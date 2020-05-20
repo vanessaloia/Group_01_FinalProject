@@ -1,0 +1,7 @@
+C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\FinalProject.cyprj|b96b6fa1-15c1-4d75-8ca8-1669c9f51300
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|d8e66437-ea08-4106-b2d5-bf13a0bf58cc
+C:\Users\annat\OneDrive\Documenti\PSoC Creator\4.3\Downloads ( 4.3).cylib\Downloads ( 4.3).cyprj|60ebca2e-7fb0-4af4-b295-edea782b7cf2
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|386519df-3079-4d2f-a77f-61397f05361f
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|33c72240-58d3-40c4-886a-233b63a6825a
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|41d604d9-9582-4a1e-9fb6-f1fc7a79ff8e
+C:\Users\annat\OneDrive\Desktop\POLITECNICO\LAB\AnnotationLibrary\AnnotationLibrary_lib\AnnotationLibrary_lib.cylib\AnnotationLibrary_lib.cyprj|f5deb0d4-1f50-4760-b532-72a517ef566b
