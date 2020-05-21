@@ -9,7 +9,7 @@
  *
  * ========================================
 */
-<<<<<<< HEAD
+
 #ifndef __INTERRUPT_ROUTINES_H
     #define __INTERRUPT_ROUTINES_H
     
@@ -22,13 +22,9 @@
     volatile uint8 FlagReady;
     
     CY_ISR_PROTO(CUSTOM_ISR_TIMER);
-#endif
-=======
 
-#ifndef INTERRUPT_ROUTINES_H
-    #define INTERRUPT_ROUTINES_H
-    
-    #include "cytypes.h"
+
+
     
     
     char change_settings_flag;
@@ -40,5 +36,5 @@
     
 #endif
 
->>>>>>> 8fb6d51433da442cd79ac85e038c83e5ccd68d14
+
 /* [] END OF FILE */

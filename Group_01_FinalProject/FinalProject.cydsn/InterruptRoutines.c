@@ -9,7 +9,6 @@
  *
  * ========================================
 */
-<<<<<<< HEAD
 #include "InterruptRoutines.h"
 #include "project.h"
 
@@ -33,10 +32,7 @@ CY_ISR(CUSTOM_ISR_TIMER){
     UART_PutString(message);
     
 }
-=======
 
-#include "project.h"
-#include "InterruptRoutines.h"
 
 CY_ISR(Custom_isr_UART)
 {
@@ -151,5 +147,4 @@ CY_ISR(Custom_isr_UART)
 
                
 
->>>>>>> 8fb6d51433da442cd79ac85e038c83e5ccd68d14
 /* [] END OF FILE */
