@@ -256,6 +256,7 @@
       <Data key="085f84da-d899-4e39-9b0c-851da5c05a23" value="Red_LED" />
       <Data key="22863ebe-a37b-476f-b252-6e49a8c00b12" value="SDA" />
       <Data key="1425177d-0d0e-4468-8bcc-e638e5509a9b" value="Rx" />
+      <Data key="77715107-f8d5-47e5-a629-0fb83101ac6b" value="Temperature_Sensor" />
       <Data key="ccc6b01e-95b8-4d07-9674-c0216155bcb8" value="MOSI" />
       <Data key="e851a3b9-efb8-48be-bbb8-b303b216c393" value="CS" />
       <Data key="e4366407-1d27-4e99-a4da-bb111660251b" value="MISO" />
@@ -3369,6 +3370,11 @@
     <Group key="1425177d-0d0e-4468-8bcc-e638e5509a9b">
       <Group key="0">
         <Data key="Port Format" value="12,6" />
+      </Group>
+    </Group>
+    <Group key="77715107-f8d5-47e5-a629-0fb83101ac6b">
+      <Group key="0">
+        <Data key="Port Format" value="3,4" />
       </Group>
     </Group>
     <Group key="ccc6b01e-95b8-4d07-9674-c0216155bcb8">

@@ -25,6 +25,8 @@
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\UART_PM.c" value="SOURCE_C;CortexM3;;;;UART" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\UART_INT.c" value="SOURCE_C;CortexM3;;;;UART" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\UART_BOOT.c" value="SOURCE_C;CortexM3;;;;UART" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\timer_clock.c" value="SOURCE_C;CortexM3;;;;timer_clock" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\timer_clock.h" value="HEADER;;;;;timer_clock" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Timer.c" value="SOURCE_C;CortexM3;;;;Timer" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Timer.h" value="HEADER;;;;;Timer" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Timer_PM.c" value="SOURCE_C;CortexM3;;;;Timer" />
@@ -64,10 +66,25 @@
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Red_LED.h" value="HEADER;;;;;Red_LED" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\isr_UART.c" value="SOURCE_C;CortexM3;;;;isr_UART" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\isr_UART.h" value="HEADER;;;;;isr_UART" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Temperature_Sensor_aliases.h" value="HEADER;;;;;Temperature_Sensor" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Temperature_Sensor.c" value="SOURCE_C;CortexM3;;;;Temperature_Sensor" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Temperature_Sensor.h" value="HEADER;;;;;Temperature_Sensor" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig.h" value="HEADER;;;;;ADC_DelSig" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_PM.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_INT.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\UART_IntClock.c" value="SOURCE_C;CortexM3;;;;UART_IntClock" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\UART_IntClock.h" value="HEADER;;;;;UART_IntClock" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\SPIM_IntClock.c" value="SOURCE_C;CortexM3;;;;SPIM_IntClock" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\SPIM_IntClock.h" value="HEADER;;;;;SPIM_IntClock" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_AMux.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig_AMux" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_AMux.h" value="HEADER;;;;;ADC_DelSig_AMux" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_Ext_CP_Clk.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig_Ext_CP_Clk" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_Ext_CP_Clk.h" value="HEADER;;;;;ADC_DelSig_Ext_CP_Clk" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_IRQ.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig_IRQ" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_IRQ.h" value="HEADER;;;;;ADC_DelSig_IRQ" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_theACLK.c" value="SOURCE_C;CortexM3;;;;ADC_DelSig_theACLK" />
+  <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\ADC_DelSig_theACLK.h" value="HEADER;;;;;ADC_DelSig_theACLK" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\cm3gcc.ld" value="LINKER_SCRIPT;;;b98f980c-3bd1-4fc7-a887-c56a20a46fdd;;cy_boot" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Cm3RealView.scat" value="LINKER_SCRIPT;;;fdb8e1ae-f83a-46cf-9446-1d703716f38a;;cy_boot" />
   <file name="C:\Users\annat\OneDrive\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\codegentemp\Cm3Start.c" value="SOURCE_C;CortexM3;;;;cy_boot" />
