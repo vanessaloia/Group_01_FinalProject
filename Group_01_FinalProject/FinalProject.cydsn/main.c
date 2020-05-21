@@ -15,6 +15,14 @@
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
+    UART_Start();
+    isr_UART_StartEx(Custom_isr_UART);
+    
+    
+    change_settings_flag=0;
+    option_table=0;
+    
+    
 
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     Timer_Start();
