@@ -15,6 +15,8 @@
  * 
  * This source code file contains macros and functions to interface
  * with the SPI Master (SPIM) of the PSoC.
+ * @author Mattia Pesenti
+ * @date 9 April, 2020
 */
 
 
