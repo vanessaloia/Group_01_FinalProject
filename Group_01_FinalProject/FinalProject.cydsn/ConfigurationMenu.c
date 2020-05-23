@@ -13,7 +13,7 @@
 
 char message [LENGTH_MEX];
 
-/* Menu dislpayed to the user while the system is running. Actual configuration of the accelerometer 
+/* Menu displayed to the user while the system is running. Actual configuration of the accelerometer 
 * \and temperature sensor are shown. Keyboard commands to change settings for the acquisition,
 * \to visualize data or to stop the visualization of data are indicated
 */
@@ -51,4 +51,13 @@ void While_Working_Menu(void)
     sprintf(message, "Press '?' to change any configuration setting\r\nPress 'v' to visualize data (Data acquisition will be stopped)\r\nPress 'u' to stop the visualization of data\r\n\n");
     UART_PutString(message);
 }
+
+/* when the user presses 'v' this message is displayed to inform to switch to Bridge control panel to visualize the acquired data */
+void Switch_to_BridgeControlPanel(void)
+{
+    /* !! DATA TO BE INSERTED */
+    sprintf(message, "Data will be displayed in %d seconds. Open Bridge Control Panel\n\n",1);
+    UART_PutString(message);
+}
+
 /* [] END OF FILE */

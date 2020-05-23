@@ -18,6 +18,7 @@
     #define LENGTH_MEX 50 
     
     void While_Working_Menu(void);
+    void Switch_to_BridgeControlPanel(void);
     
 #endif
 
