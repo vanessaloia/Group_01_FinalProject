@@ -21,7 +21,7 @@
     
     volatile uint8 FlagReady;
     
-    CY_ISR_PROTO(CUSTOM_ISR_TIMER);
+    CY_ISR_PROTO(Custom_isr_TIMER);
 
 
 
@@ -33,6 +33,8 @@
     
     
     CY_ISR_PROTO(Custom_isr_UART);
+    
+    CY_ISR_PROTO(Custom_isr_FIFO);
     
 #endif
 

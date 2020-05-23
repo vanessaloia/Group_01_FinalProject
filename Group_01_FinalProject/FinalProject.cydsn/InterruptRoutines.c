@@ -16,7 +16,7 @@ int32 temperature_digit = 0;
 int32 temperature_mv = 0;
 float temperature_celsius = 0;
 char message[20];
-CY_ISR(CUSTOM_ISR_TIMER){
+CY_ISR(Custom_isr_TIMER){
     Timer_ReadStatusRegister();
     
     temperature_digit = ADC_DelSig_Read32();
@@ -144,7 +144,9 @@ CY_ISR(Custom_isr_UART)
     }
 }
 
-
+CY_ISR(Custom_isr_FIFO) {
+    
+}
                
 
 /* [] END OF FILE */

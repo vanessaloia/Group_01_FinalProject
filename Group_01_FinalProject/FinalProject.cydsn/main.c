@@ -29,10 +29,12 @@ int main(void)
     UART_Start();
     ADC_DelSig_Start();
     
-    isr_TIMER_StartEx(CUSTOM_ISR_TIMER);
+    isr_TIMER_StartEx(Custom_isr_TIMER);
     ADC_DelSig_StartConvert();
     FlagReady = 0;
     
+    
+    isr_FIFO_StartEx(Custom_isr_FIFO);
     for(;;)
     {
         /* Place your application code here. */
