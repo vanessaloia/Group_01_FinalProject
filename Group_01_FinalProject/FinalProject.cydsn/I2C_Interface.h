@@ -8,6 +8,8 @@
  * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
+ * \author Davide Marzorati
+ * \date September 12, 2019
 */
 #ifndef I2C_Interface_H
     #define I2C_Interface_H
