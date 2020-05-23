@@ -11,14 +11,14 @@
 */
 #include "ConfigurationMenu.h"
 
-char message [LENGHT_MEX];
+char message [LENGTH_MEX];
 
 /* Menu dislpayed to the user while the system is running. Actual configuration of the accelerometer 
 * \and temperature sensor are shown. Keyboard commands to change settings for the acquisition,
 * \to visualize data or to stop the visualization of data are indicated
 */
 
-void Menu_While_Working (void)
+void While_Working_Menu(void)
 {   
     /* !!DATA TO BE INSERTED */
     
@@ -38,7 +38,7 @@ void Menu_While_Working (void)
     /* !!DATA TO BE INSERTED */ 
     
     /* Accelerometer acquisition configuration displayed */
-    sprintf(message, "Current accelerometeracquisition configuration:\r\nFull scale range: %d\r\nSampling freqeuncy: %d\r\n\n",1,2);
+    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\nSampling freqeuncy: %d\r\n\n",1,2);
     UART_PutString(message);
     
     /* !!DATA TO BE INSERTED */ 
