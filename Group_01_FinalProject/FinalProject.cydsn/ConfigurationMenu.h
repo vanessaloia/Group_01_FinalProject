@@ -16,6 +16,8 @@
     #include "stdio.h"
     
     
+    
+    
     #define LENGTH_MEX 50 
     #define TABLE_SIZE 18
     #define NUMBER_OF_TABLES 3
@@ -33,6 +35,11 @@
         char key4;
         char option4[TABLE_SIZE];
     } options_to_display;
+    
+    char initialized;
+    
+    options_to_display set_of_tables[NUMBER_OF_TABLES];
+    
     
     
         

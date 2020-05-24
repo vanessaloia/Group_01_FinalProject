@@ -9,12 +9,14 @@
  *
  * ========================================
 */
-//#include "ConfigurationMenu.h"
+#include "ConfigurationMenu.h"
 #include "OptionsToBeDisplayed.h"
+
 
 char message [LENGTH_MEX];
 
 
+ 
 
 /* Menu displayed to the user while the system is running. Actual configuration of the accelerometer 
 * \and temperature sensor are shown. Keyboard commands to change settings for the acquisition,
@@ -63,8 +65,14 @@ void Switch_to_BridgeControlPanel(void)
     UART_PutString(message);
 }
 void Show_table(void) 
-{
-    options_to_display set_of_tables[NUMBER_OF_TABLES]= {FSR,SampFreq, TempFormat} ;
+{   
+    if( !initialized) {
+        set_of_tables[0]= FSR;
+        set_of_tables[1]= SampFreq;
+        set_of_tables[2]= TempFormat;
+        initialized=1;
+    }
+    
     
 }
 

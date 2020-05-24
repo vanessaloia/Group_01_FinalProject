@@ -11,6 +11,7 @@
 */
 #include "project.h"
 #include "InterruptRoutines.h"
+#include "ConfigurationMenu.h"
 
 int main(void)
 {
@@ -21,6 +22,7 @@ int main(void)
     
     change_settings_flag=0;
     option_table=0;
+    initialized=0;
     
     
 
