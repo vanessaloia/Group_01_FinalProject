@@ -1,0 +1,1618 @@
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"SPI_Interface.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SPI_Interface_tradeByte,"ax",%progbits
+  20              		.align	2
+  21              		.global	SPI_Interface_tradeByte
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	SPI_Interface_tradeByte, %function
+  25              	SPI_Interface_tradeByte:
+  26              	.LFB0:
+  27              		.file 1 "SPI_Interface.c"
+   1:SPI_Interface.c **** /* ========================================
+   2:SPI_Interface.c ****  *
+   3:SPI_Interface.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:SPI_Interface.c ****  * All Rights Reserved
+   5:SPI_Interface.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:SPI_Interface.c ****  *
+   7:SPI_Interface.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:SPI_Interface.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:SPI_Interface.c ****  *
+  10:SPI_Interface.c ****  * ========================================
+  11:SPI_Interface.c **** */
+  12:SPI_Interface.c **** /**
+  13:SPI_Interface.c ****  * @file SPI_Interface.c
+  14:SPI_Interface.c ****  *\ Functions required to interface with the SPI MASTER (SPIM).
+  15:SPI_Interface.c ****  * 
+  16:SPI_Interface.c ****  * This source code file contains macros and functions to interface
+  17:SPI_Interface.c ****  * with the SPI Master (SPIM) of the PSoC.
+  18:SPI_Interface.c ****  * @author Mattia Pesenti
+  19:SPI_Interface.c ****  * @date 9 April, 2020
+  20:SPI_Interface.c **** */
+  21:SPI_Interface.c **** 
+  22:SPI_Interface.c **** 
+  23:SPI_Interface.c **** #include "SPI_Interface.h"
+  24:SPI_Interface.c **** 
+  25:SPI_Interface.c **** #ifndef SLAVE_CS_Write
+  26:SPI_Interface.c ****     #define SLAVE_CS_Write CS_Write
+  27:SPI_Interface.c **** #endif
+  28:SPI_Interface.c **** 
+  29:SPI_Interface.c **** /*
+  30:SPI_Interface.c **** *\ Full-Duplex, Single-Operation 1-Byte Trade
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 2
+
+
+  31:SPI_Interface.c **** */
+  32:SPI_Interface.c **** uint8_t SPI_Interface_tradeByte(uint8_t byte) {
+  28              		.loc 1 32 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 0446     		mov	r4, r0
+  33:SPI_Interface.c **** 	
+  34:SPI_Interface.c **** 	/* Enable the Slave */
+  35:SPI_Interface.c **** 	SLAVE_CS_Write(0);
+  38              		.loc 1 35 0
+  39 0004 0020     		movs	r0, #0
+  40              	.LVL1:
+  41 0006 FFF7FEFF 		bl	CS_Write
+  42              	.LVL2:
+  36:SPI_Interface.c **** 	
+  37:SPI_Interface.c **** 	/* Load the TX Buffer */
+  38:SPI_Interface.c **** 	SPIM_WriteTxData(byte);
+  43              		.loc 1 38 0
+  44 000a 2046     		mov	r0, r4
+  45 000c FFF7FEFF 		bl	SPIM_WriteTxData
+  46              	.LVL3:
+  47              	.L2:
+  39:SPI_Interface.c **** 	
+  40:SPI_Interface.c **** 	/* Wait for TX */
+  41:SPI_Interface.c ****     while( !(SPIM_ReadTxStatus() & SPIM_STS_BYTE_COMPLETE) );
+  48              		.loc 1 41 0 discriminator 1
+  49 0010 FFF7FEFF 		bl	SPIM_ReadTxStatus
+  50              	.LVL4:
+  51 0014 10F0080F 		tst	r0, #8
+  52 0018 FAD0     		beq	.L2
+  42:SPI_Interface.c **** 	
+  43:SPI_Interface.c **** 	/* Read the RX Buffer */
+  44:SPI_Interface.c **** 	uint8_t data = SPIM_ReadRxData();
+  53              		.loc 1 44 0
+  54 001a FFF7FEFF 		bl	SPIM_ReadRxData
+  55              	.LVL5:
+  56 001e 0446     		mov	r4, r0
+  57              	.LVL6:
+  45:SPI_Interface.c **** 	
+  46:SPI_Interface.c **** 	/* Disable the Slave */
+  47:SPI_Interface.c **** 	SLAVE_CS_Write(1);
+  58              		.loc 1 47 0
+  59 0020 0120     		movs	r0, #1
+  60 0022 FFF7FEFF 		bl	CS_Write
+  61              	.LVL7:
+  48:SPI_Interface.c **** 	
+  49:SPI_Interface.c **** 	return data;
+  50:SPI_Interface.c ****     
+  51:SPI_Interface.c **** }
+  62              		.loc 1 51 0
+  63 0026 2046     		mov	r0, r4
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 3
+
+
+  64 0028 10BD     		pop	{r4, pc}
+  65              		.cfi_endproc
+  66              	.LFE0:
+  67              		.size	SPI_Interface_tradeByte, .-SPI_Interface_tradeByte
+  68              		.section	.text.SPI_Interface_ReadByte,"ax",%progbits
+  69              		.align	2
+  70              		.global	SPI_Interface_ReadByte
+  71              		.thumb
+  72              		.thumb_func
+  73              		.type	SPI_Interface_ReadByte, %function
+  74              	SPI_Interface_ReadByte:
+  75              	.LFB1:
+  52:SPI_Interface.c **** 
+  53:SPI_Interface.c **** 
+  54:SPI_Interface.c **** /*
+  55:SPI_Interface.c **** *\ RX-only, Dual-Operation 1-Byte READ
+  56:SPI_Interface.c **** */
+  57:SPI_Interface.c **** uint8_t SPI_Interface_ReadByte(uint8_t byteTX) {
+  76              		.loc 1 57 0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              	.LVL8:
+  81 0000 10B5     		push	{r4, lr}
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 4, -8
+  84              		.cfi_offset 14, -4
+  85 0002 0446     		mov	r4, r0
+  58:SPI_Interface.c **** 	
+  59:SPI_Interface.c **** 	/* Enable the Slave */
+  60:SPI_Interface.c **** 	SLAVE_CS_Write(0);
+  86              		.loc 1 60 0
+  87 0004 0020     		movs	r0, #0
+  88              	.LVL9:
+  89 0006 FFF7FEFF 		bl	CS_Write
+  90              	.LVL10:
+  61:SPI_Interface.c **** 	
+  62:SPI_Interface.c **** 	/* Load the TX Buffer */
+  63:SPI_Interface.c **** 	SPIM_WriteTxData(byteTX);
+  91              		.loc 1 63 0
+  92 000a 2046     		mov	r0, r4
+  93 000c FFF7FEFF 		bl	SPIM_WriteTxData
+  94              	.LVL11:
+  64:SPI_Interface.c **** 	
+  65:SPI_Interface.c **** 	/* SPI Dummy Byte */
+  66:SPI_Interface.c **** 	SPIM_WriteTxData(SPI_DUMMY_BYTE);
+  95              		.loc 1 66 0
+  96 0010 0020     		movs	r0, #0
+  97 0012 FFF7FEFF 		bl	SPIM_WriteTxData
+  98              	.LVL12:
+  99              	.L5:
+  67:SPI_Interface.c **** 	
+  68:SPI_Interface.c **** 	/* Wait for TX/RX */
+  69:SPI_Interface.c ****     while(!(SPIM_ReadTxStatus() & SPIM_STS_SPI_DONE));
+ 100              		.loc 1 69 0 discriminator 1
+ 101 0016 FFF7FEFF 		bl	SPIM_ReadTxStatus
+ 102              	.LVL13:
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 4
+
+
+ 103 001a 10F0010F 		tst	r0, #1
+ 104 001e FAD0     		beq	.L5
+  70:SPI_Interface.c **** 	
+  71:SPI_Interface.c **** 	/* Read the RX Buffer */
+  72:SPI_Interface.c **** 	SPIM_ReadRxData();
+ 105              		.loc 1 72 0
+ 106 0020 FFF7FEFF 		bl	SPIM_ReadRxData
+ 107              	.LVL14:
+  73:SPI_Interface.c **** 	uint8_t byteRX = SPIM_ReadRxData();
+ 108              		.loc 1 73 0
+ 109 0024 FFF7FEFF 		bl	SPIM_ReadRxData
+ 110              	.LVL15:
+ 111 0028 0446     		mov	r4, r0
+ 112              	.LVL16:
+  74:SPI_Interface.c **** 	
+  75:SPI_Interface.c **** 	/* Disable the Slave */
+  76:SPI_Interface.c **** 	SLAVE_CS_Write(1);
+ 113              		.loc 1 76 0
+ 114 002a 0120     		movs	r0, #1
+ 115 002c FFF7FEFF 		bl	CS_Write
+ 116              	.LVL17:
+  77:SPI_Interface.c **** 	
+  78:SPI_Interface.c **** 	return byteRX;	
+  79:SPI_Interface.c **** 	
+  80:SPI_Interface.c **** }
+ 117              		.loc 1 80 0
+ 118 0030 2046     		mov	r0, r4
+ 119 0032 10BD     		pop	{r4, pc}
+ 120              		.cfi_endproc
+ 121              	.LFE1:
+ 122              		.size	SPI_Interface_ReadByte, .-SPI_Interface_ReadByte
+ 123              		.section	.text.SPI_Interface_Multi_RW,"ax",%progbits
+ 124              		.align	2
+ 125              		.global	SPI_Interface_Multi_RW
+ 126              		.thumb
+ 127              		.thumb_func
+ 128              		.type	SPI_Interface_Multi_RW, %function
+ 129              	SPI_Interface_Multi_RW:
+ 130              	.LFB2:
+  81:SPI_Interface.c **** 
+  82:SPI_Interface.c **** /*
+  83:SPI_Interface.c **** *\ RX-only, Dual-Operation Multi-Byte READ/WRITE
+  84:SPI_Interface.c **** */
+  85:SPI_Interface.c **** void SPI_Interface_Multi_RW(uint8_t* dataTX, uint8_t bytesTX, uint8_t* dataRX, uint8_t bytesRX) {
+ 131              		.loc 1 85 0
+ 132              		.cfi_startproc
+ 133              		@ args = 0, pretend = 0, frame = 8
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135              	.LVL18:
+ 136 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 137              		.cfi_def_cfa_offset 28
+ 138              		.cfi_offset 4, -28
+ 139              		.cfi_offset 5, -24
+ 140              		.cfi_offset 6, -20
+ 141              		.cfi_offset 7, -16
+ 142              		.cfi_offset 8, -12
+ 143              		.cfi_offset 9, -8
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 5
+
+
+ 144              		.cfi_offset 14, -4
+ 145 0004 83B0     		sub	sp, sp, #12
+ 146              		.cfi_def_cfa_offset 40
+ 147 0006 0646     		mov	r6, r0
+ 148 0008 0C46     		mov	r4, r1
+ 149 000a 1746     		mov	r7, r2
+ 150 000c 9846     		mov	r8, r3
+  86:SPI_Interface.c **** 	
+  87:SPI_Interface.c **** 	/* Enable the Slave */
+  88:SPI_Interface.c ****     SLAVE_CS_Write(0);
+ 151              		.loc 1 88 0
+ 152 000e 0020     		movs	r0, #0
+ 153              	.LVL19:
+ 154 0010 FFF7FEFF 		bl	CS_Write
+ 155              	.LVL20:
+  89:SPI_Interface.c ****         
+  90:SPI_Interface.c ****     int8_t count = bytesTX, index = 0;
+ 156              		.loc 1 90 0
+ 157 0014 64B2     		sxtb	r4, r4
+ 158              	.LVL21:
+ 159 0016 0025     		movs	r5, #0
+  91:SPI_Interface.c ****     	
+  92:SPI_Interface.c ****     /* Transmit Data */
+  93:SPI_Interface.c ****     while ( count > 0 ) {
+ 160              		.loc 1 93 0
+ 161 0018 11E0     		b	.L8
+ 162              	.LVL22:
+ 163              	.L10:
+  94:SPI_Interface.c ****             
+  95:SPI_Interface.c ****     	/* Load the TX buffer with Data*/
+  96:SPI_Interface.c ****         SPIM_PutArray(&dataTX[index*SPI_TxBufferSize], (count > SPI_TxBufferSize ? SPI_TxBufferSize
+ 164              		.loc 1 96 0
+ 165 001a 2146     		mov	r1, r4
+ 166 001c 082C     		cmp	r4, #8
+ 167 001e A8BF     		it	ge
+ 168 0020 0821     		movge	r1, #8
+ 169 0022 C9B2     		uxtb	r1, r1
+ 170 0024 06EBC500 		add	r0, r6, r5, lsl #3
+ 171 0028 FFF7FEFF 		bl	SPIM_PutArray
+ 172              	.LVL23:
+ 173              	.L9:
+  97:SPI_Interface.c ****         /* Wait for TX */
+  98:SPI_Interface.c ****         while( !(SPIM_ReadTxStatus() & SPIM_STS_SPI_DONE) );
+ 174              		.loc 1 98 0 discriminator 1
+ 175 002c FFF7FEFF 		bl	SPIM_ReadTxStatus
+ 176              	.LVL24:
+ 177 0030 10F0010F 		tst	r0, #1
+ 178 0034 FAD0     		beq	.L9
+  99:SPI_Interface.c ****         
+ 100:SPI_Interface.c ****         /* Update count */
+ 101:SPI_Interface.c ****         count -= SPI_TxBufferSize;
+ 179              		.loc 1 101 0
+ 180 0036 083C     		subs	r4, r4, #8
+ 181              	.LVL25:
+ 182 0038 64B2     		sxtb	r4, r4
+ 183              	.LVL26:
+ 102:SPI_Interface.c ****         index++;
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 6
+
+
+ 184              		.loc 1 102 0
+ 185 003a 0135     		adds	r5, r5, #1
+ 186              	.LVL27:
+ 187 003c 6DB2     		sxtb	r5, r5
+ 188              	.LVL28:
+ 189              	.L8:
+  93:SPI_Interface.c ****             
+ 190              		.loc 1 93 0
+ 191 003e 002C     		cmp	r4, #0
+ 192 0040 EBDC     		bgt	.L10
+ 103:SPI_Interface.c ****            
+ 104:SPI_Interface.c ****     }
+ 105:SPI_Interface.c ****         
+ 106:SPI_Interface.c ****     /* Clear the RX Buffer */
+ 107:SPI_Interface.c ****     SPIM_ClearFIFO();
+ 193              		.loc 1 107 0
+ 194 0042 FFF7FEFF 		bl	SPIM_ClearFIFO
+ 195              	.LVL29:
+ 108:SPI_Interface.c ****     SPIM_ClearRxBuffer();
+ 196              		.loc 1 108 0
+ 197 0046 FFF7FEFF 		bl	SPIM_ClearRxBuffer
+ 198              	.LVL30:
+ 109:SPI_Interface.c ****         
+ 110:SPI_Interface.c ****     /* Init the Dummy TX Buffer */
+ 111:SPI_Interface.c ****     uint8_t dummyTX[SPI_RxBufferSize];
+ 112:SPI_Interface.c ****     //crea un vettore di zeri
+ 113:SPI_Interface.c ****     memset(dummyTX, SPI_DUMMY_BYTE, SPI_RxBufferSize);
+ 199              		.loc 1 113 0
+ 200 004a 0026     		movs	r6, #0
+ 201              	.LVL31:
+ 202 004c 0096     		str	r6, [sp]
+ 203 004e 0196     		str	r6, [sp, #4]
+ 114:SPI_Interface.c ****         
+ 115:SPI_Interface.c ****     /* Update count for RX */
+ 116:SPI_Interface.c ****     count = bytesRX;
+ 204              		.loc 1 116 0
+ 205 0050 4FFA88F8 		sxtb	r8, r8
+ 206              	.LVL32:
+ 117:SPI_Interface.c ****     index = 0;
+ 118:SPI_Interface.c ****         
+ 119:SPI_Interface.c ****     /* Get the RX Data */
+ 120:SPI_Interface.c ****     while ( count > 0 ) {
+ 207              		.loc 1 120 0
+ 208 0054 20E0     		b	.L11
+ 209              	.LVL33:
+ 210              	.L15:
+ 121:SPI_Interface.c ****          
+ 122:SPI_Interface.c ****         /* Load the TX buffer with Dummy Bytes*/
+ 123:SPI_Interface.c ****         SPIM_PutArray(dummyTX, (count > SPI_TxBufferSize ? SPI_TxBufferSize : count));
+ 211              		.loc 1 123 0
+ 212 0056 C146     		mov	r9, r8
+ 213 0058 B8F1080F 		cmp	r8, #8
+ 214 005c A8BF     		it	ge
+ 215 005e 4FF00809 		movge	r9, #8
+ 216 0062 5FFA89F1 		uxtb	r1, r9
+ 217 0066 6846     		mov	r0, sp
+ 218 0068 FFF7FEFF 		bl	SPIM_PutArray
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 7
+
+
+ 219              	.LVL34:
+ 220              	.L12:
+ 124:SPI_Interface.c ****         /* Wait for TX */
+ 125:SPI_Interface.c ****         while( !(SPIM_ReadTxStatus() & SPIM_STS_SPI_DONE) );
+ 221              		.loc 1 125 0 discriminator 1
+ 222 006c FFF7FEFF 		bl	SPIM_ReadTxStatus
+ 223              	.LVL35:
+ 224 0070 10F0010F 		tst	r0, #1
+ 225 0074 FAD0     		beq	.L12
+ 226 0076 0024     		movs	r4, #0
+ 227 0078 06E0     		b	.L13
+ 228              	.LVL36:
+ 229              	.L14:
+ 230              	.LBB2:
+ 126:SPI_Interface.c ****         /* Read the RX Buffer */
+ 127:SPI_Interface.c ****         for( uint8_t j = 0; j < (count > SPI_TxBufferSize ? SPI_TxBufferSize : count); j++ ) {
+ 128:SPI_Interface.c ****             dataRX[j + index*SPI_RxBufferSize] = SPIM_ReadRxData();   
+ 231              		.loc 1 128 0 discriminator 3
+ 232 007a 04EBC605 		add	r5, r4, r6, lsl #3
+ 233 007e FFF7FEFF 		bl	SPIM_ReadRxData
+ 234              	.LVL37:
+ 235 0082 7855     		strb	r0, [r7, r5]
+ 127:SPI_Interface.c ****             dataRX[j + index*SPI_RxBufferSize] = SPIM_ReadRxData();   
+ 236              		.loc 1 127 0 discriminator 3
+ 237 0084 0134     		adds	r4, r4, #1
+ 238              	.LVL38:
+ 239 0086 E4B2     		uxtb	r4, r4
+ 240              	.LVL39:
+ 241              	.L13:
+ 127:SPI_Interface.c ****             dataRX[j + index*SPI_RxBufferSize] = SPIM_ReadRxData();   
+ 242              		.loc 1 127 0 is_stmt 0 discriminator 1
+ 243 0088 4C45     		cmp	r4, r9
+ 244 008a F6DB     		blt	.L14
+ 245              	.LBE2:
+ 129:SPI_Interface.c ****         }
+ 130:SPI_Interface.c ****         
+ 131:SPI_Interface.c ****         count -= SPI_RxBufferSize;
+ 246              		.loc 1 131 0 is_stmt 1
+ 247 008c A8F10808 		sub	r8, r8, #8
+ 248              	.LVL40:
+ 249 0090 4FFA88F8 		sxtb	r8, r8
+ 250              	.LVL41:
+ 132:SPI_Interface.c ****         index++;
+ 251              		.loc 1 132 0
+ 252 0094 0136     		adds	r6, r6, #1
+ 253              	.LVL42:
+ 254 0096 76B2     		sxtb	r6, r6
+ 255              	.LVL43:
+ 256              	.L11:
+ 120:SPI_Interface.c ****          
+ 257              		.loc 1 120 0
+ 258 0098 B8F1000F 		cmp	r8, #0
+ 259 009c DBDC     		bgt	.L15
+ 133:SPI_Interface.c ****         
+ 134:SPI_Interface.c ****     }
+ 135:SPI_Interface.c ****         
+ 136:SPI_Interface.c ****     /* Disable the Slave */
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 8
+
+
+ 137:SPI_Interface.c ****     SLAVE_CS_Write(1);
+ 260              		.loc 1 137 0
+ 261 009e 0120     		movs	r0, #1
+ 262 00a0 FFF7FEFF 		bl	CS_Write
+ 263              	.LVL44:
+ 138:SPI_Interface.c ****     	
+ 139:SPI_Interface.c ****     /* Clear */
+ 140:SPI_Interface.c ****     SPIM_ClearFIFO();
+ 264              		.loc 1 140 0
+ 265 00a4 FFF7FEFF 		bl	SPIM_ClearFIFO
+ 266              	.LVL45:
+ 141:SPI_Interface.c ****     SPIM_ClearRxBuffer();
+ 267              		.loc 1 141 0
+ 268 00a8 FFF7FEFF 		bl	SPIM_ClearRxBuffer
+ 269              	.LVL46:
+ 142:SPI_Interface.c ****     SPIM_ClearTxBuffer();
+ 270              		.loc 1 142 0
+ 271 00ac FFF7FEFF 		bl	SPIM_ClearTxBuffer
+ 272              	.LVL47:
+ 143:SPI_Interface.c **** 
+ 144:SPI_Interface.c **** }
+ 273              		.loc 1 144 0
+ 274 00b0 03B0     		add	sp, sp, #12
+ 275              		.cfi_def_cfa_offset 28
+ 276              		@ sp needed
+ 277 00b2 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 278              		.cfi_endproc
+ 279              	.LFE2:
+ 280              		.size	SPI_Interface_Multi_RW, .-SPI_Interface_Multi_RW
+ 281 00b6 00BF     		.text
+ 282              	.Letext0:
+ 283              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
+ 284              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
+ 285              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 286              		.file 5 "Generated_Source\\PSoC5/CS.h"
+ 287              		.file 6 "Generated_Source\\PSoC5/SPIM.h"
+ 288              		.section	.debug_info,"",%progbits
+ 289              	.Ldebug_info0:
+ 290 0000 93030000 		.4byte	0x393
+ 291 0004 0400     		.2byte	0x4
+ 292 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 293 000a 04       		.byte	0x4
+ 294 000b 01       		.uleb128 0x1
+ 295 000c EC000000 		.4byte	.LASF40
+ 296 0010 0C       		.byte	0xc
+ 297 0011 7A010000 		.4byte	.LASF41
+ 298 0015 46000000 		.4byte	.LASF42
+ 299 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 300 001d 00000000 		.4byte	0
+ 301 0021 00000000 		.4byte	.Ldebug_line0
+ 302 0025 02       		.uleb128 0x2
+ 303 0026 00000000 		.4byte	.LASF0
+ 304 002a 02       		.byte	0x2
+ 305 002b 1B       		.byte	0x1b
+ 306 002c 30000000 		.4byte	0x30
+ 307 0030 03       		.uleb128 0x3
+ 308 0031 01       		.byte	0x1
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 9
+
+
+ 309 0032 06       		.byte	0x6
+ 310 0033 BD020000 		.4byte	.LASF2
+ 311 0037 02       		.uleb128 0x2
+ 312 0038 09000000 		.4byte	.LASF1
+ 313 003c 02       		.byte	0x2
+ 314 003d 1D       		.byte	0x1d
+ 315 003e 42000000 		.4byte	0x42
+ 316 0042 03       		.uleb128 0x3
+ 317 0043 01       		.byte	0x1
+ 318 0044 08       		.byte	0x8
+ 319 0045 DE000000 		.4byte	.LASF3
+ 320 0049 03       		.uleb128 0x3
+ 321 004a 02       		.byte	0x2
+ 322 004b 05       		.byte	0x5
+ 323 004c 79020000 		.4byte	.LASF4
+ 324 0050 03       		.uleb128 0x3
+ 325 0051 02       		.byte	0x2
+ 326 0052 07       		.byte	0x7
+ 327 0053 33000000 		.4byte	.LASF5
+ 328 0057 03       		.uleb128 0x3
+ 329 0058 04       		.byte	0x4
+ 330 0059 05       		.byte	0x5
+ 331 005a A8020000 		.4byte	.LASF6
+ 332 005e 03       		.uleb128 0x3
+ 333 005f 04       		.byte	0x4
+ 334 0060 07       		.byte	0x7
+ 335 0061 8A010000 		.4byte	.LASF7
+ 336 0065 03       		.uleb128 0x3
+ 337 0066 08       		.byte	0x8
+ 338 0067 05       		.byte	0x5
+ 339 0068 3A020000 		.4byte	.LASF8
+ 340 006c 03       		.uleb128 0x3
+ 341 006d 08       		.byte	0x8
+ 342 006e 07       		.byte	0x7
+ 343 006f F3010000 		.4byte	.LASF9
+ 344 0073 04       		.uleb128 0x4
+ 345 0074 04       		.byte	0x4
+ 346 0075 05       		.byte	0x5
+ 347 0076 696E7400 		.ascii	"int\000"
+ 348 007a 03       		.uleb128 0x3
+ 349 007b 04       		.byte	0x4
+ 350 007c 07       		.byte	0x7
+ 351 007d E6010000 		.4byte	.LASF10
+ 352 0081 02       		.uleb128 0x2
+ 353 0082 B2000000 		.4byte	.LASF11
+ 354 0086 03       		.byte	0x3
+ 355 0087 14       		.byte	0x14
+ 356 0088 25000000 		.4byte	0x25
+ 357 008c 02       		.uleb128 0x2
+ 358 008d 0A020000 		.4byte	.LASF12
+ 359 0091 03       		.byte	0x3
+ 360 0092 18       		.byte	0x18
+ 361 0093 37000000 		.4byte	0x37
+ 362 0097 05       		.uleb128 0x5
+ 363 0098 9C010000 		.4byte	.LASF13
+ 364 009c 04       		.byte	0x4
+ 365 009d E401     		.2byte	0x1e4
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 10
+
+
+ 366 009f 42000000 		.4byte	0x42
+ 367 00a3 03       		.uleb128 0x3
+ 368 00a4 04       		.byte	0x4
+ 369 00a5 04       		.byte	0x4
+ 370 00a6 C0000000 		.4byte	.LASF14
+ 371 00aa 03       		.uleb128 0x3
+ 372 00ab 08       		.byte	0x8
+ 373 00ac 04       		.byte	0x4
+ 374 00ad C0010000 		.4byte	.LASF15
+ 375 00b1 03       		.uleb128 0x3
+ 376 00b2 01       		.byte	0x1
+ 377 00b3 08       		.byte	0x8
+ 378 00b4 48020000 		.4byte	.LASF16
+ 379 00b8 03       		.uleb128 0x3
+ 380 00b9 08       		.byte	0x8
+ 381 00ba 04       		.byte	0x4
+ 382 00bb B1020000 		.4byte	.LASF17
+ 383 00bf 03       		.uleb128 0x3
+ 384 00c0 04       		.byte	0x4
+ 385 00c1 07       		.byte	0x7
+ 386 00c2 31020000 		.4byte	.LASF18
+ 387 00c6 06       		.uleb128 0x6
+ 388 00c7 C7010000 		.4byte	.LASF19
+ 389 00cb 01       		.byte	0x1
+ 390 00cc 20       		.byte	0x20
+ 391 00cd 8C000000 		.4byte	0x8c
+ 392 00d1 00000000 		.4byte	.LFB0
+ 393 00d5 2A000000 		.4byte	.LFE0-.LFB0
+ 394 00d9 01       		.uleb128 0x1
+ 395 00da 9C       		.byte	0x9c
+ 396 00db 44010000 		.4byte	0x144
+ 397 00df 07       		.uleb128 0x7
+ 398 00e0 AD000000 		.4byte	.LASF21
+ 399 00e4 01       		.byte	0x1
+ 400 00e5 20       		.byte	0x20
+ 401 00e6 8C000000 		.4byte	0x8c
+ 402 00ea 00000000 		.4byte	.LLST0
+ 403 00ee 08       		.uleb128 0x8
+ 404 00ef C6000000 		.4byte	.LASF23
+ 405 00f3 01       		.byte	0x1
+ 406 00f4 2C       		.byte	0x2c
+ 407 00f5 8C000000 		.4byte	0x8c
+ 408 00f9 01       		.uleb128 0x1
+ 409 00fa 54       		.byte	0x54
+ 410 00fb 09       		.uleb128 0x9
+ 411 00fc 0A000000 		.4byte	.LVL2
+ 412 0100 3E030000 		.4byte	0x33e
+ 413 0104 0E010000 		.4byte	0x10e
+ 414 0108 0A       		.uleb128 0xa
+ 415 0109 01       		.uleb128 0x1
+ 416 010a 50       		.byte	0x50
+ 417 010b 01       		.uleb128 0x1
+ 418 010c 30       		.byte	0x30
+ 419 010d 00       		.byte	0
+ 420 010e 09       		.uleb128 0x9
+ 421 010f 10000000 		.4byte	.LVL3
+ 422 0113 49030000 		.4byte	0x349
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 11
+
+
+ 423 0117 22010000 		.4byte	0x122
+ 424 011b 0A       		.uleb128 0xa
+ 425 011c 01       		.uleb128 0x1
+ 426 011d 50       		.byte	0x50
+ 427 011e 02       		.uleb128 0x2
+ 428 011f 74       		.byte	0x74
+ 429 0120 00       		.sleb128 0
+ 430 0121 00       		.byte	0
+ 431 0122 0B       		.uleb128 0xb
+ 432 0123 14000000 		.4byte	.LVL4
+ 433 0127 54030000 		.4byte	0x354
+ 434 012b 0B       		.uleb128 0xb
+ 435 012c 1E000000 		.4byte	.LVL5
+ 436 0130 5F030000 		.4byte	0x35f
+ 437 0134 0C       		.uleb128 0xc
+ 438 0135 26000000 		.4byte	.LVL7
+ 439 0139 3E030000 		.4byte	0x33e
+ 440 013d 0A       		.uleb128 0xa
+ 441 013e 01       		.uleb128 0x1
+ 442 013f 50       		.byte	0x50
+ 443 0140 01       		.uleb128 0x1
+ 444 0141 31       		.byte	0x31
+ 445 0142 00       		.byte	0
+ 446 0143 00       		.byte	0
+ 447 0144 06       		.uleb128 0x6
+ 448 0145 D0020000 		.4byte	.LASF20
+ 449 0149 01       		.byte	0x1
+ 450 014a 39       		.byte	0x39
+ 451 014b 8C000000 		.4byte	0x8c
+ 452 014f 00000000 		.4byte	.LFB1
+ 453 0153 34000000 		.4byte	.LFE1-.LFB1
+ 454 0157 01       		.uleb128 0x1
+ 455 0158 9C       		.byte	0x9c
+ 456 0159 DE010000 		.4byte	0x1de
+ 457 015d 07       		.uleb128 0x7
+ 458 015e B9000000 		.4byte	.LASF22
+ 459 0162 01       		.byte	0x1
+ 460 0163 39       		.byte	0x39
+ 461 0164 8C000000 		.4byte	0x8c
+ 462 0168 21000000 		.4byte	.LLST1
+ 463 016c 08       		.uleb128 0x8
+ 464 016d DF010000 		.4byte	.LASF24
+ 465 0171 01       		.byte	0x1
+ 466 0172 49       		.byte	0x49
+ 467 0173 8C000000 		.4byte	0x8c
+ 468 0177 01       		.uleb128 0x1
+ 469 0178 54       		.byte	0x54
+ 470 0179 09       		.uleb128 0x9
+ 471 017a 0A000000 		.4byte	.LVL10
+ 472 017e 3E030000 		.4byte	0x33e
+ 473 0182 8C010000 		.4byte	0x18c
+ 474 0186 0A       		.uleb128 0xa
+ 475 0187 01       		.uleb128 0x1
+ 476 0188 50       		.byte	0x50
+ 477 0189 01       		.uleb128 0x1
+ 478 018a 30       		.byte	0x30
+ 479 018b 00       		.byte	0
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 12
+
+
+ 480 018c 09       		.uleb128 0x9
+ 481 018d 10000000 		.4byte	.LVL11
+ 482 0191 49030000 		.4byte	0x349
+ 483 0195 A0010000 		.4byte	0x1a0
+ 484 0199 0A       		.uleb128 0xa
+ 485 019a 01       		.uleb128 0x1
+ 486 019b 50       		.byte	0x50
+ 487 019c 02       		.uleb128 0x2
+ 488 019d 74       		.byte	0x74
+ 489 019e 00       		.sleb128 0
+ 490 019f 00       		.byte	0
+ 491 01a0 09       		.uleb128 0x9
+ 492 01a1 16000000 		.4byte	.LVL12
+ 493 01a5 49030000 		.4byte	0x349
+ 494 01a9 B3010000 		.4byte	0x1b3
+ 495 01ad 0A       		.uleb128 0xa
+ 496 01ae 01       		.uleb128 0x1
+ 497 01af 50       		.byte	0x50
+ 498 01b0 01       		.uleb128 0x1
+ 499 01b1 30       		.byte	0x30
+ 500 01b2 00       		.byte	0
+ 501 01b3 0B       		.uleb128 0xb
+ 502 01b4 1A000000 		.4byte	.LVL13
+ 503 01b8 54030000 		.4byte	0x354
+ 504 01bc 0B       		.uleb128 0xb
+ 505 01bd 24000000 		.4byte	.LVL14
+ 506 01c1 5F030000 		.4byte	0x35f
+ 507 01c5 0B       		.uleb128 0xb
+ 508 01c6 28000000 		.4byte	.LVL15
+ 509 01ca 5F030000 		.4byte	0x35f
+ 510 01ce 0C       		.uleb128 0xc
+ 511 01cf 30000000 		.4byte	.LVL17
+ 512 01d3 3E030000 		.4byte	0x33e
+ 513 01d7 0A       		.uleb128 0xa
+ 514 01d8 01       		.uleb128 0x1
+ 515 01d9 50       		.byte	0x50
+ 516 01da 01       		.uleb128 0x1
+ 517 01db 31       		.byte	0x31
+ 518 01dc 00       		.byte	0
+ 519 01dd 00       		.byte	0
+ 520 01de 0D       		.uleb128 0xd
+ 521 01df 62020000 		.4byte	.LASF43
+ 522 01e3 01       		.byte	0x1
+ 523 01e4 55       		.byte	0x55
+ 524 01e5 00000000 		.4byte	.LFB2
+ 525 01e9 B6000000 		.4byte	.LFE2-.LFB2
+ 526 01ed 01       		.uleb128 0x1
+ 527 01ee 9C       		.byte	0x9c
+ 528 01ef 28030000 		.4byte	0x328
+ 529 01f3 07       		.uleb128 0x7
+ 530 01f4 C9020000 		.4byte	.LASF25
+ 531 01f8 01       		.byte	0x1
+ 532 01f9 55       		.byte	0x55
+ 533 01fa 28030000 		.4byte	0x328
+ 534 01fe 42000000 		.4byte	.LLST2
+ 535 0202 07       		.uleb128 0x7
+ 536 0203 29020000 		.4byte	.LASF26
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 13
+
+
+ 537 0207 01       		.byte	0x1
+ 538 0208 55       		.byte	0x55
+ 539 0209 8C000000 		.4byte	0x8c
+ 540 020d 6E000000 		.4byte	.LLST3
+ 541 0211 07       		.uleb128 0x7
+ 542 0212 22020000 		.4byte	.LASF27
+ 543 0216 01       		.byte	0x1
+ 544 0217 55       		.byte	0x55
+ 545 0218 28030000 		.4byte	0x328
+ 546 021c 8F000000 		.4byte	.LLST4
+ 547 0220 07       		.uleb128 0x7
+ 548 0221 12020000 		.4byte	.LASF28
+ 549 0225 01       		.byte	0x1
+ 550 0226 55       		.byte	0x55
+ 551 0227 8C000000 		.4byte	0x8c
+ 552 022b AD000000 		.4byte	.LLST5
+ 553 022f 0E       		.uleb128 0xe
+ 554 0230 2D000000 		.4byte	.LASF29
+ 555 0234 01       		.byte	0x1
+ 556 0235 5A       		.byte	0x5a
+ 557 0236 81000000 		.4byte	0x81
+ 558 023a CE000000 		.4byte	.LLST6
+ 559 023e 0E       		.uleb128 0xe
+ 560 023f 5C020000 		.4byte	.LASF30
+ 561 0243 01       		.byte	0x1
+ 562 0244 5A       		.byte	0x5a
+ 563 0245 81000000 		.4byte	0x81
+ 564 0249 02010000 		.4byte	.LLST7
+ 565 024d 08       		.uleb128 0x8
+ 566 024e 1A020000 		.4byte	.LASF31
+ 567 0252 01       		.byte	0x1
+ 568 0253 6F       		.byte	0x6f
+ 569 0254 2E030000 		.4byte	0x32e
+ 570 0258 02       		.uleb128 0x2
+ 571 0259 91       		.byte	0x91
+ 572 025a 58       		.sleb128 -40
+ 573 025b 0F       		.uleb128 0xf
+ 574 025c 7A000000 		.4byte	.LBB2
+ 575 0260 12000000 		.4byte	.LBE2-.LBB2
+ 576 0264 7F020000 		.4byte	0x27f
+ 577 0268 10       		.uleb128 0x10
+ 578 0269 6A00     		.ascii	"j\000"
+ 579 026b 01       		.byte	0x1
+ 580 026c 7F       		.byte	0x7f
+ 581 026d 8C000000 		.4byte	0x8c
+ 582 0271 4E010000 		.4byte	.LLST8
+ 583 0275 0B       		.uleb128 0xb
+ 584 0276 82000000 		.4byte	.LVL37
+ 585 027a 5F030000 		.4byte	0x35f
+ 586 027e 00       		.byte	0
+ 587 027f 09       		.uleb128 0x9
+ 588 0280 14000000 		.4byte	.LVL20
+ 589 0284 3E030000 		.4byte	0x33e
+ 590 0288 92020000 		.4byte	0x292
+ 591 028c 0A       		.uleb128 0xa
+ 592 028d 01       		.uleb128 0x1
+ 593 028e 50       		.byte	0x50
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 14
+
+
+ 594 028f 01       		.uleb128 0x1
+ 595 0290 30       		.byte	0x30
+ 596 0291 00       		.byte	0
+ 597 0292 09       		.uleb128 0x9
+ 598 0293 2C000000 		.4byte	.LVL23
+ 599 0297 6A030000 		.4byte	0x36a
+ 600 029b BB020000 		.4byte	0x2bb
+ 601 029f 0A       		.uleb128 0xa
+ 602 02a0 01       		.uleb128 0x1
+ 603 02a1 50       		.byte	0x50
+ 604 02a2 07       		.uleb128 0x7
+ 605 02a3 75       		.byte	0x75
+ 606 02a4 00       		.sleb128 0
+ 607 02a5 33       		.byte	0x33
+ 608 02a6 24       		.byte	0x24
+ 609 02a7 76       		.byte	0x76
+ 610 02a8 00       		.sleb128 0
+ 611 02a9 22       		.byte	0x22
+ 612 02aa 0A       		.uleb128 0xa
+ 613 02ab 01       		.uleb128 0x1
+ 614 02ac 51       		.byte	0x51
+ 615 02ad 0C       		.uleb128 0xc
+ 616 02ae 38       		.byte	0x38
+ 617 02af 74       		.byte	0x74
+ 618 02b0 00       		.sleb128 0
+ 619 02b1 74       		.byte	0x74
+ 620 02b2 00       		.sleb128 0
+ 621 02b3 38       		.byte	0x38
+ 622 02b4 2A       		.byte	0x2a
+ 623 02b5 28       		.byte	0x28
+ 624 02b6 0100     		.2byte	0x1
+ 625 02b8 16       		.byte	0x16
+ 626 02b9 13       		.byte	0x13
+ 627 02ba 00       		.byte	0
+ 628 02bb 0B       		.uleb128 0xb
+ 629 02bc 30000000 		.4byte	.LVL24
+ 630 02c0 54030000 		.4byte	0x354
+ 631 02c4 0B       		.uleb128 0xb
+ 632 02c5 46000000 		.4byte	.LVL29
+ 633 02c9 75030000 		.4byte	0x375
+ 634 02cd 0B       		.uleb128 0xb
+ 635 02ce 4A000000 		.4byte	.LVL30
+ 636 02d2 80030000 		.4byte	0x380
+ 637 02d6 09       		.uleb128 0x9
+ 638 02d7 6C000000 		.4byte	.LVL34
+ 639 02db 6A030000 		.4byte	0x36a
+ 640 02df F0020000 		.4byte	0x2f0
+ 641 02e3 0A       		.uleb128 0xa
+ 642 02e4 01       		.uleb128 0x1
+ 643 02e5 50       		.byte	0x50
+ 644 02e6 02       		.uleb128 0x2
+ 645 02e7 7D       		.byte	0x7d
+ 646 02e8 00       		.sleb128 0
+ 647 02e9 0A       		.uleb128 0xa
+ 648 02ea 01       		.uleb128 0x1
+ 649 02eb 51       		.byte	0x51
+ 650 02ec 02       		.uleb128 0x2
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 15
+
+
+ 651 02ed 79       		.byte	0x79
+ 652 02ee 00       		.sleb128 0
+ 653 02ef 00       		.byte	0
+ 654 02f0 0B       		.uleb128 0xb
+ 655 02f1 70000000 		.4byte	.LVL35
+ 656 02f5 54030000 		.4byte	0x354
+ 657 02f9 09       		.uleb128 0x9
+ 658 02fa A4000000 		.4byte	.LVL44
+ 659 02fe 3E030000 		.4byte	0x33e
+ 660 0302 0C030000 		.4byte	0x30c
+ 661 0306 0A       		.uleb128 0xa
+ 662 0307 01       		.uleb128 0x1
+ 663 0308 50       		.byte	0x50
+ 664 0309 01       		.uleb128 0x1
+ 665 030a 31       		.byte	0x31
+ 666 030b 00       		.byte	0
+ 667 030c 0B       		.uleb128 0xb
+ 668 030d A8000000 		.4byte	.LVL45
+ 669 0311 75030000 		.4byte	0x375
+ 670 0315 0B       		.uleb128 0xb
+ 671 0316 AC000000 		.4byte	.LVL46
+ 672 031a 80030000 		.4byte	0x380
+ 673 031e 0B       		.uleb128 0xb
+ 674 031f B0000000 		.4byte	.LVL47
+ 675 0323 8B030000 		.4byte	0x38b
+ 676 0327 00       		.byte	0
+ 677 0328 11       		.uleb128 0x11
+ 678 0329 04       		.byte	0x4
+ 679 032a 8C000000 		.4byte	0x8c
+ 680 032e 12       		.uleb128 0x12
+ 681 032f 8C000000 		.4byte	0x8c
+ 682 0333 3E030000 		.4byte	0x33e
+ 683 0337 13       		.uleb128 0x13
+ 684 0338 BF000000 		.4byte	0xbf
+ 685 033c 07       		.byte	0x7
+ 686 033d 00       		.byte	0
+ 687 033e 14       		.uleb128 0x14
+ 688 033f 24000000 		.4byte	.LASF32
+ 689 0343 24000000 		.4byte	.LASF32
+ 690 0347 05       		.byte	0x5
+ 691 0348 26       		.byte	0x26
+ 692 0349 14       		.uleb128 0x14
+ 693 034a 13000000 		.4byte	.LASF33
+ 694 034e 13000000 		.4byte	.LASF33
+ 695 0352 06       		.byte	0x6
+ 696 0353 5E       		.byte	0x5e
+ 697 0354 14       		.uleb128 0x14
+ 698 0355 96020000 		.4byte	.LASF34
+ 699 0359 96020000 		.4byte	.LASF34
+ 700 035d 06       		.byte	0x6
+ 701 035e 5C       		.byte	0x5c
+ 702 035f 14       		.uleb128 0x14
+ 703 0360 B0010000 		.4byte	.LASF35
+ 704 0364 B0010000 		.4byte	.LASF35
+ 705 0368 06       		.byte	0x6
+ 706 0369 60       		.byte	0x60
+ 707 036a 14       		.uleb128 0x14
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 16
+
+
+ 708 036b A2010000 		.4byte	.LASF36
+ 709 036f A2010000 		.4byte	.LASF36
+ 710 0373 06       		.byte	0x6
+ 711 0374 67       		.byte	0x67
+ 712 0375 14       		.uleb128 0x14
+ 713 0376 4D020000 		.4byte	.LASF37
+ 714 037a 4D020000 		.4byte	.LASF37
+ 715 037e 06       		.byte	0x6
+ 716 037f 66       		.byte	0x66
+ 717 0380 14       		.uleb128 0x14
+ 718 0381 CB000000 		.4byte	.LASF38
+ 719 0385 CB000000 		.4byte	.LASF38
+ 720 0389 06       		.byte	0x6
+ 721 038a 64       		.byte	0x64
+ 722 038b 14       		.uleb128 0x14
+ 723 038c 83020000 		.4byte	.LASF39
+ 724 0390 83020000 		.4byte	.LASF39
+ 725 0394 06       		.byte	0x6
+ 726 0395 65       		.byte	0x65
+ 727 0396 00       		.byte	0
+ 728              		.section	.debug_abbrev,"",%progbits
+ 729              	.Ldebug_abbrev0:
+ 730 0000 01       		.uleb128 0x1
+ 731 0001 11       		.uleb128 0x11
+ 732 0002 01       		.byte	0x1
+ 733 0003 25       		.uleb128 0x25
+ 734 0004 0E       		.uleb128 0xe
+ 735 0005 13       		.uleb128 0x13
+ 736 0006 0B       		.uleb128 0xb
+ 737 0007 03       		.uleb128 0x3
+ 738 0008 0E       		.uleb128 0xe
+ 739 0009 1B       		.uleb128 0x1b
+ 740 000a 0E       		.uleb128 0xe
+ 741 000b 55       		.uleb128 0x55
+ 742 000c 17       		.uleb128 0x17
+ 743 000d 11       		.uleb128 0x11
+ 744 000e 01       		.uleb128 0x1
+ 745 000f 10       		.uleb128 0x10
+ 746 0010 17       		.uleb128 0x17
+ 747 0011 00       		.byte	0
+ 748 0012 00       		.byte	0
+ 749 0013 02       		.uleb128 0x2
+ 750 0014 16       		.uleb128 0x16
+ 751 0015 00       		.byte	0
+ 752 0016 03       		.uleb128 0x3
+ 753 0017 0E       		.uleb128 0xe
+ 754 0018 3A       		.uleb128 0x3a
+ 755 0019 0B       		.uleb128 0xb
+ 756 001a 3B       		.uleb128 0x3b
+ 757 001b 0B       		.uleb128 0xb
+ 758 001c 49       		.uleb128 0x49
+ 759 001d 13       		.uleb128 0x13
+ 760 001e 00       		.byte	0
+ 761 001f 00       		.byte	0
+ 762 0020 03       		.uleb128 0x3
+ 763 0021 24       		.uleb128 0x24
+ 764 0022 00       		.byte	0
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 17
+
+
+ 765 0023 0B       		.uleb128 0xb
+ 766 0024 0B       		.uleb128 0xb
+ 767 0025 3E       		.uleb128 0x3e
+ 768 0026 0B       		.uleb128 0xb
+ 769 0027 03       		.uleb128 0x3
+ 770 0028 0E       		.uleb128 0xe
+ 771 0029 00       		.byte	0
+ 772 002a 00       		.byte	0
+ 773 002b 04       		.uleb128 0x4
+ 774 002c 24       		.uleb128 0x24
+ 775 002d 00       		.byte	0
+ 776 002e 0B       		.uleb128 0xb
+ 777 002f 0B       		.uleb128 0xb
+ 778 0030 3E       		.uleb128 0x3e
+ 779 0031 0B       		.uleb128 0xb
+ 780 0032 03       		.uleb128 0x3
+ 781 0033 08       		.uleb128 0x8
+ 782 0034 00       		.byte	0
+ 783 0035 00       		.byte	0
+ 784 0036 05       		.uleb128 0x5
+ 785 0037 16       		.uleb128 0x16
+ 786 0038 00       		.byte	0
+ 787 0039 03       		.uleb128 0x3
+ 788 003a 0E       		.uleb128 0xe
+ 789 003b 3A       		.uleb128 0x3a
+ 790 003c 0B       		.uleb128 0xb
+ 791 003d 3B       		.uleb128 0x3b
+ 792 003e 05       		.uleb128 0x5
+ 793 003f 49       		.uleb128 0x49
+ 794 0040 13       		.uleb128 0x13
+ 795 0041 00       		.byte	0
+ 796 0042 00       		.byte	0
+ 797 0043 06       		.uleb128 0x6
+ 798 0044 2E       		.uleb128 0x2e
+ 799 0045 01       		.byte	0x1
+ 800 0046 3F       		.uleb128 0x3f
+ 801 0047 19       		.uleb128 0x19
+ 802 0048 03       		.uleb128 0x3
+ 803 0049 0E       		.uleb128 0xe
+ 804 004a 3A       		.uleb128 0x3a
+ 805 004b 0B       		.uleb128 0xb
+ 806 004c 3B       		.uleb128 0x3b
+ 807 004d 0B       		.uleb128 0xb
+ 808 004e 27       		.uleb128 0x27
+ 809 004f 19       		.uleb128 0x19
+ 810 0050 49       		.uleb128 0x49
+ 811 0051 13       		.uleb128 0x13
+ 812 0052 11       		.uleb128 0x11
+ 813 0053 01       		.uleb128 0x1
+ 814 0054 12       		.uleb128 0x12
+ 815 0055 06       		.uleb128 0x6
+ 816 0056 40       		.uleb128 0x40
+ 817 0057 18       		.uleb128 0x18
+ 818 0058 9742     		.uleb128 0x2117
+ 819 005a 19       		.uleb128 0x19
+ 820 005b 01       		.uleb128 0x1
+ 821 005c 13       		.uleb128 0x13
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 18
+
+
+ 822 005d 00       		.byte	0
+ 823 005e 00       		.byte	0
+ 824 005f 07       		.uleb128 0x7
+ 825 0060 05       		.uleb128 0x5
+ 826 0061 00       		.byte	0
+ 827 0062 03       		.uleb128 0x3
+ 828 0063 0E       		.uleb128 0xe
+ 829 0064 3A       		.uleb128 0x3a
+ 830 0065 0B       		.uleb128 0xb
+ 831 0066 3B       		.uleb128 0x3b
+ 832 0067 0B       		.uleb128 0xb
+ 833 0068 49       		.uleb128 0x49
+ 834 0069 13       		.uleb128 0x13
+ 835 006a 02       		.uleb128 0x2
+ 836 006b 17       		.uleb128 0x17
+ 837 006c 00       		.byte	0
+ 838 006d 00       		.byte	0
+ 839 006e 08       		.uleb128 0x8
+ 840 006f 34       		.uleb128 0x34
+ 841 0070 00       		.byte	0
+ 842 0071 03       		.uleb128 0x3
+ 843 0072 0E       		.uleb128 0xe
+ 844 0073 3A       		.uleb128 0x3a
+ 845 0074 0B       		.uleb128 0xb
+ 846 0075 3B       		.uleb128 0x3b
+ 847 0076 0B       		.uleb128 0xb
+ 848 0077 49       		.uleb128 0x49
+ 849 0078 13       		.uleb128 0x13
+ 850 0079 02       		.uleb128 0x2
+ 851 007a 18       		.uleb128 0x18
+ 852 007b 00       		.byte	0
+ 853 007c 00       		.byte	0
+ 854 007d 09       		.uleb128 0x9
+ 855 007e 898201   		.uleb128 0x4109
+ 856 0081 01       		.byte	0x1
+ 857 0082 11       		.uleb128 0x11
+ 858 0083 01       		.uleb128 0x1
+ 859 0084 31       		.uleb128 0x31
+ 860 0085 13       		.uleb128 0x13
+ 861 0086 01       		.uleb128 0x1
+ 862 0087 13       		.uleb128 0x13
+ 863 0088 00       		.byte	0
+ 864 0089 00       		.byte	0
+ 865 008a 0A       		.uleb128 0xa
+ 866 008b 8A8201   		.uleb128 0x410a
+ 867 008e 00       		.byte	0
+ 868 008f 02       		.uleb128 0x2
+ 869 0090 18       		.uleb128 0x18
+ 870 0091 9142     		.uleb128 0x2111
+ 871 0093 18       		.uleb128 0x18
+ 872 0094 00       		.byte	0
+ 873 0095 00       		.byte	0
+ 874 0096 0B       		.uleb128 0xb
+ 875 0097 898201   		.uleb128 0x4109
+ 876 009a 00       		.byte	0
+ 877 009b 11       		.uleb128 0x11
+ 878 009c 01       		.uleb128 0x1
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 19
+
+
+ 879 009d 31       		.uleb128 0x31
+ 880 009e 13       		.uleb128 0x13
+ 881 009f 00       		.byte	0
+ 882 00a0 00       		.byte	0
+ 883 00a1 0C       		.uleb128 0xc
+ 884 00a2 898201   		.uleb128 0x4109
+ 885 00a5 01       		.byte	0x1
+ 886 00a6 11       		.uleb128 0x11
+ 887 00a7 01       		.uleb128 0x1
+ 888 00a8 31       		.uleb128 0x31
+ 889 00a9 13       		.uleb128 0x13
+ 890 00aa 00       		.byte	0
+ 891 00ab 00       		.byte	0
+ 892 00ac 0D       		.uleb128 0xd
+ 893 00ad 2E       		.uleb128 0x2e
+ 894 00ae 01       		.byte	0x1
+ 895 00af 3F       		.uleb128 0x3f
+ 896 00b0 19       		.uleb128 0x19
+ 897 00b1 03       		.uleb128 0x3
+ 898 00b2 0E       		.uleb128 0xe
+ 899 00b3 3A       		.uleb128 0x3a
+ 900 00b4 0B       		.uleb128 0xb
+ 901 00b5 3B       		.uleb128 0x3b
+ 902 00b6 0B       		.uleb128 0xb
+ 903 00b7 27       		.uleb128 0x27
+ 904 00b8 19       		.uleb128 0x19
+ 905 00b9 11       		.uleb128 0x11
+ 906 00ba 01       		.uleb128 0x1
+ 907 00bb 12       		.uleb128 0x12
+ 908 00bc 06       		.uleb128 0x6
+ 909 00bd 40       		.uleb128 0x40
+ 910 00be 18       		.uleb128 0x18
+ 911 00bf 9742     		.uleb128 0x2117
+ 912 00c1 19       		.uleb128 0x19
+ 913 00c2 01       		.uleb128 0x1
+ 914 00c3 13       		.uleb128 0x13
+ 915 00c4 00       		.byte	0
+ 916 00c5 00       		.byte	0
+ 917 00c6 0E       		.uleb128 0xe
+ 918 00c7 34       		.uleb128 0x34
+ 919 00c8 00       		.byte	0
+ 920 00c9 03       		.uleb128 0x3
+ 921 00ca 0E       		.uleb128 0xe
+ 922 00cb 3A       		.uleb128 0x3a
+ 923 00cc 0B       		.uleb128 0xb
+ 924 00cd 3B       		.uleb128 0x3b
+ 925 00ce 0B       		.uleb128 0xb
+ 926 00cf 49       		.uleb128 0x49
+ 927 00d0 13       		.uleb128 0x13
+ 928 00d1 02       		.uleb128 0x2
+ 929 00d2 17       		.uleb128 0x17
+ 930 00d3 00       		.byte	0
+ 931 00d4 00       		.byte	0
+ 932 00d5 0F       		.uleb128 0xf
+ 933 00d6 0B       		.uleb128 0xb
+ 934 00d7 01       		.byte	0x1
+ 935 00d8 11       		.uleb128 0x11
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 20
+
+
+ 936 00d9 01       		.uleb128 0x1
+ 937 00da 12       		.uleb128 0x12
+ 938 00db 06       		.uleb128 0x6
+ 939 00dc 01       		.uleb128 0x1
+ 940 00dd 13       		.uleb128 0x13
+ 941 00de 00       		.byte	0
+ 942 00df 00       		.byte	0
+ 943 00e0 10       		.uleb128 0x10
+ 944 00e1 34       		.uleb128 0x34
+ 945 00e2 00       		.byte	0
+ 946 00e3 03       		.uleb128 0x3
+ 947 00e4 08       		.uleb128 0x8
+ 948 00e5 3A       		.uleb128 0x3a
+ 949 00e6 0B       		.uleb128 0xb
+ 950 00e7 3B       		.uleb128 0x3b
+ 951 00e8 0B       		.uleb128 0xb
+ 952 00e9 49       		.uleb128 0x49
+ 953 00ea 13       		.uleb128 0x13
+ 954 00eb 02       		.uleb128 0x2
+ 955 00ec 17       		.uleb128 0x17
+ 956 00ed 00       		.byte	0
+ 957 00ee 00       		.byte	0
+ 958 00ef 11       		.uleb128 0x11
+ 959 00f0 0F       		.uleb128 0xf
+ 960 00f1 00       		.byte	0
+ 961 00f2 0B       		.uleb128 0xb
+ 962 00f3 0B       		.uleb128 0xb
+ 963 00f4 49       		.uleb128 0x49
+ 964 00f5 13       		.uleb128 0x13
+ 965 00f6 00       		.byte	0
+ 966 00f7 00       		.byte	0
+ 967 00f8 12       		.uleb128 0x12
+ 968 00f9 01       		.uleb128 0x1
+ 969 00fa 01       		.byte	0x1
+ 970 00fb 49       		.uleb128 0x49
+ 971 00fc 13       		.uleb128 0x13
+ 972 00fd 01       		.uleb128 0x1
+ 973 00fe 13       		.uleb128 0x13
+ 974 00ff 00       		.byte	0
+ 975 0100 00       		.byte	0
+ 976 0101 13       		.uleb128 0x13
+ 977 0102 21       		.uleb128 0x21
+ 978 0103 00       		.byte	0
+ 979 0104 49       		.uleb128 0x49
+ 980 0105 13       		.uleb128 0x13
+ 981 0106 2F       		.uleb128 0x2f
+ 982 0107 0B       		.uleb128 0xb
+ 983 0108 00       		.byte	0
+ 984 0109 00       		.byte	0
+ 985 010a 14       		.uleb128 0x14
+ 986 010b 2E       		.uleb128 0x2e
+ 987 010c 00       		.byte	0
+ 988 010d 3F       		.uleb128 0x3f
+ 989 010e 19       		.uleb128 0x19
+ 990 010f 3C       		.uleb128 0x3c
+ 991 0110 19       		.uleb128 0x19
+ 992 0111 6E       		.uleb128 0x6e
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 21
+
+
+ 993 0112 0E       		.uleb128 0xe
+ 994 0113 03       		.uleb128 0x3
+ 995 0114 0E       		.uleb128 0xe
+ 996 0115 3A       		.uleb128 0x3a
+ 997 0116 0B       		.uleb128 0xb
+ 998 0117 3B       		.uleb128 0x3b
+ 999 0118 0B       		.uleb128 0xb
+ 1000 0119 00       		.byte	0
+ 1001 011a 00       		.byte	0
+ 1002 011b 00       		.byte	0
+ 1003              		.section	.debug_loc,"",%progbits
+ 1004              	.Ldebug_loc0:
+ 1005              	.LLST0:
+ 1006 0000 00000000 		.4byte	.LVL0
+ 1007 0004 06000000 		.4byte	.LVL1
+ 1008 0008 0100     		.2byte	0x1
+ 1009 000a 50       		.byte	0x50
+ 1010 000b 06000000 		.4byte	.LVL1
+ 1011 000f 2A000000 		.4byte	.LFE0
+ 1012 0013 0400     		.2byte	0x4
+ 1013 0015 F3       		.byte	0xf3
+ 1014 0016 01       		.uleb128 0x1
+ 1015 0017 50       		.byte	0x50
+ 1016 0018 9F       		.byte	0x9f
+ 1017 0019 00000000 		.4byte	0
+ 1018 001d 00000000 		.4byte	0
+ 1019              	.LLST1:
+ 1020 0021 00000000 		.4byte	.LVL8
+ 1021 0025 06000000 		.4byte	.LVL9
+ 1022 0029 0100     		.2byte	0x1
+ 1023 002b 50       		.byte	0x50
+ 1024 002c 06000000 		.4byte	.LVL9
+ 1025 0030 34000000 		.4byte	.LFE1
+ 1026 0034 0400     		.2byte	0x4
+ 1027 0036 F3       		.byte	0xf3
+ 1028 0037 01       		.uleb128 0x1
+ 1029 0038 50       		.byte	0x50
+ 1030 0039 9F       		.byte	0x9f
+ 1031 003a 00000000 		.4byte	0
+ 1032 003e 00000000 		.4byte	0
+ 1033              	.LLST2:
+ 1034 0042 00000000 		.4byte	.LVL18
+ 1035 0046 10000000 		.4byte	.LVL19
+ 1036 004a 0100     		.2byte	0x1
+ 1037 004c 50       		.byte	0x50
+ 1038 004d 10000000 		.4byte	.LVL19
+ 1039 0051 4C000000 		.4byte	.LVL31
+ 1040 0055 0100     		.2byte	0x1
+ 1041 0057 56       		.byte	0x56
+ 1042 0058 4C000000 		.4byte	.LVL31
+ 1043 005c B6000000 		.4byte	.LFE2
+ 1044 0060 0400     		.2byte	0x4
+ 1045 0062 F3       		.byte	0xf3
+ 1046 0063 01       		.uleb128 0x1
+ 1047 0064 50       		.byte	0x50
+ 1048 0065 9F       		.byte	0x9f
+ 1049 0066 00000000 		.4byte	0
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 22
+
+
+ 1050 006a 00000000 		.4byte	0
+ 1051              	.LLST3:
+ 1052 006e 00000000 		.4byte	.LVL18
+ 1053 0072 13000000 		.4byte	.LVL20-1
+ 1054 0076 0100     		.2byte	0x1
+ 1055 0078 51       		.byte	0x51
+ 1056 0079 13000000 		.4byte	.LVL20-1
+ 1057 007d B6000000 		.4byte	.LFE2
+ 1058 0081 0400     		.2byte	0x4
+ 1059 0083 F3       		.byte	0xf3
+ 1060 0084 01       		.uleb128 0x1
+ 1061 0085 51       		.byte	0x51
+ 1062 0086 9F       		.byte	0x9f
+ 1063 0087 00000000 		.4byte	0
+ 1064 008b 00000000 		.4byte	0
+ 1065              	.LLST4:
+ 1066 008f 00000000 		.4byte	.LVL18
+ 1067 0093 13000000 		.4byte	.LVL20-1
+ 1068 0097 0100     		.2byte	0x1
+ 1069 0099 52       		.byte	0x52
+ 1070 009a 13000000 		.4byte	.LVL20-1
+ 1071 009e B6000000 		.4byte	.LFE2
+ 1072 00a2 0100     		.2byte	0x1
+ 1073 00a4 57       		.byte	0x57
+ 1074 00a5 00000000 		.4byte	0
+ 1075 00a9 00000000 		.4byte	0
+ 1076              	.LLST5:
+ 1077 00ad 00000000 		.4byte	.LVL18
+ 1078 00b1 13000000 		.4byte	.LVL20-1
+ 1079 00b5 0100     		.2byte	0x1
+ 1080 00b7 53       		.byte	0x53
+ 1081 00b8 13000000 		.4byte	.LVL20-1
+ 1082 00bc B6000000 		.4byte	.LFE2
+ 1083 00c0 0400     		.2byte	0x4
+ 1084 00c2 F3       		.byte	0xf3
+ 1085 00c3 01       		.uleb128 0x1
+ 1086 00c4 53       		.byte	0x53
+ 1087 00c5 9F       		.byte	0x9f
+ 1088 00c6 00000000 		.4byte	0
+ 1089 00ca 00000000 		.4byte	0
+ 1090              	.LLST6:
+ 1091 00ce 16000000 		.4byte	.LVL21
+ 1092 00d2 38000000 		.4byte	.LVL25
+ 1093 00d6 0100     		.2byte	0x1
+ 1094 00d8 54       		.byte	0x54
+ 1095 00d9 3A000000 		.4byte	.LVL26
+ 1096 00dd 54000000 		.4byte	.LVL32
+ 1097 00e1 0100     		.2byte	0x1
+ 1098 00e3 54       		.byte	0x54
+ 1099 00e4 54000000 		.4byte	.LVL32
+ 1100 00e8 90000000 		.4byte	.LVL40
+ 1101 00ec 0100     		.2byte	0x1
+ 1102 00ee 58       		.byte	0x58
+ 1103 00ef 94000000 		.4byte	.LVL41
+ 1104 00f3 B6000000 		.4byte	.LFE2
+ 1105 00f7 0100     		.2byte	0x1
+ 1106 00f9 58       		.byte	0x58
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 23
+
+
+ 1107 00fa 00000000 		.4byte	0
+ 1108 00fe 00000000 		.4byte	0
+ 1109              	.LLST7:
+ 1110 0102 16000000 		.4byte	.LVL21
+ 1111 0106 1A000000 		.4byte	.LVL22
+ 1112 010a 0200     		.2byte	0x2
+ 1113 010c 30       		.byte	0x30
+ 1114 010d 9F       		.byte	0x9f
+ 1115 010e 1A000000 		.4byte	.LVL22
+ 1116 0112 3C000000 		.4byte	.LVL27
+ 1117 0116 0100     		.2byte	0x1
+ 1118 0118 55       		.byte	0x55
+ 1119 0119 3E000000 		.4byte	.LVL28
+ 1120 011d 54000000 		.4byte	.LVL32
+ 1121 0121 0100     		.2byte	0x1
+ 1122 0123 55       		.byte	0x55
+ 1123 0124 54000000 		.4byte	.LVL32
+ 1124 0128 56000000 		.4byte	.LVL33
+ 1125 012c 0200     		.2byte	0x2
+ 1126 012e 30       		.byte	0x30
+ 1127 012f 9F       		.byte	0x9f
+ 1128 0130 56000000 		.4byte	.LVL33
+ 1129 0134 96000000 		.4byte	.LVL42
+ 1130 0138 0100     		.2byte	0x1
+ 1131 013a 56       		.byte	0x56
+ 1132 013b 98000000 		.4byte	.LVL43
+ 1133 013f B6000000 		.4byte	.LFE2
+ 1134 0143 0100     		.2byte	0x1
+ 1135 0145 56       		.byte	0x56
+ 1136 0146 00000000 		.4byte	0
+ 1137 014a 00000000 		.4byte	0
+ 1138              	.LLST8:
+ 1139 014e 7A000000 		.4byte	.LVL36
+ 1140 0152 86000000 		.4byte	.LVL38
+ 1141 0156 0100     		.2byte	0x1
+ 1142 0158 54       		.byte	0x54
+ 1143 0159 88000000 		.4byte	.LVL39
+ 1144 015d 98000000 		.4byte	.LVL43
+ 1145 0161 0100     		.2byte	0x1
+ 1146 0163 54       		.byte	0x54
+ 1147 0164 00000000 		.4byte	0
+ 1148 0168 00000000 		.4byte	0
+ 1149              		.section	.debug_aranges,"",%progbits
+ 1150 0000 2C000000 		.4byte	0x2c
+ 1151 0004 0200     		.2byte	0x2
+ 1152 0006 00000000 		.4byte	.Ldebug_info0
+ 1153 000a 04       		.byte	0x4
+ 1154 000b 00       		.byte	0
+ 1155 000c 0000     		.2byte	0
+ 1156 000e 0000     		.2byte	0
+ 1157 0010 00000000 		.4byte	.LFB0
+ 1158 0014 2A000000 		.4byte	.LFE0-.LFB0
+ 1159 0018 00000000 		.4byte	.LFB1
+ 1160 001c 34000000 		.4byte	.LFE1-.LFB1
+ 1161 0020 00000000 		.4byte	.LFB2
+ 1162 0024 B6000000 		.4byte	.LFE2-.LFB2
+ 1163 0028 00000000 		.4byte	0
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 24
+
+
+ 1164 002c 00000000 		.4byte	0
+ 1165              		.section	.debug_ranges,"",%progbits
+ 1166              	.Ldebug_ranges0:
+ 1167 0000 00000000 		.4byte	.LFB0
+ 1168 0004 2A000000 		.4byte	.LFE0
+ 1169 0008 00000000 		.4byte	.LFB1
+ 1170 000c 34000000 		.4byte	.LFE1
+ 1171 0010 00000000 		.4byte	.LFB2
+ 1172 0014 B6000000 		.4byte	.LFE2
+ 1173 0018 00000000 		.4byte	0
+ 1174 001c 00000000 		.4byte	0
+ 1175              		.section	.debug_line,"",%progbits
+ 1176              	.Ldebug_line0:
+ 1177 0000 DB010000 		.section	.debug_str,"MS",%progbits,1
+ 1177      02005901 
+ 1177      00000201 
+ 1177      FB0E0D00 
+ 1177      01010101 
+ 1178              	.LASF0:
+ 1179 0000 5F5F696E 		.ascii	"__int8_t\000"
+ 1179      74385F74 
+ 1179      00
+ 1180              	.LASF1:
+ 1181 0009 5F5F7569 		.ascii	"__uint8_t\000"
+ 1181      6E74385F 
+ 1181      7400
+ 1182              	.LASF33:
+ 1183 0013 5350494D 		.ascii	"SPIM_WriteTxData\000"
+ 1183      5F577269 
+ 1183      74655478 
+ 1183      44617461 
+ 1183      00
+ 1184              	.LASF32:
+ 1185 0024 43535F57 		.ascii	"CS_Write\000"
+ 1185      72697465 
+ 1185      00
+ 1186              	.LASF29:
+ 1187 002d 636F756E 		.ascii	"count\000"
+ 1187      7400
+ 1188              	.LASF5:
+ 1189 0033 73686F72 		.ascii	"short unsigned int\000"
+ 1189      7420756E 
+ 1189      7369676E 
+ 1189      65642069 
+ 1189      6E7400
+ 1190              	.LASF42:
+ 1191 0046 433A5C55 		.ascii	"C:\\Users\\annat\\OneDrive\\Desktop\\Group_01_Final"
+ 1191      73657273 
+ 1191      5C616E6E 
+ 1191      61745C4F 
+ 1191      6E654472 
+ 1192 0074 50726F6A 		.ascii	"Project\\Group_01_FinalProject\\InizializationEEPRO"
+ 1192      6563745C 
+ 1192      47726F75 
+ 1192      705F3031 
+ 1192      5F46696E 
+ 1193 00a5 4D2E6379 		.ascii	"M.cydsn\000"
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 25
+
+
+ 1193      64736E00 
+ 1194              	.LASF21:
+ 1195 00ad 62797465 		.ascii	"byte\000"
+ 1195      00
+ 1196              	.LASF11:
+ 1197 00b2 696E7438 		.ascii	"int8_t\000"
+ 1197      5F7400
+ 1198              	.LASF22:
+ 1199 00b9 62797465 		.ascii	"byteTX\000"
+ 1199      545800
+ 1200              	.LASF14:
+ 1201 00c0 666C6F61 		.ascii	"float\000"
+ 1201      7400
+ 1202              	.LASF23:
+ 1203 00c6 64617461 		.ascii	"data\000"
+ 1203      00
+ 1204              	.LASF38:
+ 1205 00cb 5350494D 		.ascii	"SPIM_ClearRxBuffer\000"
+ 1205      5F436C65 
+ 1205      61725278 
+ 1205      42756666 
+ 1205      657200
+ 1206              	.LASF3:
+ 1207 00de 756E7369 		.ascii	"unsigned char\000"
+ 1207      676E6564 
+ 1207      20636861 
+ 1207      7200
+ 1208              	.LASF40:
+ 1209 00ec 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1209      43313120 
+ 1209      352E342E 
+ 1209      31203230 
+ 1209      31363036 
+ 1210 011f 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1210      20726576 
+ 1210      6973696F 
+ 1210      6E203233 
+ 1210      37373135 
+ 1211 0152 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1211      66756E63 
+ 1211      74696F6E 
+ 1211      2D736563 
+ 1211      74696F6E 
+ 1212              	.LASF41:
+ 1213 017a 5350495F 		.ascii	"SPI_Interface.c\000"
+ 1213      496E7465 
+ 1213      72666163 
+ 1213      652E6300 
+ 1214              	.LASF7:
+ 1215 018a 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1215      20756E73 
+ 1215      69676E65 
+ 1215      6420696E 
+ 1215      7400
+ 1216              	.LASF13:
+ 1217 019c 75696E74 		.ascii	"uint8\000"
+ 1217      3800
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 26
+
+
+ 1218              	.LASF36:
+ 1219 01a2 5350494D 		.ascii	"SPIM_PutArray\000"
+ 1219      5F507574 
+ 1219      41727261 
+ 1219      7900
+ 1220              	.LASF35:
+ 1221 01b0 5350494D 		.ascii	"SPIM_ReadRxData\000"
+ 1221      5F526561 
+ 1221      64527844 
+ 1221      61746100 
+ 1222              	.LASF15:
+ 1223 01c0 646F7562 		.ascii	"double\000"
+ 1223      6C6500
+ 1224              	.LASF19:
+ 1225 01c7 5350495F 		.ascii	"SPI_Interface_tradeByte\000"
+ 1225      496E7465 
+ 1225      72666163 
+ 1225      655F7472 
+ 1225      61646542 
+ 1226              	.LASF24:
+ 1227 01df 62797465 		.ascii	"byteRX\000"
+ 1227      525800
+ 1228              	.LASF10:
+ 1229 01e6 756E7369 		.ascii	"unsigned int\000"
+ 1229      676E6564 
+ 1229      20696E74 
+ 1229      00
+ 1230              	.LASF9:
+ 1231 01f3 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1231      206C6F6E 
+ 1231      6720756E 
+ 1231      7369676E 
+ 1231      65642069 
+ 1232              	.LASF12:
+ 1233 020a 75696E74 		.ascii	"uint8_t\000"
+ 1233      385F7400 
+ 1234              	.LASF28:
+ 1235 0212 62797465 		.ascii	"bytesRX\000"
+ 1235      73525800 
+ 1236              	.LASF31:
+ 1237 021a 64756D6D 		.ascii	"dummyTX\000"
+ 1237      79545800 
+ 1238              	.LASF27:
+ 1239 0222 64617461 		.ascii	"dataRX\000"
+ 1239      525800
+ 1240              	.LASF26:
+ 1241 0229 62797465 		.ascii	"bytesTX\000"
+ 1241      73545800 
+ 1242              	.LASF18:
+ 1243 0231 73697A65 		.ascii	"sizetype\000"
+ 1243      74797065 
+ 1243      00
+ 1244              	.LASF8:
+ 1245 023a 6C6F6E67 		.ascii	"long long int\000"
+ 1245      206C6F6E 
+ 1245      6720696E 
+ 1245      7400
+ARM GAS  C:\Users\annat\AppData\Local\Temp\ccKeVtPG.s 			page 27
+
+
+ 1246              	.LASF16:
+ 1247 0248 63686172 		.ascii	"char\000"
+ 1247      00
+ 1248              	.LASF37:
+ 1249 024d 5350494D 		.ascii	"SPIM_ClearFIFO\000"
+ 1249      5F436C65 
+ 1249      61724649 
+ 1249      464F00
+ 1250              	.LASF30:
+ 1251 025c 696E6465 		.ascii	"index\000"
+ 1251      7800
+ 1252              	.LASF43:
+ 1253 0262 5350495F 		.ascii	"SPI_Interface_Multi_RW\000"
+ 1253      496E7465 
+ 1253      72666163 
+ 1253      655F4D75 
+ 1253      6C74695F 
+ 1254              	.LASF4:
+ 1255 0279 73686F72 		.ascii	"short int\000"
+ 1255      7420696E 
+ 1255      7400
+ 1256              	.LASF39:
+ 1257 0283 5350494D 		.ascii	"SPIM_ClearTxBuffer\000"
+ 1257      5F436C65 
+ 1257      61725478 
+ 1257      42756666 
+ 1257      657200
+ 1258              	.LASF34:
+ 1259 0296 5350494D 		.ascii	"SPIM_ReadTxStatus\000"
+ 1259      5F526561 
+ 1259      64547853 
+ 1259      74617475 
+ 1259      7300
+ 1260              	.LASF6:
+ 1261 02a8 6C6F6E67 		.ascii	"long int\000"
+ 1261      20696E74 
+ 1261      00
+ 1262              	.LASF17:
+ 1263 02b1 6C6F6E67 		.ascii	"long double\000"
+ 1263      20646F75 
+ 1263      626C6500 
+ 1264              	.LASF2:
+ 1265 02bd 7369676E 		.ascii	"signed char\000"
+ 1265      65642063 
+ 1265      68617200 
+ 1266              	.LASF25:
+ 1267 02c9 64617461 		.ascii	"dataTX\000"
+ 1267      545800
+ 1268              	.LASF20:
+ 1269 02d0 5350495F 		.ascii	"SPI_Interface_ReadByte\000"
+ 1269      496E7465 
+ 1269      72666163 
+ 1269      655F5265 
+ 1269      61644279 
+ 1270              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
