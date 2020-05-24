@@ -16,6 +16,7 @@ int32 temperature_digit = 0;
 int32 temperature_mv = 0;
 float temperature_celsius = 0;
 char message[20];
+
 CY_ISR(Custom_isr_TIMER){
     Timer_ReadStatusRegister();
     
@@ -80,7 +81,7 @@ CY_ISR(Custom_isr_UART)
     else {
         
         
-        if(option_table==0)
+        if(option_table == DONT_SHOW_TABLE)
         {
             switch( ch_received ) 
             {
@@ -108,19 +109,19 @@ CY_ISR(Custom_isr_UART)
                 case 'F':
                 
                     /* show accelerometer full scale range table */
-                    option_table= ch_received;
+                    option_table= F;
                     break;
                 
                 case 'p':
                 case 'P':
                     /* show accelerometer sampling frequency */
-                    option_table=ch_received;
+                    option_table= P;
                     break;
                 
                 case 't':
                 case 'T':
                     /* show temperature sensor unit of measurement table */
-                    option_table= ch_received;
+                    option_table= T;
                     break;
                 
                 case 'q':
@@ -138,7 +139,7 @@ CY_ISR(Custom_isr_UART)
         else {
             
             /* change settings */
-            option_table=0;
+            option_table=DONT_SHOW_TABLE;
         }
                 
     }

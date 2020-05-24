@@ -21,7 +21,7 @@ int main(void)
     
     
     change_settings_flag=0;
-    option_table=0;
+    option_table= DONT_SHOW_TABLE;
     initialized=0;
     
     

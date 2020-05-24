@@ -19,6 +19,11 @@
     #define OFFSET_TEMPERATURE_CELSIUS 500.0
     #define SENSITIVITY_TEMPERATURE_CELSIUS 10.0
     
+    #define F 0
+    #define P 1
+    #define T 2
+    #define DONT_SHOW_TABLE 3
+    
     volatile uint8 FlagReady;
     
     CY_ISR_PROTO(Custom_isr_TIMER);
