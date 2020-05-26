@@ -121,5 +121,37 @@ void Show_table(char index_table)
     }  
     
 }
+void Keys_menu (void) 
+{
+    sprintf(message, "Press b to start data acquisition and storage\r\n");
+    UART_PutString(message);
+    
+    sprintf(message, "Press s to stop data acquisition and storage\r\n");
+    UART_PutString(message);
+    
+    sprintf(message, "Press f to change the accelerometer full scale range.\r\nPrevious stored data will be deleted\r\n");
+    UART_PutString(message);
+    
+    sprintf(message, "Press p to change the accelerometer sampling frequency\r\nPrevious data will be deleted\r\n");
+    UART_PutString(message);
+    
+    sprintf(message, "Press t to change the temperature data format\r\n");
+    UART_PutString(message);
+}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 /* [] END OF FILE */

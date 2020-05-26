@@ -40,14 +40,11 @@
     char initialized;
     
     options_to_display set_of_tables[NUMBER_OF_TABLES];
-    
-    
-    
-        
-    
+
     void While_Working_Menu(void);
     void Switch_to_BridgeControlPanel(void);
     void Show_table(char index_table);
+    void Keys_menu (void);
     
 #endif
 
