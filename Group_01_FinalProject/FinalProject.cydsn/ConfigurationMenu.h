@@ -14,26 +14,27 @@
     
     #include "project.h"
     #include "stdio.h"
+    #include "InterruptRoutines.h"
     
     
     
     
     #define LENGTH_MEX 50 
-    #define TABLE_SIZE 18
+    #define WORD_SIZE 18
     #define NUMBER_OF_TABLES 3
     
     /* struct that defines the information to display in the table for accelerometer options */
     typedef struct 
-    {   char header1[TABLE_SIZE];
-        char header2[TABLE_SIZE];
+    {   char header1[WORD_SIZE];
+        char header2[WORD_SIZE];
         char key1;
-        char option1[TABLE_SIZE];
+        char option1[WORD_SIZE];
         char key2;
-        char option2[TABLE_SIZE];
+        char option2[WORD_SIZE];
         char key3;
-        char option3[TABLE_SIZE];
+        char option3[WORD_SIZE];
         char key4;
-        char option4[TABLE_SIZE];
+        char option4[WORD_SIZE];
     } options_to_display;
     
     char initialized;
@@ -46,7 +47,7 @@
     
     void While_Working_Menu(void);
     void Switch_to_BridgeControlPanel(void);
-    void Show_table(void);
+    void Show_table(char index_table);
     
 #endif
 
