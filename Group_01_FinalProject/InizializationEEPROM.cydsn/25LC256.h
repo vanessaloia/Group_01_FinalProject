@@ -14,7 +14,7 @@
 #include "SPI_Interface.h"
 
 #define SLAVE_CS_Write CS_Write
-#define SPIM           SPIM
+//#define SPIM           SPIM
 
 extern uint8_t eeprom_Status;
 

@@ -18,50 +18,85 @@
 #define EEPROM_BYTES 32768
 char message[100];
 
+
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
     
     UART_Start();
     SPIM_Start(); 
-    CyDelay(10);
+    CyDelay(3000);
+    SPIM_ClearRxBuffer();
+    SPIM_ClearTxBuffer();
     
     UART_PutString("UART started\r\n");
-    int8_t data[DATA_SIZE];
-    int i;
+    uint8_t data[DATA_SIZE];
+    int i=0;
     uint16 addr = 0x0000;
-    
-    for (i=0;i<DATA_SIZE;i++){
+   
+    for(i=0;i<DATA_SIZE;i++){
         data[i] = 0;
     }
-    UART_PutString("EEPROM RESETTED\r\n");
-
-    
-   /* for(i=0; i<EEPROM_BYTES/64; i++){
-        EEPROM_writePage(addr, (uint8_t*) data, DATA_SIZE);
+    UART_PutString("Inizio scrittura :) \r\n");
+    CyDelay(500);
+    for(i=0; i<EEPROM_BYTES/64; i++){
+        EEPROM_writePage(addr, data, DATA_SIZE);
         EEPROM_waitForWriteComplete();
-        sprintf(message,"%d pages completed\r\n",i);
-        UART_PutString(message);
-        addr += 64;
         CyDelay(10);
-    }*/
-        
-    uint8_t data_read[3];
-    uint16 addr_read = 0x0000;
+        sprintf(message,"Addr_write = 0x%x \r\n",addr);
+        UART_PutString(message);
+        addr+=64;
+    }
     
-    //for(i=0;i<EEPROM_BYTES;i++){
-        data_read[0] = EEPROM_readByte(30000);
-        sprintf(message, "Cella 0x%x = %d\r\n", 30000, data_read[0]);
-        UART_PutString(message);
-        /*data_read[1] = EEPROM_readByte(67);
-        sprintf(message, "Cella 0x%x = %d\r\n", 67, data_read[1]);
-        UART_PutString(message);
-        data_read[2] = EEPROM_readByte(2020);
-        sprintf(message, "Cella 0x%x = %d\r\n", 2020, data_read[2]);
-        UART_PutString(message);*/
-        //addr_read += 1;
-        CyDelay(10);
-   // }
+    UART_PutString("All EEPROM cells initialized to 0 (ahahahahahaha)\r\n");
+    CyDelay(500);
+    
+    uint16 addr_read = 0x0000;
+    uint8_t data_read[EEPROM_BYTES];
+    
+    UART_PutString("scrivo tutti 3 in data read :) \r\n");
+    for (i=0;i<EEPROM_BYTES;i++){
+        data_read[i] = 3;
+    }
+    UART_PutString("fattooooooooo\r\n");
+    CyDelay(500);
+    
+    UART_PutString("Inizio lettura\r\n");
+    for(i=0;i<EEPROM_BYTES/64;i++){    
+    EEPROM_readPage(addr_read,&data_read[addr_read],DATA_SIZE);
+    CyDelay(10);
+    addr_read+=64;
+    sprintf(message,"Addr_read = %x \r\n",addr_read);
+    UART_PutString(message);
+    }
+    
+    UART_PutString("Lettura finita");
+    CyDelay(500);
+    
+    addr_read = 0x0000;
+    int count = 1;
+    int count_zeri = 0;
+    UART_PutString("INIZIO A CONTROLLAREEEEEEEEEE");
+    for(i=0;i<EEPROM_BYTES;i++){
+        if(data_read[i] != 0){
+            sprintf(message,"VALORE DIVERSO DA 0 NOOOOOOOO (CELLA 0x%x)\r\n",addr_read+i);
+            UART_PutString(message);
+        }
+        
+        if(i % EEPROM_BYTES/10 == 0){
+            sprintf(message,"Sono al %d percentoooooooooooooooooooo :) \r\n",count*10);
+            UART_PutString(message);
+            count++;
+        }
+    }
+    if(count_zeri == 0){
+        UART_PutString("SONO TUTTI A 0 HO LA EEPROM ROTTA IMPAZZISCO\r\n");
+    }
+    else{
+        UART_PutString("NON SONO TUTTI 0 :( \r\n");
+    }
+    CyDelay(10);
+
     
     UART_PutString("*************************************\r\n");
     

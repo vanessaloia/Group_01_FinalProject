@@ -84,8 +84,6 @@
           <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\CS_aliases.h</File>
           <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\CS.c</File>
           <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\CS.h</File>
-          <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\isr_UART.c</File>
-          <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\isr_UART.h</File>
           <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\UART_IntClock.c</File>
           <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\UART_IntClock.h</File>
           <File BuildType="BUILD" Toolchain="">Generated_Source\PSoC5\SPIM_IntClock.c</File>
