@@ -63,11 +63,11 @@ int main(void)
     
     UART_PutString("Inizio lettura\r\n");
     for(i=0;i<EEPROM_BYTES/64;i++){    
-    EEPROM_readPage(addr_read,&data_read[addr_read],DATA_SIZE);
-    CyDelay(10);
-    addr_read+=64;
-    sprintf(message,"Addr_read = %x \r\n",addr_read);
-    UART_PutString(message);
+        EEPROM_readPage(addr_read,&data_read[addr_read],DATA_SIZE);
+        CyDelay(10);
+        addr_read+=64;
+        sprintf(message,"Addr_read = %x \r\n",addr_read);
+        UART_PutString(message);
     }
     
     UART_PutString("Lettura finita");
@@ -76,7 +76,9 @@ int main(void)
     addr_read = 0x0000;
     int count = 1;
     int count_zeri = 0;
+    
     UART_PutString("INIZIO A CONTROLLAREEEEEEEEEE");
+    
     for(i=0;i<EEPROM_BYTES;i++){
         if(data_read[i] != 0){
             sprintf(message,"VALORE DIVERSO DA 0 NOOOOOOOO (CELLA 0x%x)\r\n",addr_read+i);

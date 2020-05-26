@@ -12,7 +12,7 @@
 * \brief function to configure accelerometer registers
 * \Accelerometer registers are non volatile so this function is called only the first time the device is turn on 
 * \settings modifiable by the user are set to default values and will be changed at runtime when the user requires it
-* \(default values for sampling frequency and FSR: 1Hz and ±2g)
+* \(default values for sampling frequency and FSR: 1Hz and Â±2g)
 */
 void Accelerometer_Configuration(void) {
     
@@ -37,7 +37,7 @@ void Accelerometer_Configuration(void) {
     /* REGISTERS CONFIGURATION: registers are first read and then, only if their content is not the desired one, they are overwritten and read again to check correct writing */    
     
     
-    /* Configuration of control registers 1 and 4 to output 3 Axis accelerometer data in Normal Resolution Mode (10-bit) at 1 Hz in the ±2.0 g FSR. */
+    /* Configuration of control registers 1 and 4 to output 3 Axis accelerometer data in Normal Resolution Mode (10-bit) at 1 Hz in the Â±2.0 g FSR. */
     /* See registers.h for single bits meaning */
 
     /* Read Control Register 1 */
