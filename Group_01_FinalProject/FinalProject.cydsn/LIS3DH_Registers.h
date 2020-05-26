@@ -1,5 +1,6 @@
 /*
 * \file LIS3DH_Registers.h
+* \header file for the configuration of accelerometer registers 
 * \this file contains, for all the registers of the LIS3DH accelerometer used in this project:
 * \-the definition of the register address
 * \-the definition of the content written in the register (if the register is written)
@@ -54,6 +55,15 @@
     /* REGISTERS FOR THE CONFIGURATION OF THE FIFO */
     
     /*
+    * \CONTROL REGISTER 3 (READ AND WRITE) configured in this way:
+    * \-ctrl_reg_3[7:3] = 00000  --> other interrupts disabled
+    * \-ctrl_reg_4[2] = 1        --> FIFO watermark interrupt on INT1 pin enabled
+    * \-ctrl_reg_4[1:0] = 00     --> other interrupts disabled
+    */
+    #define CTRL_REG_3_ADDR 0x22
+    #define CTRL_REG_3_CONTENT 0x04
+    
+    /*
     * \CONTROL REGISTER 5 (READ AND WRITE) configured in this way:
     * \-ctrl_reg_5[7] = 0      --> reboot memory content disabled 
     * \-ctrl_reg_5[6] = 1      --> FIFO enabled    
@@ -72,15 +82,8 @@
     #define FIFO_CTRL_REG_ADDR 0x2E
     #define FIFO_CTRL_REG_CONTENT 0x9F
     
-    /*
-    * \CONTROL REGISTER 3 (READ AND WRITE) configured in this way:
-    * \-ctrl_reg_3[7:3] = 00000  --> other interrupts disabled
-    * \-ctrl_reg_4[2] = 1        --> FIFO watermark interrupt on INT1 pin enabled
-    * \-ctrl_reg_4[1:0] = 00     --> other interrupts disabled
-    */
-    #define CTRL_REG_3_ADDR 0x22
-    #define CTRL_REG_3_CONTENT 0x04
        
+    void Accelerometer_Configuration(void);
     
 #endif
 
