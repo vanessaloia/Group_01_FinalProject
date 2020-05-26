@@ -8,8 +8,11 @@
     
     #define _REGISTERS_H_
     
-    /*address of the LIS3DH slave device */
+    /* Address of the LIS3DH slave device */
     #define LIS3DH_DEVICE_ADDRESS 0x18
+    
+    /* This register must be read to clear the interrupt signal on INT1 pin */
+    #define INT1_SRC_ADDR 0x31
     
     /* OUT LOW AND HIGH REGISTERS (READ ONLY) contain, for each axis, the 10 bit output expressed as two's complement left-justified */
     #define OUT_X_L_ADDR 0x28
@@ -53,18 +56,18 @@
     /*
     * \CONTROL REGISTER 5 (READ AND WRITE) configured in this way:
     * \-ctrl_reg_5[7] = 0      --> reboot memory content disabled 
-    * \-ctrl_reg_5[6:5] = 00   --> no meaning bits
-    * \-ctrl_reg_5[4] = 1      --> FIFO enabled
+    * \-ctrl_reg_5[6] = 1      --> FIFO enabled    
+    * \-ctrl_reg_5[5:4] = 00   --> no meaning bits
     * \-ctrl_reg_5[3:0] = 0000 --> default value (no latch interrupt and no 4D detection) 
     */
     #define CTRL_REG_5_ADDR 0x24
-    #define CTRL_REG_5_CONTENT 0x10
+    #define CTRL_REG_5_CONTENT 0x40
   
     /*
     * \FIFO CONTROL REGISTER (READ AND WRITE) configured in this way:
     * \-fifo_ctrl_reg[7:6] = 10    --> stream mode for the fifo
     * \-fifo_ctrl_reg[5] = 0       --> trigger event on INT1 pin
-    * \-fifo_ctrl_reg[4:0] = 11111 --> watermark level = 31 
+    * \-fifo_ctrl_reg[4:0] = 11111 --> watermark level = 31
     */
     #define FIFO_CTRL_REG_ADDR 0x2E
     #define FIFO_CTRL_REG_CONTENT 0x9F
