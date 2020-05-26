@@ -4034,7 +4034,7 @@
       </registers>
     </peripheral>
     <peripheral>
-      <name>I2C</name>
+      <name>I2C_Master</name>
       <description>No description available</description>
       <baseAddress>0x0</baseAddress>
       <addressBlock>
@@ -4044,7 +4044,7 @@
       </addressBlock>
       <registers>
         <register>
-          <name>I2C_FF_XCFG</name>
+          <name>I2C_Master_FF_XCFG</name>
           <description>I2C Extended Configuration Register</description>
           <addressOffset>0x400049C8</addressOffset>
           <size>8</size>
@@ -4090,7 +4090,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_ADDR</name>
+          <name>I2C_Master_FF_ADDR</name>
           <description>I2C Slave Adddress Register</description>
           <addressOffset>0x400049CA</addressOffset>
           <size>8</size>
@@ -4108,7 +4108,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_CFG</name>
+          <name>I2C_Master_FF_CFG</name>
           <description>I2C Configuration Register</description>
           <addressOffset>0x400049D6</addressOffset>
           <size>8</size>
@@ -4168,7 +4168,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_CSR</name>
+          <name>I2C_Master_FF_CSR</name>
           <description>I2C Control and Status Register</description>
           <addressOffset>0x400049D7</addressOffset>
           <size>8</size>
@@ -4235,7 +4235,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_DATA</name>
+          <name>I2C_Master_FF_DATA</name>
           <description>I2C Data Register</description>
           <addressOffset>0x400049D8</addressOffset>
           <size>8</size>
@@ -4253,7 +4253,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_MCSR</name>
+          <name>I2C_Master_FF_MCSR</name>
           <description>Master Control and Status Register: I2C_MCSR</description>
           <addressOffset>0x400049D9</addressOffset>
           <size>8</size>
@@ -4299,7 +4299,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_CLK_DIV1</name>
+          <name>I2C_Master_FF_CLK_DIV1</name>
           <description>I2C Clock Divide Factor Register-1</description>
           <addressOffset>0x400049DB</addressOffset>
           <size>8</size>
@@ -4317,7 +4317,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF_CLK_DIV2</name>
+          <name>I2C_Master_FF_CLK_DIV2</name>
           <description>I2C Clock Divide Factor Register-2</description>
           <addressOffset>0x400049DC</addressOffset>
           <size>8</size>
@@ -4335,7 +4335,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF__TMOUT_CSR</name>
+          <name>I2C_Master_FF__TMOUT_CSR</name>
           <description>I2C Timerout Control and Status Register</description>
           <addressOffset>0x400049DD</addressOffset>
           <size>8</size>
@@ -4381,7 +4381,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF__TMOUT_SR</name>
+          <name>I2C_Master_FF__TMOUT_SR</name>
           <description>I2C Timerout Status Register</description>
           <addressOffset>0x400049DE</addressOffset>
           <size>8</size>
@@ -4406,7 +4406,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF__TMOUT_CFG0</name>
+          <name>I2C_Master_FF__TMOUT_CFG0</name>
           <description>I2C Timerout Period Configuration Register-0</description>
           <addressOffset>0x400049DF</addressOffset>
           <size>8</size>
@@ -4424,7 +4424,7 @@
           </fields>
         </register>
         <register>
-          <name>I2C_FF__TMOUT_CFG1</name>
+          <name>I2C_Master_FF__TMOUT_CFG1</name>
           <description>Extended Configuration Register: TMOUT_CFG1</description>
           <addressOffset>0x400049E0</addressOffset>
           <size>8</size>
@@ -4454,9 +4454,45 @@
       </addressBlock>
       <registers>
         <register>
+          <name>TX_UART_TX_DATA</name>
+          <description>TX Data Register</description>
+          <addressOffset>0x40006449</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
+          <name>RX_UART_RX_ADDRESS1</name>
+          <description>RX Address1 Register</description>
+          <addressOffset>0x40006528</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
+          <name>RX_UART_RX_ADDRESS2</name>
+          <description>RX Address2 Register</description>
+          <addressOffset>0x40006538</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
+          <name>RX_UART_RX_DATA</name>
+          <description>RX Data Register</description>
+          <addressOffset>0x40006548</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
           <name>TX_UART_TX_STATUS</name>
           <description>TX status register</description>
-          <addressOffset>0x40006468</addressOffset>
+          <addressOffset>0x40006569</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -4491,42 +4527,6 @@
               <access>read-only</access>
             </field>
           </fields>
-        </register>
-        <register>
-          <name>RX_UART_RX_ADDRESS1</name>
-          <description>RX Address1 Register</description>
-          <addressOffset>0x4000652A</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-        </register>
-        <register>
-          <name>RX_UART_RX_ADDRESS2</name>
-          <description>RX Address2 Register</description>
-          <addressOffset>0x4000653A</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-        </register>
-        <register>
-          <name>RX_UART_RX_DATA</name>
-          <description>RX Data Register</description>
-          <addressOffset>0x4000654A</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-        </register>
-        <register>
-          <name>TX_UART_TX_DATA</name>
-          <description>TX Data Register</description>
-          <addressOffset>0x4000654B</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
         </register>
         <register>
           <name>RX_UART_RX_STATUS</name>

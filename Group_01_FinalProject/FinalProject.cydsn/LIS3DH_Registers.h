@@ -1,5 +1,6 @@
 /*
 * \file LIS3DH_Registers.h
+* \header file for the configuration of accelerometer registers 
 * \this file contains, for all the registers of the LIS3DH accelerometer used in this project:
 * \-the definition of the register address
 * \-the definition of the content written in the register (if the register is written)
@@ -8,8 +9,11 @@
     
     #define _REGISTERS_H_
     
-    /*address of the LIS3DH slave device */
+    /* Address of the LIS3DH slave device */
     #define LIS3DH_DEVICE_ADDRESS 0x18
+    
+    /* This register must be read to clear the interrupt signal on INT1 pin */
+    #define INT1_SRC_ADDR 0x31
     
     /* OUT LOW AND HIGH REGISTERS (READ ONLY) contain, for each axis, the 10 bit output expressed as two's complement left-justified */
     #define OUT_X_L_ADDR 0x28
@@ -51,25 +55,6 @@
     /* REGISTERS FOR THE CONFIGURATION OF THE FIFO */
     
     /*
-    * \CONTROL REGISTER 5 (READ AND WRITE) configured in this way:
-    * \-ctrl_reg_5[7] = 0      --> reboot memory content disabled 
-    * \-ctrl_reg_5[6:5] = 00   --> no meaning bits
-    * \-ctrl_reg_5[4] = 1      --> FIFO enabled
-    * \-ctrl_reg_5[3:0] = 0000 --> default value (no latch interrupt and no 4D detection) 
-    */
-    #define CTRL_REG_5_ADDR 0x24
-    #define CTRL_REG_5_CONTENT 0x10
-  
-    /*
-    * \FIFO CONTROL REGISTER (READ AND WRITE) configured in this way:
-    * \-fifo_ctrl_reg[7:6] = 10    --> stream mode for the fifo
-    * \-fifo_ctrl_reg[5] = 0       --> trigger event on INT1 pin
-    * \-fifo_ctrl_reg[4:0] = 11111 --> watermark level = 31 
-    */
-    #define FIFO_CTRL_REG_ADDR 0x2E
-    #define FIFO_CTRL_REG_CONTENT 0x9F
-    
-    /*
     * \CONTROL REGISTER 3 (READ AND WRITE) configured in this way:
     * \-ctrl_reg_3[7:3] = 00000  --> other interrupts disabled
     * \-ctrl_reg_4[2] = 1        --> FIFO watermark interrupt on INT1 pin enabled
@@ -77,7 +62,28 @@
     */
     #define CTRL_REG_3_ADDR 0x22
     #define CTRL_REG_3_CONTENT 0x04
+    
+    /*
+    * \CONTROL REGISTER 5 (READ AND WRITE) configured in this way:
+    * \-ctrl_reg_5[7] = 0      --> reboot memory content disabled 
+    * \-ctrl_reg_5[6] = 1      --> FIFO enabled    
+    * \-ctrl_reg_5[5:4] = 00   --> no meaning bits
+    * \-ctrl_reg_5[3:0] = 0000 --> default value (no latch interrupt and no 4D detection) 
+    */
+    #define CTRL_REG_5_ADDR 0x24
+    #define CTRL_REG_5_CONTENT 0x40
+  
+    /*
+    * \FIFO CONTROL REGISTER (READ AND WRITE) configured in this way:
+    * \-fifo_ctrl_reg[7:6] = 10    --> stream mode for the fifo
+    * \-fifo_ctrl_reg[5] = 0       --> trigger event on INT1 pin
+    * \-fifo_ctrl_reg[4:0] = 11111 --> watermark level = 31
+    */
+    #define FIFO_CTRL_REG_ADDR 0x2E
+    #define FIFO_CTRL_REG_CONTENT 0x9F
+    
        
+    void Accelerometer_Configuration(void);
     
 #endif
 
