@@ -11,11 +11,27 @@
 */
 #include "InterruptRoutines.h"
 #include "project.h"
+#include "I2C_Interface.h"
+#include "LIS3DH_Registers.h"
+
 
 int32 temperature_digit = 0;
 int32 temperature_mv = 0;
 float temperature_celsius = 0;
 char message[20];
+
+
+/* array to store accelerometer output data read from FIFO (starting from the position zero, for 32 samples: LSB and MSB (left-justified) of X,Y and Z axis acceleration ) */
+uint8_t AccelerometerData[BYTES_READ_FROM_FIFO];
+
+/* array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
+int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
+
+
+uint8_t DataBuffer[BYTES_READ_FROM_FIFO];
+uint8_t DataBuffer2[DATA_BYTES+2];
+
+volatile uint8_t PacketReadyFlag=0;
 
 CY_ISR(Custom_isr_TIMER){
     Timer_ReadStatusRegister();
@@ -145,8 +161,41 @@ CY_ISR(Custom_isr_UART)
     }
 }
 
+
+/*
+* \brief ISR on FIFO watermark level (generated every xx):
+* \-read the accelerometer register int1_src to clear the interrupt signal on INT1 pin
+*/
 CY_ISR(Custom_isr_FIFO) {
     
+    uint8_t int1_src_reg;
+    ErrorCode error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,
+                                                  INT1_SRC_ADDR,
+                                                  &int1_src_reg);
+    
+    if (error == NO_ERROR) {
+        uint8_t i;
+        error = I2C_Peripheral_ReadRegisterMulti( LIS3DH_DEVICE_ADDRESS,
+                                                  OUT_X_L_ADDR,
+                                                  192,
+                                                  AccelerometerData);   
+        
+        if (error == NO_ERROR) {
+            
+            for(i = 0; i < BYTES_READ_FROM_FIFO/2; i++) {
+                
+                /* right shift of 6 to get right-justified 10 bits */
+                Accelerations_digit[i] = (int16)((AccelerometerData[i*2] | (AccelerometerData[i*2+1] << 8))) >> 6;
+                DataBuffer[i*2]=Accelerations_digit[i] & 0xFF;
+                DataBuffer[i*2+1]=Accelerations_digit[i]>>8;
+                
+            }
+                
+            PacketReadyFlag=1;
+                
+
+        }
+    }
 }
                
 
