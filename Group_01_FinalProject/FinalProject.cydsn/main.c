@@ -11,6 +11,7 @@
 */
 #include "project.h"
 #include "InterruptRoutines.h"
+#include "ConfigurationMenu.h"
 #include "LIS3DH_Registers.h"
 #include "I2C_Interface.h"
 
@@ -22,7 +23,8 @@ int main(void)
     
     
     change_settings_flag=0;
-    option_table=0;
+    option_table= DONT_SHOW_TABLE;
+    initialized=0;
     
     
 

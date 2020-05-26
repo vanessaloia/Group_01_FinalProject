@@ -15,8 +15,8 @@
 #include "LIS3DH_Registers.h"
 
 
-int32 temperature_digit = 0;
-int32 temperature_mv = 0;
+int16 temperature_digit = 0;
+int16 temperature_mv = 0;
 float temperature_celsius = 0;
 char message[20];
 
@@ -38,17 +38,12 @@ volatile uint8_t TempDataReadyFlag = 0;
 CY_ISR(Custom_isr_TIMER){
     Timer_ReadStatusRegister();
     
-    temperature_digit = ADC_DelSig_Read32();
+    temperature_digit = ADC_DelSig_Read16();
     
     if(temperature_digit < 0) temperature_digit = 0;
-    if(temperature_digit > 65535) temperature_digit = 65535;
+    if(temperature_digit > 1023) temperature_digit = 1023;
     
     temperature_mv = ADC_DelSig_CountsTo_mVolts(temperature_digit);
-    
-    temperature_celsius = (temperature_mv - OFFSET_TEMPERATURE_CELSIUS)/SENSITIVITY_TEMPERATURE_CELSIUS;
-
-    sprintf(message,"%d\r\n",(int)temperature_celsius);
-    UART_PutString(message);
     
 }
 
@@ -99,7 +94,7 @@ CY_ISR(Custom_isr_UART)
     else {
         
         
-        if(option_table==0)
+        if(option_table == DONT_SHOW_TABLE)
         {
             switch( ch_received ) 
             {
@@ -127,19 +122,19 @@ CY_ISR(Custom_isr_UART)
                 case 'F':
                 
                     /* show accelerometer full scale range table */
-                    option_table= ch_received;
+                    option_table= F;
                     break;
                 
                 case 'p':
                 case 'P':
                     /* show accelerometer sampling frequency */
-                    option_table=ch_received;
+                    option_table= P;
                     break;
                 
                 case 't':
                 case 'T':
                     /* show temperature sensor unit of measurement table */
-                    option_table= ch_received;
+                    option_table= T;
                     break;
                 
                 case 'q':
@@ -157,7 +152,7 @@ CY_ISR(Custom_isr_UART)
         else {
             
             /* change settings */
-            option_table=0;
+            option_table=DONT_SHOW_TABLE;
         }
                 
     }
