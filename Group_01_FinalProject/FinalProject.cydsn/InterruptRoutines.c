@@ -63,7 +63,7 @@ CY_ISR(Custom_isr_UART)
                 case '?':
                 
                     /* show Configuration menu */
-                
+                    ShowMenuFlag = 1;
                     /* futher characters used for changing configurations of the acquisition */
                     change_settings_flag=1;
                    
@@ -149,16 +149,66 @@ CY_ISR(Custom_isr_UART)
             }
         }
         
-        //else {
+        else {
             
-            /* change settings */
-            //option_table=DONT_SHOW_TABLE;
+            if(option_table == F_S_R){
+                switch (ch_received){
+                    case 1:
+                    //todo SELECT FSR
+                    feature_selected = 1;
+                    break;
+                    case 2:
+                    //todo SELECT FSR
+                    feature_selected = 2;
+                    break;
+                    case 3:
+                    //todo SELECT FSR
+                    feature_selected = 3;
+                    break;
+                    case 4:
+                    //todo SELECT FSR
+                    feature_selected = 1;
+                    break;
+                }
+              
+            }else if(option_table == SAMP_FREQ){
+                switch (ch_received){
+                    case 1:
+                        //todo SELECT SAMP_FREQ
+                        feature_selected = 1;
+                    break;
+                    case 2:
+                        //todo SELECT SAMP_FREQ
+                        feature_selected = 1;
+                    break;
+                    case 3:
+                        //todo SELECT SAMP_FREQ
+                        feature_selected = 1;
+                    break;
+                    case 4:
+                        //todo SELECT SAMP_FREQ
+                        feature_selected = 1;
+                    break;
+                }
+            }else if(option_table == TEMP){
+                switch (ch_received){
+                    case 'c':
+                    case 'C':
+                        //todo SELECT TEMPERATURE UNIT
+                        feature_selected = 'c';
+                    break;
+                    case 'F':
+                    case 'f':
+                        //todo SELECT TEMPERATURE UNIT
+                        feature_selected = 'f';
+                    break;
+                }
             
-        //}
+            }
                 
+        }
     }
 }
-
 
 /*
 * \brief ISR on FIFO watermark level (generated every xx):

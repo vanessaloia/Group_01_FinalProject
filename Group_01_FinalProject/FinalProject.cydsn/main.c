@@ -44,7 +44,7 @@ int main(void)
     change_settings_flag=0;
     option_table= DONT_SHOW_TABLE;
     initialized=0;
-       
+    feature_selected = 0;
 
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     
@@ -59,15 +59,15 @@ int main(void)
     ADC_DelSig_StartConvert();
     FlagReady = 0;
     
-    
+    *//*
     I2C_Master_Start();
     
 
     
-    
+    */
     //DataBuffer2[0] = 0xA0;
     //DataBuffer2[7] = 0xC0;
-    isr_FIFO_StartEx(Custom_isr_FIFO);
+    //isr_FIFO_StartEx(Custom_isr_FIFO);
     
     
     uint8_t i;
@@ -103,13 +103,56 @@ int main(void)
 //        
 //    }
         }
-}
-}
+        
+        if(ShowMenuFlag){
+            While_Working_Menu();
+            ShowMenuFlag = 0;
+        }
+        
+        if(feature_selected && option_table == F_S_R){
+            if(feature_selected == 1){
+                //SET FSR +-2g
+                feature_selected = 0;
+            }else if(feature_selected == 2){
+                //SET FSR +-4g
+                feature_selected = 0;
+            }else if(feature_selected == 3){
+                //SET FSR +-8g
+                feature_selected = 0;
+            }else if(feature_selected == 4){
+                //SET FSR +-16g
+                feature_selected = 0;
+            }
+        }else if(feature_selected && option_table == SAMP_FREQ){
+            if(feature_selected == 1){
+                //SET SAMPLING FREQUENCY 1Hz
+                feature_selected = 0;
+            }else if(feature_selected == 2){
+                //SET SAMPLING FREQUENCY 10Hz
+                feature_selected = 0;
+            }else if(feature_selected == 3){
+                //SET SAMPLING FREQUENCY 25Hz
+                feature_selected = 0;
+            }else if(feature_selected == 4){
+                //SET SAMPLING FREQUENCY 50Hz
+                feature_selected = 0;
+            }
+        }else if(feature_selected && option_table == TEMP){
+            if(feature_selected == 'c'){
+                //SET TEMPERATURE UNIT AT CELSIUS
+                feature_selected = 0;
+            }else if(feature_selected == 'f'){
+                //SET TEMPERATURE UNIT AT FAHRENHEIT
+                feature_selected = 0;
+            }
+        }
+  }
+//}
 /*/
     While_Working_Menu();
     char v=0;
     for (;;) 
-    {   /*
+    {   *
         if (change_settings_flag) 
             v=1;
         if (v) 
@@ -136,6 +179,6 @@ int main(void)
         
         
     }
-}
+//}
     
 /* [] END OF FILE */

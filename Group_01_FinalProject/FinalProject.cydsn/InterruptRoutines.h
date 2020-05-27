@@ -35,6 +35,7 @@
     char change_settings_flag;
     char start;
     uint8_t option_table;
+    uint8_t feature_selected;
     
     
     CY_ISR_PROTO(Custom_isr_UART);
@@ -46,7 +47,8 @@
     #define EEPROM_ACCELEROMETER_DATA_BYTES 4
     #define EEPROM_TEMPERATURE_DATA_BYTES 2
     #define EEPROM_PACKET_BYTES EEPROM_ACCELEROMETER_DATA_BYTES + EEPROM_TEMPERATURE_DATA_BYTES
-
+    
+    volatile uint8 ShowMenuFlag;
 
     
     CY_ISR_PROTO(Custom_isr_FIFO);
