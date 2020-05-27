@@ -39,14 +39,14 @@ int main(void)
     }
     UART_PutString("Inizio scrittura :) \r\n");
     CyDelay(500);
-    for(i=0; i<EEPROM_BYTES/64; i++){
+  /*  for(i=0; i<EEPROM_BYTES/64; i++){
         EEPROM_writePage(addr, data, DATA_SIZE);
         EEPROM_waitForWriteComplete();
         CyDelay(10);
         sprintf(message,"Addr_write = 0x%x \r\n",addr);
         UART_PutString(message);
         addr+=64;
-    }
+    }*/
     
     UART_PutString("All EEPROM cells initialized to 0 (ahahahahahaha)\r\n");
     CyDelay(500);
