@@ -45,6 +45,7 @@
     void Switch_to_BridgeControlPanel(void);
     void Show_table(char index_table);
     void Keys_menu (void);
+    void Menu_edge(void);
     
 #endif
 
