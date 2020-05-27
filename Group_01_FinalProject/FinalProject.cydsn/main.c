@@ -46,6 +46,9 @@ int main(void)
     //DataBuffer2[0] = 0xA0;
     //DataBuffer2[7] = 0xC0;
     isr_FIFO_StartEx(Custom_isr_FIFO);
+    while (!FIFODataReadyFlag);
+    FIFODataReadyFlag = 0;
+    isr_TIMER_StartEx(Custom_isr_TIMER);
     
     
     uint8_t i;
