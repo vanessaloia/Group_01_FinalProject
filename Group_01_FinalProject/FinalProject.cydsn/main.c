@@ -47,6 +47,10 @@ int main(void)
        
 
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+    
+    
+    /*
+    
     Timer_Start();
     UART_Start();
     ADC_DelSig_Start();
@@ -61,8 +65,8 @@ int main(void)
 
     
     
-    DataBuffer2[0] = 0xA0;
-    DataBuffer2[7] = 0xC0;
+    //DataBuffer2[0] = 0xA0;
+    //DataBuffer2[7] = 0xC0;
     isr_FIFO_StartEx(Custom_isr_FIFO);
     
     
@@ -70,19 +74,68 @@ int main(void)
     for(;;)
     {
         /* Place your application code here. */
-            if (PacketReadyFlag) {
-                for (i=0; i<WATERMARK_LEVEL+1; i++) {
-                  DataBuffer2[1]=DataBuffer[6*i];  
-                  DataBuffer2[2]=DataBuffer[6*i+1]; 
-                  DataBuffer2[3]=DataBuffer[6*i+2];  
-                  DataBuffer2[4]=DataBuffer[6*i+3];  
-                  DataBuffer2[5]=DataBuffer[6*i+4];  
-                  DataBuffer2[6]=DataBuffer[6*i+5];    
-                  UART_PutArray(DataBuffer2, 8); /*API to transmit an array of bytes */
+        if (FIFODataReadyFlag && TempDataReadyFlag) {
+            
+            for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
+                EEPROM_Data[i*6] = Accelerations_digit[i*3]>>4;
+                EEPROM_Data[i*6+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >> 6);
+                EEPROM_Data[i*6+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
+                EEPROM_Data[i*6+3] = Accelerations_digit[i*3+2];
+                EEPROM_Data[i*6+4] = Temperature_Data[i]>>8;
+                EEPROM_Data[i*6+5] = Temperature_Data[i];                    
+            }  
+            
+            //function to send data to EEPROM to be put here
+            FIFODataReadyFlag = 0;
+            TempDataReadyFlag = 0;
+           
+//            if (PacketReadyFlag) {
+//                for (i=0; i<WATERMARK_LEVEL+1; i++) {
+//                  DataBuffer2[1]=DataBuffer[6*i];  
+//                  DataBuffer2[2]=DataBuffer[6*i+1]; 
+//                  DataBuffer2[3]=DataBuffer[6*i+2];  
+//                  DataBuffer2[4]=DataBuffer[6*i+3];  
+//                  DataBuffer2[5]=DataBuffer[6*i+4];  
+//                  DataBuffer2[6]=DataBuffer[6*i+5];    
+//                  UART_PutArray(DataBuffer2, 8); /*API to transmit an array of bytes */
+//        }
+//        PacketReadyFlag = 0;
+//        
+//    }
         }
-        PacketReadyFlag = 0;
+}
+}
+/*/
+    While_Working_Menu();
+    char v=0;
+    for (;;) 
+    {   /*
+        if (change_settings_flag) 
+            v=1;
+        if (v) 
+        {
+            Keys_menu();
+            //change_settings_flag=0;
+            v=0;
+        }
+        if (option_table != DONT_SHOW_TABLE)
+        {
+            char message[20];
+            sprintf(message,"option table:%d \n", option_table);
+            UART_PutString(message);
+            Show_table(option_table);
+            option_table=DONT_SHOW_TABLE;
+        }
+        */
+        
+        
+         Show_table(2);
+        
+        
+        
+        
         
     }
 }
-}
+    
 /* [] END OF FILE */

@@ -25,6 +25,8 @@ char message [LENGTH_MEX];
 
 void While_Working_Menu(void)
 {   
+    
+    Menu_edge();
     /* !!DATA TO BE INSERTED */
     
     /* if the system is acquiring data */
@@ -43,26 +45,30 @@ void While_Working_Menu(void)
     /* !!DATA TO BE INSERTED */ 
     
     /* Accelerometer acquisition configuration displayed */
-    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\nSampling freqeuncy: %d\r\n\n",1,2);
+    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\nSampling frequency: %d\r\n",1,2);
     UART_PutString(message);
     
     /* !!DATA TO BE INSERTED */ 
     
     /* Temperature sensor acquisition configuration displayed */
-    sprintf(message, "Temperature sensor data saved as:\r\n%s\r\n\n", (1==1)? "Farenheit" : "Celsius");
+    sprintf(message, "Temperature sensor data format:\r\n%s\r\n\n", (1==1)? "Fahrenheit" : "Celsius");
     UART_PutString(message);
     
     /* Keyboard commands to change configuation and to handle data visualization */
-    sprintf(message, "Press '?' to change any configuration setting\r\nPress 'v' to visualize data (Data acquisition will be stopped)\r\nPress 'u' to stop the visualization of data\r\n\n");
+    sprintf(message, "Press '?' to change the configuration settings for data acquisition\r\nPress 'v' to visualize data (Data acquisition will be stopped)\r\nPress 'u' to stop the visualization of data\r\n\n");
     UART_PutString(message);
+    
+    Menu_edge();
 }
 
 /* when the user presses 'v' this message is displayed to inform to switch to Bridge control panel to visualize the acquired data */
 void Switch_to_BridgeControlPanel(void)
 {
+    Menu_edge();
     /* !! DATA TO BE INSERTED */
     sprintf(message, "Data will be displayed in %d seconds. Open Bridge Control Panel\n\n",1);
     UART_PutString(message);
+    Menu_edge();
 }
 
 /* Function that displays the correct table depending on which parameter the user wants to change.
@@ -92,7 +98,7 @@ void Show_table(char index_table)
         initialized=1;
     }
     /* pointer variable "index" points the memory cell of the first element of the struct related with the correct element of set_of_tables array */
-    char *index= &(set_of_tables[index_table].header1);
+    char *index= &(set_of_tables[1].header1);
     
     
     /* start variable is used in the for loop to define the initial memory cell pointed. 
@@ -107,39 +113,48 @@ void Show_table(char index_table)
     * \ So, in this case the last cell to be pointed is after 1+WORD_SIZE (key1 size+ option1 size).
     * \ In the other cases, the table is composed by 4 options so the last cell memory to be pointed in the for loop is (1+WORD_SIZE)*3
     */
-    stop= (option_table == T)? (start +(1+ WORD_SIZE +1)): (start + (1+WORD_SIZE)*3+1);
-    
+    stop= (option_table == TEMP)? (start +(1+ WORD_SIZE +1)): (start + (1+WORD_SIZE)*3+1);
+    Menu_edge();
     /* header1 and header2 of the correct table sent through UART */
-    sprintf(message," %s | %s\r\n", index, index+WORD_SIZE);
+    sprintf(message,"   %s | %s\r\n", index, index+WORD_SIZE);
     UART_PutString(message);
     
     /* in each cycle a row is printed (n-key = character) +( n-option = string) */
     for (i=start; i<stop; i+= (1+ WORD_SIZE))
     {
-        sprintf("%c     | %s\r\n", *(index+i) , index+i+1);
+        sprintf(message, "       %c     |   %s\r\n", *(index+i) , index+i+1);
         UART_PutString( message);
     }  
-    
+    Menu_edge();
 }
 void Keys_menu (void) 
 {
-    sprintf(message, "Press b to start data acquisition and storage\r\n");
+    Menu_edge();
+    sprintf(message, "Press 'b' to start data acquisition and storage\r\n\n");
     UART_PutString(message);
     
-    sprintf(message, "Press s to stop data acquisition and storage\r\n");
+    sprintf(message, "Press 's' to stop data acquisition and storage\r\n\n");
     UART_PutString(message);
     
-    sprintf(message, "Press f to change the accelerometer full scale range.\r\nPrevious stored data will be deleted\r\n");
+    sprintf(message, "Press 'f' to change the accelerometer full scale range.Previous stored data will be deleted\r\n\n");
     UART_PutString(message);
     
-    sprintf(message, "Press p to change the accelerometer sampling frequency\r\nPrevious data will be deleted\r\n");
+    sprintf(message, "Press 'p' to change the accelerometer sampling frequency.Previous data will be deleted\r\n\n");
     UART_PutString(message);
     
-    sprintf(message, "Press t to change the temperature data format\r\n");
+    sprintf(message, "Press 't' to change the temperature data format\r\n\n");
     UART_PutString(message);
+    
+    sprintf(message, "Press 'q' to quit the menu\r\n\n");
+    UART_PutString(message);
+    Menu_edge();
 }
 
-    
+void Menu_edge(void)
+{
+    sprintf(message,"\r\n     ************************\r\n\n");
+    UART_PutString(message);
+}
     
     
     

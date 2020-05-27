@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 1
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 1
 
 
    1              		.syntax unified
@@ -19,14 +19,14 @@ ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 1
   16              		.text
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
-  19              		.section	.text.While_Working_Menu,"ax",%progbits
+  19              		.section	.text.Menu_edge,"ax",%progbits
   20              		.align	2
-  21              		.global	While_Working_Menu
+  21              		.global	Menu_edge
   22              		.thumb
   23              		.thumb_func
-  24              		.type	While_Working_Menu, %function
-  25              	While_Working_Menu:
-  26              	.LFB64:
+  24              		.type	Menu_edge, %function
+  25              	Menu_edge:
+  26              	.LFB68:
   27              		.file 1 "ConfigurationMenu.c"
    1:ConfigurationMenu.c **** /* ========================================
    2:ConfigurationMenu.c ****  *
@@ -40,818 +40,2555 @@ ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 1
   10:ConfigurationMenu.c ****  * ========================================
   11:ConfigurationMenu.c **** */
   12:ConfigurationMenu.c **** #include "ConfigurationMenu.h"
-  13:ConfigurationMenu.c **** 
-  14:ConfigurationMenu.c **** char message [LENGTH_MEX];
+  13:ConfigurationMenu.c **** #include "OptionsToBeDisplayed.h"
+  14:ConfigurationMenu.c **** 
   15:ConfigurationMenu.c **** 
-  16:ConfigurationMenu.c **** /* Menu dislpayed to the user while the system is running. Actual configuration of the acceleromete
-  17:ConfigurationMenu.c **** * \and temperature sensor are shown. Keyboard commands to change settings for the acquisition,
-  18:ConfigurationMenu.c **** * \to visualize data or to stop the visualization of data are indicated
-  19:ConfigurationMenu.c **** */
+  16:ConfigurationMenu.c **** char message [LENGTH_MEX];
+  17:ConfigurationMenu.c **** 
+  18:ConfigurationMenu.c **** 
+  19:ConfigurationMenu.c ****  
   20:ConfigurationMenu.c **** 
-  21:ConfigurationMenu.c **** void While_Working_Menu(void)
-  22:ConfigurationMenu.c **** {   
-  28              		.loc 1 22 0
+  21:ConfigurationMenu.c **** /* Menu displayed to the user while the system is running. Actual configuration of the acceleromete
+  22:ConfigurationMenu.c **** * \and temperature sensor are shown. Keyboard commands to change settings for the acquisition,
+  23:ConfigurationMenu.c **** * \to visualize data or to stop the visualization of data are indicated
+  24:ConfigurationMenu.c **** */
+  25:ConfigurationMenu.c **** 
+  26:ConfigurationMenu.c **** void While_Working_Menu(void)
+  27:ConfigurationMenu.c **** {   
+  28:ConfigurationMenu.c ****     
+  29:ConfigurationMenu.c ****     Menu_edge();
+  30:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 2
+
+
+  31:ConfigurationMenu.c ****     
+  32:ConfigurationMenu.c ****     /* if the system is acquiring data */
+  33:ConfigurationMenu.c ****     if(1/* the flag start/stop is in start*/) 
+  34:ConfigurationMenu.c ****     {
+  35:ConfigurationMenu.c ****         sprintf(message, "Ongoing data acquisition... \r\n\n");
+  36:ConfigurationMenu.c ****         UART_PutString(message);
+  37:ConfigurationMenu.c ****     }
+  38:ConfigurationMenu.c ****     /* if the acquisition has been stopped */
+  39:ConfigurationMenu.c ****     else 
+  40:ConfigurationMenu.c ****     {
+  41:ConfigurationMenu.c ****         sprintf(message, "Data acquisition stopped \r\n\n");
+  42:ConfigurationMenu.c ****         UART_PutString(message);
+  43:ConfigurationMenu.c ****     }
+  44:ConfigurationMenu.c ****         
+  45:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */ 
+  46:ConfigurationMenu.c ****     
+  47:ConfigurationMenu.c ****     /* Accelerometer acquisition configuration displayed */
+  48:ConfigurationMenu.c ****     sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\nS
+  49:ConfigurationMenu.c ****     UART_PutString(message);
+  50:ConfigurationMenu.c ****     
+  51:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */ 
+  52:ConfigurationMenu.c ****     
+  53:ConfigurationMenu.c ****     /* Temperature sensor acquisition configuration displayed */
+  54:ConfigurationMenu.c ****     sprintf(message, "Temperature sensor data format:\r\n%s\r\n\n", (1==1)? "Fahrenheit" : "Celsius
+  55:ConfigurationMenu.c ****     UART_PutString(message);
+  56:ConfigurationMenu.c ****     
+  57:ConfigurationMenu.c ****     /* Keyboard commands to change configuation and to handle data visualization */
+  58:ConfigurationMenu.c ****     sprintf(message, "Press '?' to change the configuration settings for data acquisition\r\nPress 
+  59:ConfigurationMenu.c ****     UART_PutString(message);
+  60:ConfigurationMenu.c ****     
+  61:ConfigurationMenu.c ****     Menu_edge();
+  62:ConfigurationMenu.c **** }
+  63:ConfigurationMenu.c **** 
+  64:ConfigurationMenu.c **** /* when the user presses 'v' this message is displayed to inform to switch to Bridge control panel 
+  65:ConfigurationMenu.c **** void Switch_to_BridgeControlPanel(void)
+  66:ConfigurationMenu.c **** {
+  67:ConfigurationMenu.c ****     Menu_edge();
+  68:ConfigurationMenu.c ****     /* !! DATA TO BE INSERTED */
+  69:ConfigurationMenu.c ****     sprintf(message, "Data will be displayed in %d seconds. Open Bridge Control Panel\n\n",1);
+  70:ConfigurationMenu.c ****     UART_PutString(message);
+  71:ConfigurationMenu.c ****     Menu_edge();
+  72:ConfigurationMenu.c **** }
+  73:ConfigurationMenu.c **** 
+  74:ConfigurationMenu.c **** /* Function that displays the correct table depending on which parameter the user wants to change.
+  75:ConfigurationMenu.c **** * \This information is contained in option_table global variable The first time that the function i
+  76:ConfigurationMenu.c **** * \the array set_of tables is initialized.
+  77:ConfigurationMenu.c **** * \ set_of_tables[0] contains the struct with the information to display related with the accelerom
+  78:ConfigurationMenu.c **** * \ set_of tables[1] contains the struct with the information to display reòated with the accelero
+  79:ConfigurationMenu.c **** * \ set_of tables[2] contains the struct with the information to display related with the unit of m
+  80:ConfigurationMenu.c **** * \ A pointer is defined and associanted with the first cell memory of the variable header1 of the 
+  81:ConfigurationMenu.c **** * \ The elements of the struct are printed though a foor loop using the pointer.
+  82:ConfigurationMenu.c **** */
+  83:ConfigurationMenu.c **** 
+  84:ConfigurationMenu.c **** void Show_table(char index_table) 
+  85:ConfigurationMenu.c **** {   
+  86:ConfigurationMenu.c ****     
+  87:ConfigurationMenu.c ****     uint8_t i;
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 3
+
+
+  88:ConfigurationMenu.c ****     uint8_t start;
+  89:ConfigurationMenu.c ****     uint8_t stop;
+  90:ConfigurationMenu.c ****     
+  91:ConfigurationMenu.c ****     /* global variable "initialized" is set in main.c to 0. The first time that the function is cal
+  92:ConfigurationMenu.c ****     * / is initialized and the variable "initialized" is set to 1
+  93:ConfigurationMenu.c ****     */
+  94:ConfigurationMenu.c ****     if( !initialized) {
+  95:ConfigurationMenu.c ****         set_of_tables[0]= FSR;
+  96:ConfigurationMenu.c ****         set_of_tables[1]= SampFreq;
+  97:ConfigurationMenu.c ****         set_of_tables[2]= TempFormat;
+  98:ConfigurationMenu.c ****         initialized=1;
+  99:ConfigurationMenu.c ****     }
+ 100:ConfigurationMenu.c ****     /* pointer variable "index" points the memory cell of the first element of the struct related w
+ 101:ConfigurationMenu.c ****     char *index= &(set_of_tables[1].header1);
+ 102:ConfigurationMenu.c ****     
+ 103:ConfigurationMenu.c ****     
+ 104:ConfigurationMenu.c ****     /* start variable is used in the for loop to define the initial memory cell pointed. 
+ 105:ConfigurationMenu.c ****     * \ header1 and header2 are printed before to enter in the for loop. The first cell to point is
+ 106:ConfigurationMenu.c ****     * \pointed by index
+ 107:ConfigurationMenu.c ****     */
+ 108:ConfigurationMenu.c ****     
+ 109:ConfigurationMenu.c ****     start= 2* WORD_SIZE;
+ 110:ConfigurationMenu.c ****     
+ 111:ConfigurationMenu.c ****     /* stop variable is used in the for loop to define the last memory cell pointed in the last cyc
+ 112:ConfigurationMenu.c ****     * \ if the paramter to change is the temperature data format just to options have to be display
+ 113:ConfigurationMenu.c ****     * \ So, in this case the last cell to be pointed is after 1+WORD_SIZE (key1 size+ option1 size)
+ 114:ConfigurationMenu.c ****     * \ In the other cases, the table is composed by 4 options so the last cell memory to be pointe
+ 115:ConfigurationMenu.c ****     */
+ 116:ConfigurationMenu.c ****     stop= (option_table == TEMP)? (start +(1+ WORD_SIZE +1)): (start + (1+WORD_SIZE)*3+1);
+ 117:ConfigurationMenu.c ****     Menu_edge();
+ 118:ConfigurationMenu.c ****     /* header1 and header2 of the correct table sent through UART */
+ 119:ConfigurationMenu.c ****     sprintf(message,"   %s | %s\r\n", index, index+WORD_SIZE);
+ 120:ConfigurationMenu.c ****     UART_PutString(message);
+ 121:ConfigurationMenu.c ****     
+ 122:ConfigurationMenu.c ****     /* in each cycle a row is printed (n-key = character) +( n-option = string) */
+ 123:ConfigurationMenu.c ****     for (i=start; i<stop; i+= (1+ WORD_SIZE))
+ 124:ConfigurationMenu.c ****     {
+ 125:ConfigurationMenu.c ****         sprintf(message, "       %c     |   %s\r\n", *(index+i) , index+i+1);
+ 126:ConfigurationMenu.c ****         UART_PutString( message);
+ 127:ConfigurationMenu.c ****     }  
+ 128:ConfigurationMenu.c ****     Menu_edge();
+ 129:ConfigurationMenu.c **** }
+ 130:ConfigurationMenu.c **** void Keys_menu (void) 
+ 131:ConfigurationMenu.c **** {
+ 132:ConfigurationMenu.c ****     Menu_edge();
+ 133:ConfigurationMenu.c ****     sprintf(message, "Press 'b' to start data acquisition and storage\r\n\n");
+ 134:ConfigurationMenu.c ****     UART_PutString(message);
+ 135:ConfigurationMenu.c ****     
+ 136:ConfigurationMenu.c ****     sprintf(message, "Press 's' to stop data acquisition and storage\r\n\n");
+ 137:ConfigurationMenu.c ****     UART_PutString(message);
+ 138:ConfigurationMenu.c ****     
+ 139:ConfigurationMenu.c ****     sprintf(message, "Press 'f' to change the accelerometer full scale range.Previous stored data w
+ 140:ConfigurationMenu.c ****     UART_PutString(message);
+ 141:ConfigurationMenu.c ****     
+ 142:ConfigurationMenu.c ****     sprintf(message, "Press 'p' to change the accelerometer sampling frequency.Previous data will b
+ 143:ConfigurationMenu.c ****     UART_PutString(message);
+ 144:ConfigurationMenu.c ****     
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 4
+
+
+ 145:ConfigurationMenu.c ****     sprintf(message, "Press 't' to change the temperature data format\r\n\n");
+ 146:ConfigurationMenu.c ****     UART_PutString(message);
+ 147:ConfigurationMenu.c ****     
+ 148:ConfigurationMenu.c ****     sprintf(message, "Press 'q' to quit the menu\r\n\n");
+ 149:ConfigurationMenu.c ****     UART_PutString(message);
+ 150:ConfigurationMenu.c ****     Menu_edge();
+ 151:ConfigurationMenu.c **** }
+ 152:ConfigurationMenu.c **** 
+ 153:ConfigurationMenu.c **** void Menu_edge(void)
+ 154:ConfigurationMenu.c **** {
+  28              		.loc 1 154 0
   29              		.cfi_startproc
   30              		@ args = 0, pretend = 0, frame = 0
   31              		@ frame_needed = 0, uses_anonymous_args = 0
-  32 0000 38B5     		push	{r3, r4, r5, lr}
-  33              		.cfi_def_cfa_offset 16
-  34              		.cfi_offset 3, -16
-  35              		.cfi_offset 4, -12
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 2
+  32 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  33              		.cfi_def_cfa_offset 24
+  34              		.cfi_offset 3, -24
+  35              		.cfi_offset 4, -20
+  36              		.cfi_offset 5, -16
+  37              		.cfi_offset 6, -12
+  38              		.cfi_offset 7, -8
+  39              		.cfi_offset 14, -4
+ 155:ConfigurationMenu.c ****     sprintf(message,"\r\n     ************************\r\n\n");
+  40              		.loc 1 155 0
+  41 0002 0B4E     		ldr	r6, .L4
+  42 0004 0B4C     		ldr	r4, .L4+4
+  43 0006 06F12007 		add	r7, r6, #32
+  44              	.L2:
+  45 000a 3546     		mov	r5, r6
+  46 000c 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+  47 000e 2060     		str	r0, [r4]	@ unaligned
+  48 0010 6160     		str	r1, [r4, #4]	@ unaligned
+  49 0012 A260     		str	r2, [r4, #8]	@ unaligned
+  50 0014 E360     		str	r3, [r4, #12]	@ unaligned
+  51 0016 2E46     		mov	r6, r5
+  52 0018 1034     		adds	r4, r4, #16
+  53 001a BD42     		cmp	r5, r7
+  54 001c F5D1     		bne	.L2
+  55 001e 2A88     		ldrh	r2, [r5]	@ unaligned
+  56 0020 AB78     		ldrb	r3, [r5, #2]	@ zero_extendqisi2
+  57 0022 2280     		strh	r2, [r4]	@ unaligned
+  58 0024 A370     		strb	r3, [r4, #2]
+ 156:ConfigurationMenu.c ****     UART_PutString(message);
+  59              		.loc 1 156 0
+  60 0026 0348     		ldr	r0, .L4+4
+  61 0028 FFF7FEFF 		bl	UART_PutString
+  62              	.LVL0:
+  63 002c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+  64              	.L5:
+  65 002e 00BF     		.align	2
+  66              	.L4:
+  67 0030 00000000 		.word	.LC0
+  68 0034 00000000 		.word	message
+  69              		.cfi_endproc
+  70              	.LFE68:
+  71              		.size	Menu_edge, .-Menu_edge
+  72              		.section	.text.While_Working_Menu,"ax",%progbits
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 5
 
 
-  36              		.cfi_offset 5, -8
-  37              		.cfi_offset 14, -4
-  23:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */
-  24:ConfigurationMenu.c ****     
-  25:ConfigurationMenu.c ****     /* if the system is acquiring data */
-  26:ConfigurationMenu.c ****     if(1/* the flag start/stop is in start*/) 
-  27:ConfigurationMenu.c ****     {
-  28:ConfigurationMenu.c ****         sprintf(message, "Ongoing data acquisition... \r\n\n");
-  38              		.loc 1 28 0
-  39 0002 144C     		ldr	r4, .L3
-  40 0004 144D     		ldr	r5, .L3+4
-  41 0006 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
-  42 0008 2060     		str	r0, [r4]	@ unaligned
-  43 000a 6160     		str	r1, [r4, #4]	@ unaligned
-  44 000c A260     		str	r2, [r4, #8]	@ unaligned
-  45 000e E360     		str	r3, [r4, #12]	@ unaligned
-  46 0010 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
-  47 0012 2061     		str	r0, [r4, #16]	@ unaligned
-  48 0014 6161     		str	r1, [r4, #20]	@ unaligned
-  49 0016 A261     		str	r2, [r4, #24]	@ unaligned
-  50 0018 E361     		str	r3, [r4, #28]	@ unaligned
-  29:ConfigurationMenu.c ****         UART_PutString(message);
-  51              		.loc 1 29 0
-  52 001a 2046     		mov	r0, r4
-  53 001c FFF7FEFF 		bl	UART_PutString
-  54              	.LVL0:
-  30:ConfigurationMenu.c ****     }
-  31:ConfigurationMenu.c ****     /* if the acquisition has been stopped */
-  32:ConfigurationMenu.c ****     else 
-  33:ConfigurationMenu.c ****     {
-  34:ConfigurationMenu.c ****         sprintf(message, "Data acquisition stopped \r\n\n");
+  73              		.align	2
+  74              		.global	While_Working_Menu
+  75              		.thumb
+  76              		.thumb_func
+  77              		.type	While_Working_Menu, %function
+  78              	While_Working_Menu:
+  79              	.LFB64:
+  27:ConfigurationMenu.c ****     
+  80              		.loc 1 27 0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84 0000 38B5     		push	{r3, r4, r5, lr}
+  85              		.cfi_def_cfa_offset 16
+  86              		.cfi_offset 3, -16
+  87              		.cfi_offset 4, -12
+  88              		.cfi_offset 5, -8
+  89              		.cfi_offset 14, -4
+  29:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */
+  90              		.loc 1 29 0
+  91 0002 FFF7FEFF 		bl	Menu_edge
+  92              	.LVL1:
   35:ConfigurationMenu.c ****         UART_PutString(message);
+  93              		.loc 1 35 0
+  94 0006 154C     		ldr	r4, .L8
+  95 0008 154D     		ldr	r5, .L8+4
+  96 000a 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+  97 000c 2060     		str	r0, [r4]	@ unaligned
+  98 000e 6160     		str	r1, [r4, #4]	@ unaligned
+  99 0010 A260     		str	r2, [r4, #8]	@ unaligned
+ 100 0012 E360     		str	r3, [r4, #12]	@ unaligned
+ 101 0014 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 102 0016 2061     		str	r0, [r4, #16]	@ unaligned
+ 103 0018 6161     		str	r1, [r4, #20]	@ unaligned
+ 104 001a A261     		str	r2, [r4, #24]	@ unaligned
+ 105 001c E361     		str	r3, [r4, #28]	@ unaligned
   36:ConfigurationMenu.c ****     }
-  37:ConfigurationMenu.c ****         
-  38:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */ 
-  39:ConfigurationMenu.c ****     
-  40:ConfigurationMenu.c ****     /* Accelerometer acquisition configuration displayed */
-  41:ConfigurationMenu.c ****     sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\nS
-  55              		.loc 1 41 0
-  56 0020 0223     		movs	r3, #2
-  57 0022 0122     		movs	r2, #1
-  58 0024 0D49     		ldr	r1, .L3+8
-  59 0026 2046     		mov	r0, r4
-  60 0028 FFF7FEFF 		bl	sprintf
-  61              	.LVL1:
-  42:ConfigurationMenu.c ****     UART_PutString(message);
-  62              		.loc 1 42 0
-  63 002c 2046     		mov	r0, r4
-  64 002e FFF7FEFF 		bl	UART_PutString
-  65              	.LVL2:
-  43:ConfigurationMenu.c ****     
-  44:ConfigurationMenu.c ****     /* !!DATA TO BE INSERTED */ 
-  45:ConfigurationMenu.c ****     
-  46:ConfigurationMenu.c ****     /* Temperature sensor acquisition configuration displayed */
-  47:ConfigurationMenu.c ****     sprintf(message, "Temperature sensor data saved as:\r\n%s\r\n\n", (1==1)? "Farenheit" : "Celsiu
-  66              		.loc 1 47 0
-  67 0032 0B4A     		ldr	r2, .L3+12
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 3
-
-
-  68 0034 0B49     		ldr	r1, .L3+16
-  69 0036 2046     		mov	r0, r4
-  70 0038 FFF7FEFF 		bl	sprintf
-  71              	.LVL3:
+ 106              		.loc 1 36 0
+ 107 001e 2046     		mov	r0, r4
+ 108 0020 FFF7FEFF 		bl	UART_PutString
+ 109              	.LVL2:
   48:ConfigurationMenu.c ****     UART_PutString(message);
-  72              		.loc 1 48 0
-  73 003c 2046     		mov	r0, r4
-  74 003e FFF7FEFF 		bl	UART_PutString
-  75              	.LVL4:
+ 110              		.loc 1 48 0
+ 111 0024 0223     		movs	r3, #2
+ 112 0026 0122     		movs	r2, #1
+ 113 0028 0E49     		ldr	r1, .L8+8
+ 114 002a 2046     		mov	r0, r4
+ 115 002c FFF7FEFF 		bl	sprintf
+ 116              	.LVL3:
   49:ConfigurationMenu.c ****     
-  50:ConfigurationMenu.c ****     /* Keyboard commands to change configuation and to handle data visualization */
-  51:ConfigurationMenu.c ****     sprintf(message, "Press '?' to change any configuration setting\r\nPress 'v' to visualize data 
-  76              		.loc 1 51 0
-  77 0042 9E22     		movs	r2, #158
-  78 0044 0849     		ldr	r1, .L3+20
-  79 0046 2046     		mov	r0, r4
-  80 0048 FFF7FEFF 		bl	memcpy
-  81              	.LVL5:
-  52:ConfigurationMenu.c ****     UART_PutString(message);
-  82              		.loc 1 52 0
-  83 004c 2046     		mov	r0, r4
-  84 004e FFF7FEFF 		bl	UART_PutString
-  85              	.LVL6:
-  86 0052 38BD     		pop	{r3, r4, r5, pc}
-  87              	.L4:
-  88              		.align	2
-  89              	.L3:
-  90 0054 00000000 		.word	message
-  91 0058 00000000 		.word	.LC0
-  92 005c 20000000 		.word	.LC1
-  93 0060 84000000 		.word	.LC2
-  94 0064 90000000 		.word	.LC3
-  95 0068 BC000000 		.word	.LC4
-  96              		.cfi_endproc
-  97              	.LFE64:
-  98              		.size	While_Working_Menu, .-While_Working_Menu
-  99              		.comm	message,50,4
- 100              		.section	.rodata.str1.4,"aMS",%progbits,1
- 101              		.align	2
- 102              	.LC0:
- 103 0000 4F6E676F 		.ascii	"Ongoing data acquisition... \015\012\012\000"
- 103      696E6720 
- 103      64617461 
- 103      20616371 
- 103      75697369 
- 104              	.LC1:
- 105 0020 43757272 		.ascii	"Current accelerometer acquisition configuration:\015"
- 105      656E7420 
- 105      61636365 
- 105      6C65726F 
- 105      6D657465 
- 106 0051 0A46756C 		.ascii	"\012Full scale range: %d\015\012Sampling freqeuncy:"
- 106      6C207363 
- 106      616C6520 
- 106      72616E67 
- 106      653A2025 
- 107 007b 2025640D 		.ascii	" %d\015\012\012\000"
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 4
+ 117              		.loc 1 49 0
+ 118 0030 2046     		mov	r0, r4
+ 119 0032 FFF7FEFF 		bl	UART_PutString
+ 120              	.LVL4:
+  54:ConfigurationMenu.c ****     UART_PutString(message);
+ 121              		.loc 1 54 0
+ 122 0036 0C4A     		ldr	r2, .L8+12
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 6
 
 
- 107      0A0A00
- 108 0082 0000     		.space	2
- 109              	.LC2:
- 110 0084 46617265 		.ascii	"Farenheit\000"
- 110      6E686569 
- 110      7400
- 111 008e 0000     		.space	2
- 112              	.LC3:
- 113 0090 54656D70 		.ascii	"Temperature sensor data saved as:\015\012%s\015\012"
- 113      65726174 
- 113      75726520 
- 113      73656E73 
- 113      6F722064 
- 114 00b7 0A00     		.ascii	"\012\000"
- 115 00b9 000000   		.space	3
- 116              	.LC4:
- 117 00bc 50726573 		.ascii	"Press '?' to change any configuration setting\015\012"
- 117      7320273F 
- 117      2720746F 
- 117      20636861 
- 117      6E676520 
- 118 00eb 50726573 		.ascii	"Press 'v' to visualize data (Data acquisition will "
- 118      73202776 
- 118      2720746F 
- 118      20766973 
- 118      75616C69 
- 119 011e 62652073 		.ascii	"be stopped)\015\012Press 'u' to stop the visualizat"
- 119      746F7070 
- 119      6564290D 
- 119      0A507265 
- 119      73732027 
- 120 014b 696F6E20 		.ascii	"ion of data\015\012\012\000"
- 120      6F662064 
- 120      6174610D 
- 120      0A0A00
- 121              		.text
- 122              	.Letext0:
- 123              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
- 124              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
- 125              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
- 126              		.file 5 "Generated_Source\\PSoC5/UART.h"
- 127              		.file 6 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
- 128              		.section	.debug_info,"",%progbits
- 129              	.Ldebug_info0:
- 130 0000 C4010000 		.4byte	0x1c4
- 131 0004 0400     		.2byte	0x4
- 132 0006 00000000 		.4byte	.Ldebug_abbrev0
- 133 000a 04       		.byte	0x4
- 134 000b 01       		.uleb128 0x1
- 135 000c 30000000 		.4byte	.LASF20
- 136 0010 0C       		.byte	0xc
- 137 0011 FA000000 		.4byte	.LASF21
- 138 0015 0E010000 		.4byte	.LASF22
- 139 0019 00000000 		.4byte	.Ldebug_ranges0+0
- 140 001d 00000000 		.4byte	0
- 141 0021 00000000 		.4byte	.Ldebug_line0
- 142 0025 02       		.uleb128 0x2
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 5
+ 123 0038 0C49     		ldr	r1, .L8+16
+ 124 003a 2046     		mov	r0, r4
+ 125 003c FFF7FEFF 		bl	sprintf
+ 126              	.LVL5:
+  55:ConfigurationMenu.c ****     
+ 127              		.loc 1 55 0
+ 128 0040 2046     		mov	r0, r4
+ 129 0042 FFF7FEFF 		bl	UART_PutString
+ 130              	.LVL6:
+  58:ConfigurationMenu.c ****     UART_PutString(message);
+ 131              		.loc 1 58 0
+ 132 0046 B422     		movs	r2, #180
+ 133 0048 0949     		ldr	r1, .L8+20
+ 134 004a 2046     		mov	r0, r4
+ 135 004c FFF7FEFF 		bl	memcpy
+ 136              	.LVL7:
+  59:ConfigurationMenu.c ****     
+ 137              		.loc 1 59 0
+ 138 0050 2046     		mov	r0, r4
+ 139 0052 FFF7FEFF 		bl	UART_PutString
+ 140              	.LVL8:
+  61:ConfigurationMenu.c **** }
+ 141              		.loc 1 61 0
+ 142 0056 FFF7FEFF 		bl	Menu_edge
+ 143              	.LVL9:
+ 144 005a 38BD     		pop	{r3, r4, r5, pc}
+ 145              	.L9:
+ 146              		.align	2
+ 147              	.L8:
+ 148 005c 00000000 		.word	message
+ 149 0060 24000000 		.word	.LC1
+ 150 0064 44000000 		.word	.LC2
+ 151 0068 A8000000 		.word	.LC3
+ 152 006c B4000000 		.word	.LC4
+ 153 0070 DC000000 		.word	.LC5
+ 154              		.cfi_endproc
+ 155              	.LFE64:
+ 156              		.size	While_Working_Menu, .-While_Working_Menu
+ 157              		.section	.text.Switch_to_BridgeControlPanel,"ax",%progbits
+ 158              		.align	2
+ 159              		.global	Switch_to_BridgeControlPanel
+ 160              		.thumb
+ 161              		.thumb_func
+ 162              		.type	Switch_to_BridgeControlPanel, %function
+ 163              	Switch_to_BridgeControlPanel:
+ 164              	.LFB65:
+  66:ConfigurationMenu.c ****     Menu_edge();
+ 165              		.loc 1 66 0
+ 166              		.cfi_startproc
+ 167              		@ args = 0, pretend = 0, frame = 0
+ 168              		@ frame_needed = 0, uses_anonymous_args = 0
+ 169 0000 10B5     		push	{r4, lr}
+ 170              		.cfi_def_cfa_offset 8
+ 171              		.cfi_offset 4, -8
+ 172              		.cfi_offset 14, -4
+  67:ConfigurationMenu.c ****     /* !! DATA TO BE INSERTED */
+ 173              		.loc 1 67 0
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 7
 
 
- 143 0026 01       		.byte	0x1
- 144 0027 06       		.byte	0x6
- 145 0028 C2010000 		.4byte	.LASF0
- 146 002c 02       		.uleb128 0x2
- 147 002d 01       		.byte	0x1
- 148 002e 08       		.byte	0x8
- 149 002f 6E010000 		.4byte	.LASF1
- 150 0033 02       		.uleb128 0x2
- 151 0034 02       		.byte	0x2
- 152 0035 05       		.byte	0x5
- 153 0036 EA010000 		.4byte	.LASF2
- 154 003a 02       		.uleb128 0x2
- 155 003b 02       		.byte	0x2
- 156 003c 07       		.byte	0x7
- 157 003d 08000000 		.4byte	.LASF3
- 158 0041 03       		.uleb128 0x3
- 159 0042 DA010000 		.4byte	.LASF9
- 160 0046 02       		.byte	0x2
- 161 0047 3F       		.byte	0x3f
- 162 0048 4C000000 		.4byte	0x4c
- 163 004c 02       		.uleb128 0x2
- 164 004d 04       		.byte	0x4
- 165 004e 05       		.byte	0x5
- 166 004f 81010000 		.4byte	.LASF4
- 167 0053 02       		.uleb128 0x2
- 168 0054 04       		.byte	0x4
- 169 0055 07       		.byte	0x7
- 170 0056 BE000000 		.4byte	.LASF5
- 171 005a 02       		.uleb128 0x2
- 172 005b 08       		.byte	0x8
- 173 005c 05       		.byte	0x5
- 174 005d 98010000 		.4byte	.LASF6
- 175 0061 02       		.uleb128 0x2
- 176 0062 08       		.byte	0x8
- 177 0063 07       		.byte	0x7
- 178 0064 E3000000 		.4byte	.LASF7
- 179 0068 04       		.uleb128 0x4
- 180 0069 04       		.byte	0x4
- 181 006a 05       		.byte	0x5
- 182 006b 696E7400 		.ascii	"int\000"
- 183 006f 02       		.uleb128 0x2
- 184 0070 04       		.byte	0x4
- 185 0071 07       		.byte	0x7
- 186 0072 1B000000 		.4byte	.LASF8
- 187 0076 03       		.uleb128 0x3
- 188 0077 F4010000 		.4byte	.LASF10
- 189 007b 03       		.byte	0x3
- 190 007c 2C       		.byte	0x2c
- 191 007d 41000000 		.4byte	0x41
- 192 0081 02       		.uleb128 0x2
- 193 0082 04       		.byte	0x4
- 194 0083 04       		.byte	0x4
- 195 0084 E4010000 		.4byte	.LASF11
- 196 0088 02       		.uleb128 0x2
- 197 0089 08       		.byte	0x8
- 198 008a 04       		.byte	0x4
- 199 008b 8A010000 		.4byte	.LASF12
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 6
+ 174 0002 FFF7FEFF 		bl	Menu_edge
+ 175              	.LVL10:
+  69:ConfigurationMenu.c ****     UART_PutString(message);
+ 176              		.loc 1 69 0
+ 177 0006 064C     		ldr	r4, .L12
+ 178 0008 0122     		movs	r2, #1
+ 179 000a 0649     		ldr	r1, .L12+4
+ 180 000c 2046     		mov	r0, r4
+ 181 000e FFF7FEFF 		bl	sprintf
+ 182              	.LVL11:
+  70:ConfigurationMenu.c ****     Menu_edge();
+ 183              		.loc 1 70 0
+ 184 0012 2046     		mov	r0, r4
+ 185 0014 FFF7FEFF 		bl	UART_PutString
+ 186              	.LVL12:
+  71:ConfigurationMenu.c **** }
+ 187              		.loc 1 71 0
+ 188 0018 FFF7FEFF 		bl	Menu_edge
+ 189              	.LVL13:
+ 190 001c 10BD     		pop	{r4, pc}
+ 191              	.L13:
+ 192 001e 00BF     		.align	2
+ 193              	.L12:
+ 194 0020 00000000 		.word	message
+ 195 0024 90010000 		.word	.LC6
+ 196              		.cfi_endproc
+ 197              	.LFE65:
+ 198              		.size	Switch_to_BridgeControlPanel, .-Switch_to_BridgeControlPanel
+ 199              		.section	.text.Show_table,"ax",%progbits
+ 200              		.align	2
+ 201              		.global	Show_table
+ 202              		.thumb
+ 203              		.thumb_func
+ 204              		.type	Show_table, %function
+ 205              	Show_table:
+ 206              	.LFB66:
+  85:ConfigurationMenu.c ****     
+ 207              		.loc 1 85 0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 0
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+ 211              	.LVL14:
+ 212 0000 70B5     		push	{r4, r5, r6, lr}
+ 213              		.cfi_def_cfa_offset 16
+ 214              		.cfi_offset 4, -16
+ 215              		.cfi_offset 5, -12
+ 216              		.cfi_offset 6, -8
+ 217              		.cfi_offset 14, -4
+  94:ConfigurationMenu.c ****         set_of_tables[0]= FSR;
+ 218              		.loc 1 94 0
+ 219 0002 214B     		ldr	r3, .L21
+ 220 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 221 0006 B3B9     		cbnz	r3, .L15
+  95:ConfigurationMenu.c ****         set_of_tables[1]= SampFreq;
+ 222              		.loc 1 95 0
+ 223 0008 204C     		ldr	r4, .L21+4
+ 224 000a 214D     		ldr	r5, .L21+8
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 8
 
 
- 200 008f 02       		.uleb128 0x2
- 201 0090 01       		.byte	0x1
- 202 0091 08       		.byte	0x8
- 203 0092 7C010000 		.4byte	.LASF13
- 204 0096 02       		.uleb128 0x2
- 205 0097 08       		.byte	0x8
- 206 0098 04       		.byte	0x4
- 207 0099 CE010000 		.4byte	.LASF14
- 208 009d 02       		.uleb128 0x2
- 209 009e 04       		.byte	0x4
- 210 009f 07       		.byte	0x7
- 211 00a0 FC010000 		.4byte	.LASF15
- 212 00a4 05       		.uleb128 0x5
- 213 00a5 D0000000 		.4byte	.LASF23
- 214 00a9 01       		.byte	0x1
- 215 00aa 15       		.byte	0x15
- 216 00ab 00000000 		.4byte	.LFB64
- 217 00af 6C000000 		.4byte	.LFE64-.LFB64
- 218 00b3 01       		.uleb128 0x1
- 219 00b4 9C       		.byte	0x9c
- 220 00b5 76010000 		.4byte	0x176
- 221 00b9 06       		.uleb128 0x6
- 222 00ba 20000000 		.4byte	.LVL0
- 223 00be A8010000 		.4byte	0x1a8
- 224 00c2 CD000000 		.4byte	0xcd
- 225 00c6 07       		.uleb128 0x7
- 226 00c7 01       		.uleb128 0x1
- 227 00c8 50       		.byte	0x50
- 228 00c9 02       		.uleb128 0x2
- 229 00ca 74       		.byte	0x74
- 230 00cb 00       		.sleb128 0
- 231 00cc 00       		.byte	0
- 232 00cd 06       		.uleb128 0x6
- 233 00ce 2C000000 		.4byte	.LVL1
- 234 00d2 B3010000 		.4byte	0x1b3
- 235 00d6 F4000000 		.4byte	0xf4
- 236 00da 07       		.uleb128 0x7
- 237 00db 01       		.uleb128 0x1
- 238 00dc 50       		.byte	0x50
- 239 00dd 02       		.uleb128 0x2
- 240 00de 74       		.byte	0x74
- 241 00df 00       		.sleb128 0
- 242 00e0 07       		.uleb128 0x7
- 243 00e1 01       		.uleb128 0x1
- 244 00e2 51       		.byte	0x51
- 245 00e3 05       		.uleb128 0x5
- 246 00e4 03       		.byte	0x3
- 247 00e5 20000000 		.4byte	.LC1
- 248 00e9 07       		.uleb128 0x7
- 249 00ea 01       		.uleb128 0x1
- 250 00eb 52       		.byte	0x52
- 251 00ec 01       		.uleb128 0x1
- 252 00ed 31       		.byte	0x31
- 253 00ee 07       		.uleb128 0x7
- 254 00ef 01       		.uleb128 0x1
- 255 00f0 53       		.byte	0x53
- 256 00f1 01       		.uleb128 0x1
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 7
+ 225 000c 7026     		movs	r6, #112
+ 226 000e 3246     		mov	r2, r6
+ 227 0010 2946     		mov	r1, r5
+ 228 0012 2046     		mov	r0, r4
+ 229              	.LVL15:
+ 230 0014 FFF7FEFF 		bl	memcpy
+ 231              	.LVL16:
+  96:ConfigurationMenu.c ****         set_of_tables[2]= TempFormat;
+ 232              		.loc 1 96 0
+ 233 0018 3246     		mov	r2, r6
+ 234 001a A919     		adds	r1, r5, r6
+ 235 001c A019     		adds	r0, r4, r6
+ 236 001e FFF7FEFF 		bl	memcpy
+ 237              	.LVL17:
+  97:ConfigurationMenu.c ****         initialized=1;
+ 238              		.loc 1 97 0
+ 239 0022 3246     		mov	r2, r6
+ 240 0024 05F1E001 		add	r1, r5, #224
+ 241 0028 04F1E000 		add	r0, r4, #224
+ 242 002c FFF7FEFF 		bl	memcpy
+ 243              	.LVL18:
+  98:ConfigurationMenu.c ****     }
+ 244              		.loc 1 98 0
+ 245 0030 0122     		movs	r2, #1
+ 246 0032 154B     		ldr	r3, .L21
+ 247 0034 1A70     		strb	r2, [r3]
+ 248              	.L15:
+ 249              	.LVL19:
+ 116:ConfigurationMenu.c ****     Menu_edge();
+ 250              		.loc 1 116 0
+ 251 0036 174B     		ldr	r3, .L21+12
+ 252 0038 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 253 003a 022B     		cmp	r3, #2
+ 254 003c 01D1     		bne	.L19
+ 255 003e 3826     		movs	r6, #56
+ 256 0040 00E0     		b	.L16
+ 257              	.L19:
+ 258 0042 5E26     		movs	r6, #94
+ 259              	.L16:
+ 260              	.LVL20:
+ 117:ConfigurationMenu.c ****     /* header1 and header2 of the correct table sent through UART */
+ 261              		.loc 1 117 0 discriminator 4
+ 262 0044 FFF7FEFF 		bl	Menu_edge
+ 263              	.LVL21:
+ 119:ConfigurationMenu.c ****     UART_PutString(message);
+ 264              		.loc 1 119 0 discriminator 4
+ 265 0048 134A     		ldr	r2, .L21+16
+ 266 004a 144C     		ldr	r4, .L21+20
+ 267 004c 1346     		mov	r3, r2
+ 268 004e 123A     		subs	r2, r2, #18
+ 269 0050 1349     		ldr	r1, .L21+24
+ 270 0052 2046     		mov	r0, r4
+ 271 0054 FFF7FEFF 		bl	sprintf
+ 272              	.LVL22:
+ 120:ConfigurationMenu.c ****     
+ 273              		.loc 1 120 0 discriminator 4
+ 274 0058 2046     		mov	r0, r4
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 9
 
 
- 257 00f2 32       		.byte	0x32
- 258 00f3 00       		.byte	0
- 259 00f4 06       		.uleb128 0x6
- 260 00f5 32000000 		.4byte	.LVL2
- 261 00f9 A8010000 		.4byte	0x1a8
- 262 00fd 08010000 		.4byte	0x108
- 263 0101 07       		.uleb128 0x7
- 264 0102 01       		.uleb128 0x1
- 265 0103 50       		.byte	0x50
- 266 0104 02       		.uleb128 0x2
- 267 0105 74       		.byte	0x74
- 268 0106 00       		.sleb128 0
- 269 0107 00       		.byte	0
- 270 0108 06       		.uleb128 0x6
- 271 0109 3C000000 		.4byte	.LVL3
- 272 010d B3010000 		.4byte	0x1b3
- 273 0111 2E010000 		.4byte	0x12e
- 274 0115 07       		.uleb128 0x7
- 275 0116 01       		.uleb128 0x1
- 276 0117 50       		.byte	0x50
- 277 0118 02       		.uleb128 0x2
- 278 0119 74       		.byte	0x74
- 279 011a 00       		.sleb128 0
- 280 011b 07       		.uleb128 0x7
- 281 011c 01       		.uleb128 0x1
- 282 011d 51       		.byte	0x51
- 283 011e 05       		.uleb128 0x5
- 284 011f 03       		.byte	0x3
- 285 0120 90000000 		.4byte	.LC3
- 286 0124 07       		.uleb128 0x7
- 287 0125 01       		.uleb128 0x1
- 288 0126 52       		.byte	0x52
- 289 0127 05       		.uleb128 0x5
- 290 0128 03       		.byte	0x3
- 291 0129 84000000 		.4byte	.LC2
- 292 012d 00       		.byte	0
- 293 012e 06       		.uleb128 0x6
- 294 012f 42000000 		.4byte	.LVL4
- 295 0133 A8010000 		.4byte	0x1a8
- 296 0137 42010000 		.4byte	0x142
- 297 013b 07       		.uleb128 0x7
- 298 013c 01       		.uleb128 0x1
- 299 013d 50       		.byte	0x50
- 300 013e 02       		.uleb128 0x2
- 301 013f 74       		.byte	0x74
- 302 0140 00       		.sleb128 0
- 303 0141 00       		.byte	0
- 304 0142 06       		.uleb128 0x6
- 305 0143 4C000000 		.4byte	.LVL5
- 306 0147 BE010000 		.4byte	0x1be
- 307 014b 65010000 		.4byte	0x165
- 308 014f 07       		.uleb128 0x7
- 309 0150 01       		.uleb128 0x1
- 310 0151 50       		.byte	0x50
- 311 0152 02       		.uleb128 0x2
- 312 0153 74       		.byte	0x74
- 313 0154 00       		.sleb128 0
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 8
+ 275 005a FFF7FEFF 		bl	UART_PutString
+ 276              	.LVL23:
+ 123:ConfigurationMenu.c ****     {
+ 277              		.loc 1 123 0 discriminator 4
+ 278 005e 2424     		movs	r4, #36
+ 279 0060 0DE0     		b	.L17
+ 280              	.LVL24:
+ 281              	.L18:
+ 125:ConfigurationMenu.c ****         UART_PutString( message);
+ 282              		.loc 1 125 0 discriminator 3
+ 283 0062 104A     		ldr	r2, .L21+28
+ 284              	.LVL25:
+ 285 0064 631C     		adds	r3, r4, #1
+ 286 0066 0D4D     		ldr	r5, .L21+20
+ 287 0068 1344     		add	r3, r3, r2
+ 288 006a 125D     		ldrb	r2, [r2, r4]	@ zero_extendqisi2
+ 289              	.LVL26:
+ 290 006c 0E49     		ldr	r1, .L21+32
+ 291 006e 2846     		mov	r0, r5
+ 292 0070 FFF7FEFF 		bl	sprintf
+ 293              	.LVL27:
+ 126:ConfigurationMenu.c ****     }  
+ 294              		.loc 1 126 0 discriminator 3
+ 295 0074 2846     		mov	r0, r5
+ 296 0076 FFF7FEFF 		bl	UART_PutString
+ 297              	.LVL28:
+ 123:ConfigurationMenu.c ****     {
+ 298              		.loc 1 123 0 discriminator 3
+ 299 007a 1334     		adds	r4, r4, #19
+ 300              	.LVL29:
+ 301 007c E4B2     		uxtb	r4, r4
+ 302              	.LVL30:
+ 303              	.L17:
+ 123:ConfigurationMenu.c ****     {
+ 304              		.loc 1 123 0 is_stmt 0 discriminator 1
+ 305 007e B442     		cmp	r4, r6
+ 306 0080 EFD3     		bcc	.L18
+ 128:ConfigurationMenu.c **** }
+ 307              		.loc 1 128 0 is_stmt 1
+ 308 0082 FFF7FEFF 		bl	Menu_edge
+ 309              	.LVL31:
+ 310 0086 70BD     		pop	{r4, r5, r6, pc}
+ 311              	.LVL32:
+ 312              	.L22:
+ 313              		.align	2
+ 314              	.L21:
+ 315 0088 00000000 		.word	initialized
+ 316 008c 00000000 		.word	set_of_tables
+ 317 0090 00000000 		.word	.LANCHOR0
+ 318 0094 00000000 		.word	option_table
+ 319 0098 82000000 		.word	set_of_tables+130
+ 320 009c 00000000 		.word	message
+ 321 00a0 D4010000 		.word	.LC7
+ 322 00a4 70000000 		.word	set_of_tables+112
+ 323 00a8 E4010000 		.word	.LC8
+ 324              		.cfi_endproc
+ 325              	.LFE66:
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 10
 
 
- 314 0155 07       		.uleb128 0x7
- 315 0156 01       		.uleb128 0x1
- 316 0157 51       		.byte	0x51
- 317 0158 05       		.uleb128 0x5
- 318 0159 03       		.byte	0x3
- 319 015a BC000000 		.4byte	.LC4
- 320 015e 07       		.uleb128 0x7
- 321 015f 01       		.uleb128 0x1
- 322 0160 52       		.byte	0x52
- 323 0161 02       		.uleb128 0x2
- 324 0162 08       		.byte	0x8
- 325 0163 9E       		.byte	0x9e
- 326 0164 00       		.byte	0
- 327 0165 08       		.uleb128 0x8
- 328 0166 52000000 		.4byte	.LVL6
- 329 016a A8010000 		.4byte	0x1a8
- 330 016e 07       		.uleb128 0x7
- 331 016f 01       		.uleb128 0x1
- 332 0170 50       		.byte	0x50
- 333 0171 02       		.uleb128 0x2
- 334 0172 74       		.byte	0x74
- 335 0173 00       		.sleb128 0
- 336 0174 00       		.byte	0
- 337 0175 00       		.byte	0
- 338 0176 09       		.uleb128 0x9
- 339 0177 B5010000 		.4byte	.LASF16
- 340 017b 04       		.byte	0x4
- 341 017c 1207     		.2byte	0x712
- 342 017e 82010000 		.4byte	0x182
- 343 0182 0A       		.uleb128 0xa
- 344 0183 76000000 		.4byte	0x76
- 345 0187 0B       		.uleb128 0xb
- 346 0188 8F000000 		.4byte	0x8f
- 347 018c 97010000 		.4byte	0x197
- 348 0190 0C       		.uleb128 0xc
- 349 0191 9D000000 		.4byte	0x9d
- 350 0195 31       		.byte	0x31
- 351 0196 00       		.byte	0
- 352 0197 0D       		.uleb128 0xd
- 353 0198 00000000 		.4byte	.LASF17
- 354 019c 01       		.byte	0x1
- 355 019d 0E       		.byte	0xe
- 356 019e 87010000 		.4byte	0x187
- 357 01a2 05       		.uleb128 0x5
- 358 01a3 03       		.byte	0x3
- 359 01a4 00000000 		.4byte	message
- 360 01a8 0E       		.uleb128 0xe
- 361 01a9 A6010000 		.4byte	.LASF18
- 362 01ad A6010000 		.4byte	.LASF18
- 363 01b1 05       		.byte	0x5
- 364 01b2 8B       		.byte	0x8b
- 365 01b3 0E       		.uleb128 0xe
- 366 01b4 28000000 		.4byte	.LASF19
- 367 01b8 28000000 		.4byte	.LASF19
- 368 01bc 06       		.byte	0x6
- 369 01bd E7       		.byte	0xe7
- 370 01be 0F       		.uleb128 0xf
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 9
+ 326              		.size	Show_table, .-Show_table
+ 327              		.section	.text.Keys_menu,"ax",%progbits
+ 328              		.align	2
+ 329              		.global	Keys_menu
+ 330              		.thumb
+ 331              		.thumb_func
+ 332              		.type	Keys_menu, %function
+ 333              	Keys_menu:
+ 334              	.LFB67:
+ 131:ConfigurationMenu.c ****     Menu_edge();
+ 335              		.loc 1 131 0
+ 336              		.cfi_startproc
+ 337              		@ args = 0, pretend = 0, frame = 0
+ 338              		@ frame_needed = 0, uses_anonymous_args = 0
+ 339 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 340              		.cfi_def_cfa_offset 24
+ 341              		.cfi_offset 3, -24
+ 342              		.cfi_offset 4, -20
+ 343              		.cfi_offset 5, -16
+ 344              		.cfi_offset 6, -12
+ 345              		.cfi_offset 7, -8
+ 346              		.cfi_offset 14, -4
+ 132:ConfigurationMenu.c ****     sprintf(message, "Press 'b' to start data acquisition and storage\r\n\n");
+ 347              		.loc 1 132 0
+ 348 0002 FFF7FEFF 		bl	Menu_edge
+ 349              	.LVL33:
+ 133:ConfigurationMenu.c ****     UART_PutString(message);
+ 350              		.loc 1 133 0
+ 351 0006 304E     		ldr	r6, .L28
+ 352 0008 304C     		ldr	r4, .L28+4
+ 353 000a 06F13007 		add	r7, r6, #48
+ 354              	.L24:
+ 355 000e 3546     		mov	r5, r6
+ 356 0010 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 357 0012 2060     		str	r0, [r4]	@ unaligned
+ 358 0014 6160     		str	r1, [r4, #4]	@ unaligned
+ 359 0016 A260     		str	r2, [r4, #8]	@ unaligned
+ 360 0018 E360     		str	r3, [r4, #12]	@ unaligned
+ 361 001a 2E46     		mov	r6, r5
+ 362 001c 1034     		adds	r4, r4, #16
+ 363 001e BD42     		cmp	r5, r7
+ 364 0020 F5D1     		bne	.L24
+ 365 0022 2A88     		ldrh	r2, [r5]	@ unaligned
+ 366 0024 AB78     		ldrb	r3, [r5, #2]	@ zero_extendqisi2
+ 367 0026 2280     		strh	r2, [r4]	@ unaligned
+ 368 0028 A370     		strb	r3, [r4, #2]
+ 134:ConfigurationMenu.c ****     
+ 369              		.loc 1 134 0
+ 370 002a 284C     		ldr	r4, .L28+4
+ 371 002c 2046     		mov	r0, r4
+ 372 002e FFF7FEFF 		bl	UART_PutString
+ 373              	.LVL34:
+ 136:ConfigurationMenu.c ****     UART_PutString(message);
+ 374              		.loc 1 136 0
+ 375 0032 274E     		ldr	r6, .L28+8
+ 376 0034 06F13007 		add	r7, r6, #48
+ 377              	.L25:
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 11
 
 
- 371 01bf 91010000 		.4byte	.LASF24
- 372 01c3 91010000 		.4byte	.LASF24
- 373 01c7 00       		.byte	0
- 374              		.section	.debug_abbrev,"",%progbits
- 375              	.Ldebug_abbrev0:
- 376 0000 01       		.uleb128 0x1
- 377 0001 11       		.uleb128 0x11
- 378 0002 01       		.byte	0x1
- 379 0003 25       		.uleb128 0x25
- 380 0004 0E       		.uleb128 0xe
- 381 0005 13       		.uleb128 0x13
- 382 0006 0B       		.uleb128 0xb
- 383 0007 03       		.uleb128 0x3
- 384 0008 0E       		.uleb128 0xe
- 385 0009 1B       		.uleb128 0x1b
- 386 000a 0E       		.uleb128 0xe
- 387 000b 55       		.uleb128 0x55
- 388 000c 17       		.uleb128 0x17
- 389 000d 11       		.uleb128 0x11
- 390 000e 01       		.uleb128 0x1
- 391 000f 10       		.uleb128 0x10
- 392 0010 17       		.uleb128 0x17
- 393 0011 00       		.byte	0
- 394 0012 00       		.byte	0
- 395 0013 02       		.uleb128 0x2
- 396 0014 24       		.uleb128 0x24
- 397 0015 00       		.byte	0
- 398 0016 0B       		.uleb128 0xb
- 399 0017 0B       		.uleb128 0xb
- 400 0018 3E       		.uleb128 0x3e
- 401 0019 0B       		.uleb128 0xb
- 402 001a 03       		.uleb128 0x3
- 403 001b 0E       		.uleb128 0xe
- 404 001c 00       		.byte	0
- 405 001d 00       		.byte	0
- 406 001e 03       		.uleb128 0x3
- 407 001f 16       		.uleb128 0x16
- 408 0020 00       		.byte	0
- 409 0021 03       		.uleb128 0x3
- 410 0022 0E       		.uleb128 0xe
- 411 0023 3A       		.uleb128 0x3a
- 412 0024 0B       		.uleb128 0xb
- 413 0025 3B       		.uleb128 0x3b
- 414 0026 0B       		.uleb128 0xb
- 415 0027 49       		.uleb128 0x49
- 416 0028 13       		.uleb128 0x13
- 417 0029 00       		.byte	0
- 418 002a 00       		.byte	0
- 419 002b 04       		.uleb128 0x4
- 420 002c 24       		.uleb128 0x24
- 421 002d 00       		.byte	0
- 422 002e 0B       		.uleb128 0xb
- 423 002f 0B       		.uleb128 0xb
- 424 0030 3E       		.uleb128 0x3e
- 425 0031 0B       		.uleb128 0xb
- 426 0032 03       		.uleb128 0x3
- 427 0033 08       		.uleb128 0x8
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 10
+ 378 0038 3546     		mov	r5, r6
+ 379 003a 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 380 003c 2060     		str	r0, [r4]	@ unaligned
+ 381 003e 6160     		str	r1, [r4, #4]	@ unaligned
+ 382 0040 A260     		str	r2, [r4, #8]	@ unaligned
+ 383 0042 E360     		str	r3, [r4, #12]	@ unaligned
+ 384 0044 2E46     		mov	r6, r5
+ 385 0046 1034     		adds	r4, r4, #16
+ 386 0048 BD42     		cmp	r5, r7
+ 387 004a F5D1     		bne	.L25
+ 388 004c 2B88     		ldrh	r3, [r5]	@ unaligned
+ 389 004e 2380     		strh	r3, [r4]	@ unaligned
+ 137:ConfigurationMenu.c ****     
+ 390              		.loc 1 137 0
+ 391 0050 1E4C     		ldr	r4, .L28+4
+ 392 0052 2046     		mov	r0, r4
+ 393 0054 FFF7FEFF 		bl	UART_PutString
+ 394              	.LVL35:
+ 139:ConfigurationMenu.c ****     UART_PutString(message);
+ 395              		.loc 1 139 0
+ 396 0058 5F22     		movs	r2, #95
+ 397 005a 1E49     		ldr	r1, .L28+12
+ 398 005c 2046     		mov	r0, r4
+ 399 005e FFF7FEFF 		bl	memcpy
+ 400              	.LVL36:
+ 140:ConfigurationMenu.c ****     
+ 401              		.loc 1 140 0
+ 402 0062 2046     		mov	r0, r4
+ 403 0064 FFF7FEFF 		bl	UART_PutString
+ 404              	.LVL37:
+ 142:ConfigurationMenu.c ****     UART_PutString(message);
+ 405              		.loc 1 142 0
+ 406 0068 5A22     		movs	r2, #90
+ 407 006a 1B49     		ldr	r1, .L28+16
+ 408 006c 2046     		mov	r0, r4
+ 409 006e FFF7FEFF 		bl	memcpy
+ 410              	.LVL38:
+ 143:ConfigurationMenu.c ****     
+ 411              		.loc 1 143 0
+ 412 0072 2046     		mov	r0, r4
+ 413 0074 FFF7FEFF 		bl	UART_PutString
+ 414              	.LVL39:
+ 145:ConfigurationMenu.c ****     UART_PutString(message);
+ 415              		.loc 1 145 0
+ 416 0078 184E     		ldr	r6, .L28+20
+ 417 007a 06F13007 		add	r7, r6, #48
+ 418              	.L26:
+ 419 007e 3546     		mov	r5, r6
+ 420 0080 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 421 0082 2060     		str	r0, [r4]	@ unaligned
+ 422 0084 6160     		str	r1, [r4, #4]	@ unaligned
+ 423 0086 A260     		str	r2, [r4, #8]	@ unaligned
+ 424 0088 E360     		str	r3, [r4, #12]	@ unaligned
+ 425 008a 2E46     		mov	r6, r5
+ 426 008c 1034     		adds	r4, r4, #16
+ 427 008e BD42     		cmp	r5, r7
+ 428 0090 F5D1     		bne	.L26
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 12
 
 
- 428 0034 00       		.byte	0
- 429 0035 00       		.byte	0
- 430 0036 05       		.uleb128 0x5
- 431 0037 2E       		.uleb128 0x2e
- 432 0038 01       		.byte	0x1
- 433 0039 3F       		.uleb128 0x3f
- 434 003a 19       		.uleb128 0x19
- 435 003b 03       		.uleb128 0x3
- 436 003c 0E       		.uleb128 0xe
- 437 003d 3A       		.uleb128 0x3a
- 438 003e 0B       		.uleb128 0xb
- 439 003f 3B       		.uleb128 0x3b
- 440 0040 0B       		.uleb128 0xb
- 441 0041 27       		.uleb128 0x27
- 442 0042 19       		.uleb128 0x19
- 443 0043 11       		.uleb128 0x11
- 444 0044 01       		.uleb128 0x1
- 445 0045 12       		.uleb128 0x12
- 446 0046 06       		.uleb128 0x6
- 447 0047 40       		.uleb128 0x40
- 448 0048 18       		.uleb128 0x18
- 449 0049 9742     		.uleb128 0x2117
- 450 004b 19       		.uleb128 0x19
- 451 004c 01       		.uleb128 0x1
- 452 004d 13       		.uleb128 0x13
- 453 004e 00       		.byte	0
- 454 004f 00       		.byte	0
- 455 0050 06       		.uleb128 0x6
- 456 0051 898201   		.uleb128 0x4109
- 457 0054 01       		.byte	0x1
- 458 0055 11       		.uleb128 0x11
- 459 0056 01       		.uleb128 0x1
- 460 0057 31       		.uleb128 0x31
- 461 0058 13       		.uleb128 0x13
- 462 0059 01       		.uleb128 0x1
- 463 005a 13       		.uleb128 0x13
- 464 005b 00       		.byte	0
- 465 005c 00       		.byte	0
- 466 005d 07       		.uleb128 0x7
- 467 005e 8A8201   		.uleb128 0x410a
- 468 0061 00       		.byte	0
- 469 0062 02       		.uleb128 0x2
- 470 0063 18       		.uleb128 0x18
- 471 0064 9142     		.uleb128 0x2111
- 472 0066 18       		.uleb128 0x18
- 473 0067 00       		.byte	0
- 474 0068 00       		.byte	0
- 475 0069 08       		.uleb128 0x8
- 476 006a 898201   		.uleb128 0x4109
- 477 006d 01       		.byte	0x1
- 478 006e 11       		.uleb128 0x11
- 479 006f 01       		.uleb128 0x1
- 480 0070 31       		.uleb128 0x31
- 481 0071 13       		.uleb128 0x13
- 482 0072 00       		.byte	0
- 483 0073 00       		.byte	0
- 484 0074 09       		.uleb128 0x9
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 11
+ 429 0092 2A88     		ldrh	r2, [r5]	@ unaligned
+ 430 0094 AB78     		ldrb	r3, [r5, #2]	@ zero_extendqisi2
+ 431 0096 2280     		strh	r2, [r4]	@ unaligned
+ 432 0098 A370     		strb	r3, [r4, #2]
+ 146:ConfigurationMenu.c ****     
+ 433              		.loc 1 146 0
+ 434 009a 0C4D     		ldr	r5, .L28+4
+ 435 009c 2846     		mov	r0, r5
+ 436 009e FFF7FEFF 		bl	UART_PutString
+ 437              	.LVL40:
+ 148:ConfigurationMenu.c ****     UART_PutString(message);
+ 438              		.loc 1 148 0
+ 439 00a2 0F4C     		ldr	r4, .L28+24
+ 440 00a4 0FCC     		ldmia	r4!, {r0, r1, r2, r3}
+ 441 00a6 2860     		str	r0, [r5]	@ unaligned
+ 442 00a8 6960     		str	r1, [r5, #4]	@ unaligned
+ 443 00aa AA60     		str	r2, [r5, #8]	@ unaligned
+ 444 00ac EB60     		str	r3, [r5, #12]	@ unaligned
+ 445 00ae 07CC     		ldmia	r4!, {r0, r1, r2}
+ 446 00b0 2861     		str	r0, [r5, #16]	@ unaligned
+ 447 00b2 6961     		str	r1, [r5, #20]	@ unaligned
+ 448 00b4 AA61     		str	r2, [r5, #24]	@ unaligned
+ 449 00b6 2388     		ldrh	r3, [r4]	@ unaligned
+ 450 00b8 AB83     		strh	r3, [r5, #28]	@ unaligned
+ 149:ConfigurationMenu.c ****     Menu_edge();
+ 451              		.loc 1 149 0
+ 452 00ba 2846     		mov	r0, r5
+ 453 00bc FFF7FEFF 		bl	UART_PutString
+ 454              	.LVL41:
+ 150:ConfigurationMenu.c **** }
+ 455              		.loc 1 150 0
+ 456 00c0 FFF7FEFF 		bl	Menu_edge
+ 457              	.LVL42:
+ 458 00c4 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 459              	.L29:
+ 460 00c6 00BF     		.align	2
+ 461              	.L28:
+ 462 00c8 FC010000 		.word	.LC9
+ 463 00cc 00000000 		.word	message
+ 464 00d0 40030000 		.word	.LC10
+ 465 00d4 30020000 		.word	.LC11
+ 466 00d8 90020000 		.word	.LC12
+ 467 00dc EC020000 		.word	.LC13
+ 468 00e0 20030000 		.word	.LC14
+ 469              		.cfi_endproc
+ 470              	.LFE67:
+ 471              		.size	Keys_menu, .-Keys_menu
+ 472              		.comm	message,50,4
+ 473              		.global	TempFormat
+ 474              		.global	SampFreq
+ 475              		.global	FSR
+ 476              		.comm	set_of_tables,336,4
+ 477              		.comm	initialized,1,1
+ 478              		.comm	option_table,1,1
+ 479              		.comm	start,1,1
+ 480              		.comm	change_settings_flag,1,1
+ 481              		.comm	FlagReady,1,1
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 13
 
 
- 485 0075 34       		.uleb128 0x34
- 486 0076 00       		.byte	0
- 487 0077 03       		.uleb128 0x3
- 488 0078 0E       		.uleb128 0xe
- 489 0079 3A       		.uleb128 0x3a
- 490 007a 0B       		.uleb128 0xb
- 491 007b 3B       		.uleb128 0x3b
- 492 007c 05       		.uleb128 0x5
- 493 007d 49       		.uleb128 0x49
- 494 007e 13       		.uleb128 0x13
- 495 007f 3F       		.uleb128 0x3f
- 496 0080 19       		.uleb128 0x19
- 497 0081 3C       		.uleb128 0x3c
- 498 0082 19       		.uleb128 0x19
- 499 0083 00       		.byte	0
- 500 0084 00       		.byte	0
- 501 0085 0A       		.uleb128 0xa
- 502 0086 35       		.uleb128 0x35
- 503 0087 00       		.byte	0
- 504 0088 49       		.uleb128 0x49
- 505 0089 13       		.uleb128 0x13
- 506 008a 00       		.byte	0
- 507 008b 00       		.byte	0
- 508 008c 0B       		.uleb128 0xb
- 509 008d 01       		.uleb128 0x1
- 510 008e 01       		.byte	0x1
- 511 008f 49       		.uleb128 0x49
- 512 0090 13       		.uleb128 0x13
- 513 0091 01       		.uleb128 0x1
- 514 0092 13       		.uleb128 0x13
- 515 0093 00       		.byte	0
- 516 0094 00       		.byte	0
- 517 0095 0C       		.uleb128 0xc
- 518 0096 21       		.uleb128 0x21
- 519 0097 00       		.byte	0
- 520 0098 49       		.uleb128 0x49
- 521 0099 13       		.uleb128 0x13
- 522 009a 2F       		.uleb128 0x2f
- 523 009b 0B       		.uleb128 0xb
- 524 009c 00       		.byte	0
- 525 009d 00       		.byte	0
- 526 009e 0D       		.uleb128 0xd
- 527 009f 34       		.uleb128 0x34
- 528 00a0 00       		.byte	0
- 529 00a1 03       		.uleb128 0x3
- 530 00a2 0E       		.uleb128 0xe
- 531 00a3 3A       		.uleb128 0x3a
- 532 00a4 0B       		.uleb128 0xb
- 533 00a5 3B       		.uleb128 0x3b
- 534 00a6 0B       		.uleb128 0xb
- 535 00a7 49       		.uleb128 0x49
- 536 00a8 13       		.uleb128 0x13
- 537 00a9 3F       		.uleb128 0x3f
- 538 00aa 19       		.uleb128 0x19
- 539 00ab 02       		.uleb128 0x2
- 540 00ac 18       		.uleb128 0x18
- 541 00ad 00       		.byte	0
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 12
+ 482              		.section	.rodata
+ 483              		.align	2
+ 484              		.set	.LANCHOR0,. + 0
+ 485              		.type	FSR, %object
+ 486              		.size	FSR, 112
+ 487              	FSR:
+ 488 0000 43686172 		.ascii	"Character\000"
+ 488      61637465 
+ 488      7200
+ 489 000a 00000000 		.space	8
+ 489      00000000 
+ 490 0012 46756C6C 		.ascii	"Full scale range\000"
+ 490      20736361 
+ 490      6C652072 
+ 490      616E6765 
+ 490      00
+ 491 0023 00       		.space	1
+ 492 0024 31       		.byte	49
+ 493 0025 2B2F2D20 		.ascii	"+/- 2g\000"
+ 493      326700
+ 494 002c 00000000 		.space	11
+ 494      00000000 
+ 494      000000
+ 495 0037 32       		.byte	50
+ 496 0038 2B2F2D20 		.ascii	"+/- 4g\000"
+ 496      346700
+ 497 003f 00000000 		.space	11
+ 497      00000000 
+ 497      000000
+ 498 004a 33       		.byte	51
+ 499 004b 2B2F2D20 		.ascii	"+/- 8g\000"
+ 499      386700
+ 500 0052 00000000 		.space	11
+ 500      00000000 
+ 500      000000
+ 501 005d 34       		.byte	52
+ 502 005e 2B2F2D20 		.ascii	"+/- 16g\000"
+ 502      31366700 
+ 503 0066 00000000 		.space	10
+ 503      00000000 
+ 503      0000
+ 504              		.type	SampFreq, %object
+ 505              		.size	SampFreq, 112
+ 506              	SampFreq:
+ 507 0070 43686172 		.ascii	"Character\000"
+ 507      61637465 
+ 507      7200
+ 508 007a 00000000 		.space	8
+ 508      00000000 
+ 509 0082 53616D70 		.ascii	"Sampling Frequency"
+ 509      6C696E67 
+ 509      20467265 
+ 509      7175656E 
+ 509      6379
+ 510 0094 31       		.byte	49
+ 511 0095 3120487A 		.ascii	"1 Hz\000"
+ 511      00
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 14
 
 
- 542 00ae 00       		.byte	0
- 543 00af 0E       		.uleb128 0xe
- 544 00b0 2E       		.uleb128 0x2e
- 545 00b1 00       		.byte	0
- 546 00b2 3F       		.uleb128 0x3f
- 547 00b3 19       		.uleb128 0x19
- 548 00b4 3C       		.uleb128 0x3c
- 549 00b5 19       		.uleb128 0x19
- 550 00b6 6E       		.uleb128 0x6e
- 551 00b7 0E       		.uleb128 0xe
- 552 00b8 03       		.uleb128 0x3
- 553 00b9 0E       		.uleb128 0xe
- 554 00ba 3A       		.uleb128 0x3a
- 555 00bb 0B       		.uleb128 0xb
- 556 00bc 3B       		.uleb128 0x3b
- 557 00bd 0B       		.uleb128 0xb
- 558 00be 00       		.byte	0
- 559 00bf 00       		.byte	0
- 560 00c0 0F       		.uleb128 0xf
- 561 00c1 2E       		.uleb128 0x2e
- 562 00c2 00       		.byte	0
- 563 00c3 3F       		.uleb128 0x3f
- 564 00c4 19       		.uleb128 0x19
- 565 00c5 3C       		.uleb128 0x3c
- 566 00c6 19       		.uleb128 0x19
- 567 00c7 6E       		.uleb128 0x6e
- 568 00c8 0E       		.uleb128 0xe
- 569 00c9 03       		.uleb128 0x3
- 570 00ca 0E       		.uleb128 0xe
- 571 00cb 00       		.byte	0
- 572 00cc 00       		.byte	0
- 573 00cd 00       		.byte	0
- 574              		.section	.debug_aranges,"",%progbits
- 575 0000 1C000000 		.4byte	0x1c
- 576 0004 0200     		.2byte	0x2
- 577 0006 00000000 		.4byte	.Ldebug_info0
- 578 000a 04       		.byte	0x4
- 579 000b 00       		.byte	0
- 580 000c 0000     		.2byte	0
- 581 000e 0000     		.2byte	0
- 582 0010 00000000 		.4byte	.LFB64
- 583 0014 6C000000 		.4byte	.LFE64-.LFB64
- 584 0018 00000000 		.4byte	0
- 585 001c 00000000 		.4byte	0
- 586              		.section	.debug_ranges,"",%progbits
- 587              	.Ldebug_ranges0:
- 588 0000 00000000 		.4byte	.LFB64
- 589 0004 6C000000 		.4byte	.LFE64
- 590 0008 00000000 		.4byte	0
- 591 000c 00000000 		.4byte	0
- 592              		.section	.debug_line,"",%progbits
- 593              	.Ldebug_line0:
- 594 0000 E8010000 		.section	.debug_str,"MS",%progbits,1
- 594      0200C901 
- 594      00000201 
- 594      FB0E0D00 
- 594      01010101 
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 13
+ 512 009a 00000000 		.space	13
+ 512      00000000 
+ 512      00000000 
+ 512      00
+ 513 00a7 32       		.byte	50
+ 514 00a8 31302048 		.ascii	"10 Hz\000"
+ 514      7A00
+ 515 00ae 00000000 		.space	12
+ 515      00000000 
+ 515      00000000 
+ 516 00ba 33       		.byte	51
+ 517 00bb 32352048 		.ascii	"25 Hz\000"
+ 517      7A00
+ 518 00c1 00000000 		.space	12
+ 518      00000000 
+ 518      00000000 
+ 519 00cd 34       		.byte	52
+ 520 00ce 35302048 		.ascii	"50 Hz\000"
+ 520      7A00
+ 521 00d4 00000000 		.space	12
+ 521      00000000 
+ 521      00000000 
+ 522              		.type	TempFormat, %object
+ 523              		.size	TempFormat, 112
+ 524              	TempFormat:
+ 525 00e0 43686172 		.ascii	"Character\000"
+ 525      61637465 
+ 525      7200
+ 526 00ea 00000000 		.space	8
+ 526      00000000 
+ 527 00f2 54656D70 		.ascii	"Temperature format"
+ 527      65726174 
+ 527      75726520 
+ 527      666F726D 
+ 527      6174
+ 528 0104 63       		.byte	99
+ 529 0105 43656C73 		.ascii	"Celsius\000"
+ 529      69757300 
+ 530 010d 00000000 		.space	10
+ 530      00000000 
+ 530      0000
+ 531 0117 66       		.byte	102
+ 532 0118 46616872 		.ascii	"Fahrenheit\000"
+ 532      656E6865 
+ 532      697400
+ 533 0123 00000000 		.space	7
+ 533      000000
+ 534 012a 20       		.byte	32
+ 535 012b 2000     		.ascii	" \000"
+ 536 012d 00000000 		.space	16
+ 536      00000000 
+ 536      00000000 
+ 536      00000000 
+ 537 013d 20       		.byte	32
+ 538 013e 2000     		.ascii	" \000"
+ 539 0140 00000000 		.space	16
+ 539      00000000 
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 15
 
 
- 595              	.LASF17:
- 596 0000 6D657373 		.ascii	"message\000"
- 596      61676500 
- 597              	.LASF3:
- 598 0008 73686F72 		.ascii	"short unsigned int\000"
- 598      7420756E 
- 598      7369676E 
- 598      65642069 
- 598      6E7400
- 599              	.LASF8:
- 600 001b 756E7369 		.ascii	"unsigned int\000"
- 600      676E6564 
- 600      20696E74 
- 600      00
- 601              	.LASF19:
- 602 0028 73707269 		.ascii	"sprintf\000"
- 602      6E746600 
- 603              	.LASF20:
- 604 0030 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 604      43313120 
- 604      352E342E 
- 604      31203230 
- 604      31363036 
- 605 0063 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
- 605      20726576 
- 605      6973696F 
- 605      6E203233 
- 605      37373135 
- 606 0096 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 606      66756E63 
- 606      74696F6E 
- 606      2D736563 
- 606      74696F6E 
- 607              	.LASF5:
- 608 00be 6C6F6E67 		.ascii	"long unsigned int\000"
- 608      20756E73 
- 608      69676E65 
- 608      6420696E 
- 608      7400
- 609              	.LASF23:
- 610 00d0 5768696C 		.ascii	"While_Working_Menu\000"
- 610      655F576F 
- 610      726B696E 
- 610      675F4D65 
- 610      6E7500
- 611              	.LASF7:
- 612 00e3 6C6F6E67 		.ascii	"long long unsigned int\000"
- 612      206C6F6E 
- 612      6720756E 
- 612      7369676E 
- 612      65642069 
- 613              	.LASF21:
- 614 00fa 436F6E66 		.ascii	"ConfigurationMenu.c\000"
- 614      69677572 
- 614      6174696F 
- 614      6E4D656E 
- 614      752E6300 
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 14
+ 539      00000000 
+ 539      00000000 
+ 540              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 541              		.align	2
+ 542              	.LC0:
+ 543 0000 0D0A2020 		.ascii	"\015\012     ************************\015\012\012\000"
+ 543      2020202A 
+ 543      2A2A2A2A 
+ 543      2A2A2A2A 
+ 543      2A2A2A2A 
+ 544 0023 00       		.space	1
+ 545              	.LC1:
+ 546 0024 4F6E676F 		.ascii	"Ongoing data acquisition... \015\012\012\000"
+ 546      696E6720 
+ 546      64617461 
+ 546      20616371 
+ 546      75697369 
+ 547              	.LC2:
+ 548 0044 43757272 		.ascii	"Current accelerometer acquisition configuration:\015"
+ 548      656E7420 
+ 548      61636365 
+ 548      6C65726F 
+ 548      6D657465 
+ 549 0075 0A46756C 		.ascii	"\012Full scale range: %d\015\012Sampling frequency:"
+ 549      6C207363 
+ 549      616C6520 
+ 549      72616E67 
+ 549      653A2025 
+ 550 009f 2025640D 		.ascii	" %d\015\012\000"
+ 550      0A00
+ 551 00a5 000000   		.space	3
+ 552              	.LC3:
+ 553 00a8 46616872 		.ascii	"Fahrenheit\000"
+ 553      656E6865 
+ 553      697400
+ 554 00b3 00       		.space	1
+ 555              	.LC4:
+ 556 00b4 54656D70 		.ascii	"Temperature sensor data format:\015\012%s\015\012\012"
+ 556      65726174 
+ 556      75726520 
+ 556      73656E73 
+ 556      6F722064 
+ 557 00da 00       		.ascii	"\000"
+ 558 00db 00       		.space	1
+ 559              	.LC5:
+ 560 00dc 50726573 		.ascii	"Press '?' to change the configuration settings for "
+ 560      7320273F 
+ 560      2720746F 
+ 560      20636861 
+ 560      6E676520 
+ 561 010f 64617461 		.ascii	"data acquisition\015\012Press 'v' to visualize data"
+ 561      20616371 
+ 561      75697369 
+ 561      74696F6E 
+ 561      0D0A5072 
+ 562 013c 20284461 		.ascii	" (Data acquisition will be stopped)\015\012Press 'u"
+ 562      74612061 
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 16
 
 
- 615              	.LASF22:
- 616 010e 433A5C55 		.ascii	"C:\\Users\\Beatrice Bonomi\\Desktop\\Group_01_Final"
- 616      73657273 
- 616      5C426561 
- 616      74726963 
- 616      6520426F 
- 617 013d 50726F6A 		.ascii	"Project\\Group_01_FinalProject\\FinalProject.cydsn\000"
- 617      6563745C 
- 617      47726F75 
- 617      705F3031 
- 617      5F46696E 
- 618              	.LASF1:
- 619 016e 756E7369 		.ascii	"unsigned char\000"
- 619      676E6564 
- 619      20636861 
- 619      7200
- 620              	.LASF13:
- 621 017c 63686172 		.ascii	"char\000"
- 621      00
- 622              	.LASF4:
- 623 0181 6C6F6E67 		.ascii	"long int\000"
- 623      20696E74 
- 623      00
- 624              	.LASF12:
- 625 018a 646F7562 		.ascii	"double\000"
- 625      6C6500
- 626              	.LASF24:
- 627 0191 6D656D63 		.ascii	"memcpy\000"
- 627      707900
- 628              	.LASF6:
- 629 0198 6C6F6E67 		.ascii	"long long int\000"
- 629      206C6F6E 
- 629      6720696E 
- 629      7400
- 630              	.LASF18:
- 631 01a6 55415254 		.ascii	"UART_PutString\000"
- 631      5F507574 
- 631      53747269 
- 631      6E6700
- 632              	.LASF16:
- 633 01b5 49544D5F 		.ascii	"ITM_RxBuffer\000"
- 633      52784275 
- 633      66666572 
- 633      00
- 634              	.LASF0:
- 635 01c2 7369676E 		.ascii	"signed char\000"
- 635      65642063 
- 635      68617200 
- 636              	.LASF14:
- 637 01ce 6C6F6E67 		.ascii	"long double\000"
- 637      20646F75 
- 637      626C6500 
- 638              	.LASF9:
- 639 01da 5F5F696E 		.ascii	"__int32_t\000"
- 639      7433325F 
- 639      7400
- 640              	.LASF11:
-ARM GAS  C:\Users\BEATRI~1\AppData\Local\Temp\ccps65pK.s 			page 15
+ 562      63717569 
+ 562      73697469 
+ 562      6F6E2077 
+ 563 0169 2720746F 		.ascii	"' to stop the visualization of data\015\012\012\000"
+ 563      2073746F 
+ 563      70207468 
+ 563      65207669 
+ 563      7375616C 
+ 564              	.LC6:
+ 565 0190 44617461 		.ascii	"Data will be displayed in %d seconds. Open Bridge C"
+ 565      2077696C 
+ 565      6C206265 
+ 565      20646973 
+ 565      706C6179 
+ 566 01c3 6F6E7472 		.ascii	"ontrol Panel\012\012\000"
+ 566      6F6C2050 
+ 566      616E656C 
+ 566      0A0A00
+ 567 01d2 0000     		.space	2
+ 568              	.LC7:
+ 569 01d4 20202025 		.ascii	"   %s | %s\015\012\000"
+ 569      73207C20 
+ 569      25730D0A 
+ 569      00
+ 570 01e1 000000   		.space	3
+ 571              	.LC8:
+ 572 01e4 20202020 		.ascii	"       %c     |   %s\015\012\000"
+ 572      20202025 
+ 572      63202020 
+ 572      20207C20 
+ 572      20202573 
+ 573 01fb 00       		.space	1
+ 574              	.LC9:
+ 575 01fc 50726573 		.ascii	"Press 'b' to start data acquisition and storage\015"
+ 575      73202762 
+ 575      2720746F 
+ 575      20737461 
+ 575      72742064 
+ 576 022c 0A0A00   		.ascii	"\012\012\000"
+ 577 022f 00       		.space	1
+ 578              	.LC11:
+ 579 0230 50726573 		.ascii	"Press 'f' to change the accelerometer full scale ra"
+ 579      73202766 
+ 579      2720746F 
+ 579      20636861 
+ 579      6E676520 
+ 580 0263 6E67652E 		.ascii	"nge.Previous stored data will be deleted\015\012\012"
+ 580      50726576 
+ 580      696F7573 
+ 580      2073746F 
+ 580      72656420 
+ 581 028e 00       		.ascii	"\000"
+ 582 028f 00       		.space	1
+ 583              	.LC12:
+ 584 0290 50726573 		.ascii	"Press 'p' to change the accelerometer sampling freq"
+ 584      73202770 
+ 584      2720746F 
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 17
 
 
- 641 01e4 666C6F61 		.ascii	"float\000"
- 641      7400
- 642              	.LASF2:
- 643 01ea 73686F72 		.ascii	"short int\000"
- 643      7420696E 
- 643      7400
- 644              	.LASF10:
- 645 01f4 696E7433 		.ascii	"int32_t\000"
- 645      325F7400 
- 646              	.LASF15:
- 647 01fc 73697A65 		.ascii	"sizetype\000"
- 647      74797065 
- 647      00
- 648              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ 584      20636861 
+ 584      6E676520 
+ 585 02c3 75656E63 		.ascii	"uency.Previous data will be deleted\015\012\012\000"
+ 585      792E5072 
+ 585      6576696F 
+ 585      75732064 
+ 585      61746120 
+ 586 02ea 0000     		.space	2
+ 587              	.LC13:
+ 588 02ec 50726573 		.ascii	"Press 't' to change the temperature data format\015"
+ 588      73202774 
+ 588      2720746F 
+ 588      20636861 
+ 588      6E676520 
+ 589 031c 0A0A00   		.ascii	"\012\012\000"
+ 590 031f 00       		.space	1
+ 591              	.LC14:
+ 592 0320 50726573 		.ascii	"Press 'q' to quit the menu\015\012\012\000"
+ 592      73202771 
+ 592      2720746F 
+ 592      20717569 
+ 592      74207468 
+ 593 033e 0000     		.space	2
+ 594              	.LC10:
+ 595 0340 50726573 		.ascii	"Press 's' to stop data acquisition and storage\015\012"
+ 595      73202773 
+ 595      2720746F 
+ 595      2073746F 
+ 595      70206461 
+ 596 0370 0A00     		.ascii	"\012\000"
+ 597              		.text
+ 598              	.Letext0:
+ 599              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
+ 600              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
+ 601              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 602              		.file 5 "ConfigurationMenu.h"
+ 603              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 604              		.file 7 "InterruptRoutines.h"
+ 605              		.file 8 "OptionsToBeDisplayed.h"
+ 606              		.file 9 "Generated_Source\\PSoC5/UART.h"
+ 607              		.file 10 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4
+ 608              		.section	.debug_info,"",%progbits
+ 609              	.Ldebug_info0:
+ 610 0000 14060000 		.4byte	0x614
+ 611 0004 0400     		.2byte	0x4
+ 612 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 613 000a 04       		.byte	0x4
+ 614 000b 01       		.uleb128 0x1
+ 615 000c 0B010000 		.4byte	.LASF49
+ 616 0010 0C       		.byte	0xc
+ 617 0011 12000000 		.4byte	.LASF50
+ 618 0015 97000000 		.4byte	.LASF51
+ 619 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 620 001d 00000000 		.4byte	0
+ 621 0021 00000000 		.4byte	.Ldebug_line0
+ 622 0025 02       		.uleb128 0x2
+ 623 0026 01       		.byte	0x1
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 18
+
+
+ 624 0027 06       		.byte	0x6
+ 625 0028 0A030000 		.4byte	.LASF0
+ 626 002c 03       		.uleb128 0x3
+ 627 002d 08000000 		.4byte	.LASF4
+ 628 0031 02       		.byte	0x2
+ 629 0032 1D       		.byte	0x1d
+ 630 0033 37000000 		.4byte	0x37
+ 631 0037 02       		.uleb128 0x2
+ 632 0038 01       		.byte	0x1
+ 633 0039 08       		.byte	0x8
+ 634 003a FD000000 		.4byte	.LASF1
+ 635 003e 02       		.uleb128 0x2
+ 636 003f 02       		.byte	0x2
+ 637 0040 05       		.byte	0x5
+ 638 0041 AB020000 		.4byte	.LASF2
+ 639 0045 02       		.uleb128 0x2
+ 640 0046 02       		.byte	0x2
+ 641 0047 07       		.byte	0x7
+ 642 0048 B7010000 		.4byte	.LASF3
+ 643 004c 03       		.uleb128 0x3
+ 644 004d 3B000000 		.4byte	.LASF5
+ 645 0051 02       		.byte	0x2
+ 646 0052 3F       		.byte	0x3f
+ 647 0053 57000000 		.4byte	0x57
+ 648 0057 02       		.uleb128 0x2
+ 649 0058 04       		.byte	0x4
+ 650 0059 05       		.byte	0x5
+ 651 005a F5020000 		.4byte	.LASF6
+ 652 005e 02       		.uleb128 0x2
+ 653 005f 04       		.byte	0x4
+ 654 0060 07       		.byte	0x7
+ 655 0061 A5010000 		.4byte	.LASF7
+ 656 0065 02       		.uleb128 0x2
+ 657 0066 08       		.byte	0x8
+ 658 0067 05       		.byte	0x5
+ 659 0068 7B020000 		.4byte	.LASF8
+ 660 006c 02       		.uleb128 0x2
+ 661 006d 08       		.byte	0x8
+ 662 006e 07       		.byte	0x7
+ 663 006f 38020000 		.4byte	.LASF9
+ 664 0073 04       		.uleb128 0x4
+ 665 0074 04       		.byte	0x4
+ 666 0075 05       		.byte	0x5
+ 667 0076 696E7400 		.ascii	"int\000"
+ 668 007a 02       		.uleb128 0x2
+ 669 007b 04       		.byte	0x4
+ 670 007c 07       		.byte	0x7
+ 671 007d 2B020000 		.4byte	.LASF10
+ 672 0081 03       		.uleb128 0x3
+ 673 0082 4F020000 		.4byte	.LASF11
+ 674 0086 03       		.byte	0x3
+ 675 0087 18       		.byte	0x18
+ 676 0088 2C000000 		.4byte	0x2c
+ 677 008c 03       		.uleb128 0x3
+ 678 008d 6A020000 		.4byte	.LASF12
+ 679 0091 03       		.byte	0x3
+ 680 0092 2C       		.byte	0x2c
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 19
+
+
+ 681 0093 4C000000 		.4byte	0x4c
+ 682 0097 05       		.uleb128 0x5
+ 683 0098 B5020000 		.4byte	.LASF13
+ 684 009c 04       		.byte	0x4
+ 685 009d E401     		.2byte	0x1e4
+ 686 009f 37000000 		.4byte	0x37
+ 687 00a3 02       		.uleb128 0x2
+ 688 00a4 04       		.byte	0x4
+ 689 00a5 04       		.byte	0x4
+ 690 00a6 91000000 		.4byte	.LASF14
+ 691 00aa 02       		.uleb128 0x2
+ 692 00ab 08       		.byte	0x8
+ 693 00ac 04       		.byte	0x4
+ 694 00ad ED010000 		.4byte	.LASF15
+ 695 00b1 02       		.uleb128 0x2
+ 696 00b2 01       		.byte	0x1
+ 697 00b3 08       		.byte	0x8
+ 698 00b4 99020000 		.4byte	.LASF16
+ 699 00b8 06       		.uleb128 0x6
+ 700 00b9 97000000 		.4byte	0x97
+ 701 00bd 02       		.uleb128 0x2
+ 702 00be 08       		.byte	0x8
+ 703 00bf 04       		.byte	0x4
+ 704 00c0 FE020000 		.4byte	.LASF17
+ 705 00c4 02       		.uleb128 0x2
+ 706 00c5 04       		.byte	0x4
+ 707 00c6 07       		.byte	0x7
+ 708 00c7 72020000 		.4byte	.LASF18
+ 709 00cb 07       		.uleb128 0x7
+ 710 00cc 04       		.byte	0x4
+ 711 00cd B1000000 		.4byte	0xb1
+ 712 00d1 08       		.uleb128 0x8
+ 713 00d2 70       		.byte	0x70
+ 714 00d3 05       		.byte	0x5
+ 715 00d4 1B       		.byte	0x1b
+ 716 00d5 52010000 		.4byte	0x152
+ 717 00d9 09       		.uleb128 0x9
+ 718 00da 89020000 		.4byte	.LASF19
+ 719 00de 05       		.byte	0x5
+ 720 00df 1C       		.byte	0x1c
+ 721 00e0 52010000 		.4byte	0x152
+ 722 00e4 00       		.byte	0
+ 723 00e5 09       		.uleb128 0x9
+ 724 00e6 91020000 		.4byte	.LASF20
+ 725 00ea 05       		.byte	0x5
+ 726 00eb 1D       		.byte	0x1d
+ 727 00ec 52010000 		.4byte	0x152
+ 728 00f0 12       		.byte	0x12
+ 729 00f1 09       		.uleb128 0x9
+ 730 00f2 D9010000 		.4byte	.LASF21
+ 731 00f6 05       		.byte	0x5
+ 732 00f7 1E       		.byte	0x1e
+ 733 00f8 B1000000 		.4byte	0xb1
+ 734 00fc 24       		.byte	0x24
+ 735 00fd 09       		.uleb128 0x9
+ 736 00fe BB020000 		.4byte	.LASF22
+ 737 0102 05       		.byte	0x5
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 20
+
+
+ 738 0103 1F       		.byte	0x1f
+ 739 0104 52010000 		.4byte	0x152
+ 740 0108 25       		.byte	0x25
+ 741 0109 09       		.uleb128 0x9
+ 742 010a DE010000 		.4byte	.LASF23
+ 743 010e 05       		.byte	0x5
+ 744 010f 20       		.byte	0x20
+ 745 0110 B1000000 		.4byte	0xb1
+ 746 0114 37       		.byte	0x37
+ 747 0115 09       		.uleb128 0x9
+ 748 0116 89000000 		.4byte	.LASF24
+ 749 011a 05       		.byte	0x5
+ 750 011b 21       		.byte	0x21
+ 751 011c 52010000 		.4byte	0x152
+ 752 0120 38       		.byte	0x38
+ 753 0121 09       		.uleb128 0x9
+ 754 0122 E3010000 		.4byte	.LASF25
+ 755 0126 05       		.byte	0x5
+ 756 0127 22       		.byte	0x22
+ 757 0128 B1000000 		.4byte	0xb1
+ 758 012c 4A       		.byte	0x4a
+ 759 012d 09       		.uleb128 0x9
+ 760 012e D8020000 		.4byte	.LASF26
+ 761 0132 05       		.byte	0x5
+ 762 0133 23       		.byte	0x23
+ 763 0134 52010000 		.4byte	0x152
+ 764 0138 4B       		.byte	0x4b
+ 765 0139 09       		.uleb128 0x9
+ 766 013a E8010000 		.4byte	.LASF27
+ 767 013e 05       		.byte	0x5
+ 768 013f 24       		.byte	0x24
+ 769 0140 B1000000 		.4byte	0xb1
+ 770 0144 5D       		.byte	0x5d
+ 771 0145 09       		.uleb128 0x9
+ 772 0146 E0020000 		.4byte	.LASF28
+ 773 014a 05       		.byte	0x5
+ 774 014b 25       		.byte	0x25
+ 775 014c 52010000 		.4byte	0x152
+ 776 0150 5E       		.byte	0x5e
+ 777 0151 00       		.byte	0
+ 778 0152 0A       		.uleb128 0xa
+ 779 0153 B1000000 		.4byte	0xb1
+ 780 0157 62010000 		.4byte	0x162
+ 781 015b 0B       		.uleb128 0xb
+ 782 015c C4000000 		.4byte	0xc4
+ 783 0160 11       		.byte	0x11
+ 784 0161 00       		.byte	0
+ 785 0162 03       		.uleb128 0x3
+ 786 0163 18020000 		.4byte	.LASF29
+ 787 0167 05       		.byte	0x5
+ 788 0168 26       		.byte	0x26
+ 789 0169 D1000000 		.4byte	0xd1
+ 790 016d 0C       		.uleb128 0xc
+ 791 016e 57020000 		.4byte	.LASF30
+ 792 0172 01       		.byte	0x1
+ 793 0173 99       		.byte	0x99
+ 794 0174 00000000 		.4byte	.LFB68
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 21
+
+
+ 795 0178 38000000 		.4byte	.LFE68-.LFB68
+ 796 017c 01       		.uleb128 0x1
+ 797 017d 9C       		.byte	0x9c
+ 798 017e 96010000 		.4byte	0x196
+ 799 0182 0D       		.uleb128 0xd
+ 800 0183 2C000000 		.4byte	.LVL0
+ 801 0187 F8050000 		.4byte	0x5f8
+ 802 018b 0E       		.uleb128 0xe
+ 803 018c 01       		.uleb128 0x1
+ 804 018d 50       		.byte	0x50
+ 805 018e 05       		.uleb128 0x5
+ 806 018f 03       		.byte	0x3
+ 807 0190 00000000 		.4byte	message
+ 808 0194 00       		.byte	0
+ 809 0195 00       		.byte	0
+ 810 0196 0C       		.uleb128 0xc
+ 811 0197 68000000 		.4byte	.LASF31
+ 812 019b 01       		.byte	0x1
+ 813 019c 1A       		.byte	0x1a
+ 814 019d 00000000 		.4byte	.LFB64
+ 815 01a1 74000000 		.4byte	.LFE64-.LFB64
+ 816 01a5 01       		.uleb128 0x1
+ 817 01a6 9C       		.byte	0x9c
+ 818 01a7 7E020000 		.4byte	0x27e
+ 819 01ab 0F       		.uleb128 0xf
+ 820 01ac 06000000 		.4byte	.LVL1
+ 821 01b0 6D010000 		.4byte	0x16d
+ 822 01b4 10       		.uleb128 0x10
+ 823 01b5 24000000 		.4byte	.LVL2
+ 824 01b9 F8050000 		.4byte	0x5f8
+ 825 01bd C8010000 		.4byte	0x1c8
+ 826 01c1 0E       		.uleb128 0xe
+ 827 01c2 01       		.uleb128 0x1
+ 828 01c3 50       		.byte	0x50
+ 829 01c4 02       		.uleb128 0x2
+ 830 01c5 74       		.byte	0x74
+ 831 01c6 00       		.sleb128 0
+ 832 01c7 00       		.byte	0
+ 833 01c8 10       		.uleb128 0x10
+ 834 01c9 30000000 		.4byte	.LVL3
+ 835 01cd 03060000 		.4byte	0x603
+ 836 01d1 EF010000 		.4byte	0x1ef
+ 837 01d5 0E       		.uleb128 0xe
+ 838 01d6 01       		.uleb128 0x1
+ 839 01d7 50       		.byte	0x50
+ 840 01d8 02       		.uleb128 0x2
+ 841 01d9 74       		.byte	0x74
+ 842 01da 00       		.sleb128 0
+ 843 01db 0E       		.uleb128 0xe
+ 844 01dc 01       		.uleb128 0x1
+ 845 01dd 51       		.byte	0x51
+ 846 01de 05       		.uleb128 0x5
+ 847 01df 03       		.byte	0x3
+ 848 01e0 44000000 		.4byte	.LC2
+ 849 01e4 0E       		.uleb128 0xe
+ 850 01e5 01       		.uleb128 0x1
+ 851 01e6 52       		.byte	0x52
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 22
+
+
+ 852 01e7 01       		.uleb128 0x1
+ 853 01e8 31       		.byte	0x31
+ 854 01e9 0E       		.uleb128 0xe
+ 855 01ea 01       		.uleb128 0x1
+ 856 01eb 53       		.byte	0x53
+ 857 01ec 01       		.uleb128 0x1
+ 858 01ed 32       		.byte	0x32
+ 859 01ee 00       		.byte	0
+ 860 01ef 10       		.uleb128 0x10
+ 861 01f0 36000000 		.4byte	.LVL4
+ 862 01f4 F8050000 		.4byte	0x5f8
+ 863 01f8 03020000 		.4byte	0x203
+ 864 01fc 0E       		.uleb128 0xe
+ 865 01fd 01       		.uleb128 0x1
+ 866 01fe 50       		.byte	0x50
+ 867 01ff 02       		.uleb128 0x2
+ 868 0200 74       		.byte	0x74
+ 869 0201 00       		.sleb128 0
+ 870 0202 00       		.byte	0
+ 871 0203 10       		.uleb128 0x10
+ 872 0204 40000000 		.4byte	.LVL5
+ 873 0208 03060000 		.4byte	0x603
+ 874 020c 29020000 		.4byte	0x229
+ 875 0210 0E       		.uleb128 0xe
+ 876 0211 01       		.uleb128 0x1
+ 877 0212 50       		.byte	0x50
+ 878 0213 02       		.uleb128 0x2
+ 879 0214 74       		.byte	0x74
+ 880 0215 00       		.sleb128 0
+ 881 0216 0E       		.uleb128 0xe
+ 882 0217 01       		.uleb128 0x1
+ 883 0218 51       		.byte	0x51
+ 884 0219 05       		.uleb128 0x5
+ 885 021a 03       		.byte	0x3
+ 886 021b B4000000 		.4byte	.LC4
+ 887 021f 0E       		.uleb128 0xe
+ 888 0220 01       		.uleb128 0x1
+ 889 0221 52       		.byte	0x52
+ 890 0222 05       		.uleb128 0x5
+ 891 0223 03       		.byte	0x3
+ 892 0224 A8000000 		.4byte	.LC3
+ 893 0228 00       		.byte	0
+ 894 0229 10       		.uleb128 0x10
+ 895 022a 46000000 		.4byte	.LVL6
+ 896 022e F8050000 		.4byte	0x5f8
+ 897 0232 3D020000 		.4byte	0x23d
+ 898 0236 0E       		.uleb128 0xe
+ 899 0237 01       		.uleb128 0x1
+ 900 0238 50       		.byte	0x50
+ 901 0239 02       		.uleb128 0x2
+ 902 023a 74       		.byte	0x74
+ 903 023b 00       		.sleb128 0
+ 904 023c 00       		.byte	0
+ 905 023d 10       		.uleb128 0x10
+ 906 023e 50000000 		.4byte	.LVL7
+ 907 0242 0E060000 		.4byte	0x60e
+ 908 0246 60020000 		.4byte	0x260
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 23
+
+
+ 909 024a 0E       		.uleb128 0xe
+ 910 024b 01       		.uleb128 0x1
+ 911 024c 50       		.byte	0x50
+ 912 024d 02       		.uleb128 0x2
+ 913 024e 74       		.byte	0x74
+ 914 024f 00       		.sleb128 0
+ 915 0250 0E       		.uleb128 0xe
+ 916 0251 01       		.uleb128 0x1
+ 917 0252 51       		.byte	0x51
+ 918 0253 05       		.uleb128 0x5
+ 919 0254 03       		.byte	0x3
+ 920 0255 DC000000 		.4byte	.LC5
+ 921 0259 0E       		.uleb128 0xe
+ 922 025a 01       		.uleb128 0x1
+ 923 025b 52       		.byte	0x52
+ 924 025c 02       		.uleb128 0x2
+ 925 025d 08       		.byte	0x8
+ 926 025e B4       		.byte	0xb4
+ 927 025f 00       		.byte	0
+ 928 0260 10       		.uleb128 0x10
+ 929 0261 56000000 		.4byte	.LVL8
+ 930 0265 F8050000 		.4byte	0x5f8
+ 931 0269 74020000 		.4byte	0x274
+ 932 026d 0E       		.uleb128 0xe
+ 933 026e 01       		.uleb128 0x1
+ 934 026f 50       		.byte	0x50
+ 935 0270 02       		.uleb128 0x2
+ 936 0271 74       		.byte	0x74
+ 937 0272 00       		.sleb128 0
+ 938 0273 00       		.byte	0
+ 939 0274 0F       		.uleb128 0xf
+ 940 0275 5A000000 		.4byte	.LVL9
+ 941 0279 6D010000 		.4byte	0x16d
+ 942 027d 00       		.byte	0
+ 943 027e 0C       		.uleb128 0xc
+ 944 027f 4B000000 		.4byte	.LASF32
+ 945 0283 01       		.byte	0x1
+ 946 0284 41       		.byte	0x41
+ 947 0285 00000000 		.4byte	.LFB65
+ 948 0289 28000000 		.4byte	.LFE65-.LFB65
+ 949 028d 01       		.uleb128 0x1
+ 950 028e 9C       		.byte	0x9c
+ 951 028f DC020000 		.4byte	0x2dc
+ 952 0293 0F       		.uleb128 0xf
+ 953 0294 06000000 		.4byte	.LVL10
+ 954 0298 6D010000 		.4byte	0x16d
+ 955 029c 10       		.uleb128 0x10
+ 956 029d 12000000 		.4byte	.LVL11
+ 957 02a1 03060000 		.4byte	0x603
+ 958 02a5 BE020000 		.4byte	0x2be
+ 959 02a9 0E       		.uleb128 0xe
+ 960 02aa 01       		.uleb128 0x1
+ 961 02ab 50       		.byte	0x50
+ 962 02ac 02       		.uleb128 0x2
+ 963 02ad 74       		.byte	0x74
+ 964 02ae 00       		.sleb128 0
+ 965 02af 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 24
+
+
+ 966 02b0 01       		.uleb128 0x1
+ 967 02b1 51       		.byte	0x51
+ 968 02b2 05       		.uleb128 0x5
+ 969 02b3 03       		.byte	0x3
+ 970 02b4 90010000 		.4byte	.LC6
+ 971 02b8 0E       		.uleb128 0xe
+ 972 02b9 01       		.uleb128 0x1
+ 973 02ba 52       		.byte	0x52
+ 974 02bb 01       		.uleb128 0x1
+ 975 02bc 31       		.byte	0x31
+ 976 02bd 00       		.byte	0
+ 977 02be 10       		.uleb128 0x10
+ 978 02bf 18000000 		.4byte	.LVL12
+ 979 02c3 F8050000 		.4byte	0x5f8
+ 980 02c7 D2020000 		.4byte	0x2d2
+ 981 02cb 0E       		.uleb128 0xe
+ 982 02cc 01       		.uleb128 0x1
+ 983 02cd 50       		.byte	0x50
+ 984 02ce 02       		.uleb128 0x2
+ 985 02cf 74       		.byte	0x74
+ 986 02d0 00       		.sleb128 0
+ 987 02d1 00       		.byte	0
+ 988 02d2 0F       		.uleb128 0xf
+ 989 02d3 1C000000 		.4byte	.LVL13
+ 990 02d7 6D010000 		.4byte	0x16d
+ 991 02db 00       		.byte	0
+ 992 02dc 0C       		.uleb128 0xc
+ 993 02dd 30000000 		.4byte	.LASF33
+ 994 02e1 01       		.byte	0x1
+ 995 02e2 54       		.byte	0x54
+ 996 02e3 00000000 		.4byte	.LFB66
+ 997 02e7 AC000000 		.4byte	.LFE66-.LFB66
+ 998 02eb 01       		.uleb128 0x1
+ 999 02ec 9C       		.byte	0x9c
+ 1000 02ed 32040000 		.4byte	0x432
+ 1001 02f1 11       		.uleb128 0x11
+ 1002 02f2 F4010000 		.4byte	.LASF52
+ 1003 02f6 01       		.byte	0x1
+ 1004 02f7 54       		.byte	0x54
+ 1005 02f8 B1000000 		.4byte	0xb1
+ 1006 02fc 00000000 		.4byte	.LLST0
+ 1007 0300 12       		.uleb128 0x12
+ 1008 0301 6900     		.ascii	"i\000"
+ 1009 0303 01       		.byte	0x1
+ 1010 0304 57       		.byte	0x57
+ 1011 0305 81000000 		.4byte	0x81
+ 1012 0309 21000000 		.4byte	.LLST1
+ 1013 030d 13       		.uleb128 0x13
+ 1014 030e 45000000 		.4byte	.LASF34
+ 1015 0312 01       		.byte	0x1
+ 1016 0313 58       		.byte	0x58
+ 1017 0314 81000000 		.4byte	0x81
+ 1018 0318 24       		.byte	0x24
+ 1019 0319 14       		.uleb128 0x14
+ 1020 031a D4010000 		.4byte	.LASF35
+ 1021 031e 01       		.byte	0x1
+ 1022 031f 59       		.byte	0x59
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 25
+
+
+ 1023 0320 81000000 		.4byte	0x81
+ 1024 0324 4C000000 		.4byte	.LLST2
+ 1025 0328 14       		.uleb128 0x14
+ 1026 0329 9E020000 		.4byte	.LASF36
+ 1027 032d 01       		.byte	0x1
+ 1028 032e 65       		.byte	0x65
+ 1029 032f CB000000 		.4byte	0xcb
+ 1030 0333 5F000000 		.4byte	.LLST3
+ 1031 0337 10       		.uleb128 0x10
+ 1032 0338 18000000 		.4byte	.LVL16
+ 1033 033c 0E060000 		.4byte	0x60e
+ 1034 0340 57030000 		.4byte	0x357
+ 1035 0344 0E       		.uleb128 0xe
+ 1036 0345 01       		.uleb128 0x1
+ 1037 0346 50       		.byte	0x50
+ 1038 0347 02       		.uleb128 0x2
+ 1039 0348 74       		.byte	0x74
+ 1040 0349 00       		.sleb128 0
+ 1041 034a 0E       		.uleb128 0xe
+ 1042 034b 01       		.uleb128 0x1
+ 1043 034c 51       		.byte	0x51
+ 1044 034d 02       		.uleb128 0x2
+ 1045 034e 75       		.byte	0x75
+ 1046 034f 00       		.sleb128 0
+ 1047 0350 0E       		.uleb128 0xe
+ 1048 0351 01       		.uleb128 0x1
+ 1049 0352 52       		.byte	0x52
+ 1050 0353 02       		.uleb128 0x2
+ 1051 0354 76       		.byte	0x76
+ 1052 0355 00       		.sleb128 0
+ 1053 0356 00       		.byte	0
+ 1054 0357 10       		.uleb128 0x10
+ 1055 0358 22000000 		.4byte	.LVL17
+ 1056 035c 0E060000 		.4byte	0x60e
+ 1057 0360 7D030000 		.4byte	0x37d
+ 1058 0364 0E       		.uleb128 0xe
+ 1059 0365 01       		.uleb128 0x1
+ 1060 0366 50       		.byte	0x50
+ 1061 0367 05       		.uleb128 0x5
+ 1062 0368 74       		.byte	0x74
+ 1063 0369 00       		.sleb128 0
+ 1064 036a 76       		.byte	0x76
+ 1065 036b 00       		.sleb128 0
+ 1066 036c 22       		.byte	0x22
+ 1067 036d 0E       		.uleb128 0xe
+ 1068 036e 01       		.uleb128 0x1
+ 1069 036f 51       		.byte	0x51
+ 1070 0370 05       		.uleb128 0x5
+ 1071 0371 75       		.byte	0x75
+ 1072 0372 00       		.sleb128 0
+ 1073 0373 76       		.byte	0x76
+ 1074 0374 00       		.sleb128 0
+ 1075 0375 22       		.byte	0x22
+ 1076 0376 0E       		.uleb128 0xe
+ 1077 0377 01       		.uleb128 0x1
+ 1078 0378 52       		.byte	0x52
+ 1079 0379 02       		.uleb128 0x2
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 26
+
+
+ 1080 037a 76       		.byte	0x76
+ 1081 037b 00       		.sleb128 0
+ 1082 037c 00       		.byte	0
+ 1083 037d 10       		.uleb128 0x10
+ 1084 037e 30000000 		.4byte	.LVL18
+ 1085 0382 0E060000 		.4byte	0x60e
+ 1086 0386 9F030000 		.4byte	0x39f
+ 1087 038a 0E       		.uleb128 0xe
+ 1088 038b 01       		.uleb128 0x1
+ 1089 038c 50       		.byte	0x50
+ 1090 038d 03       		.uleb128 0x3
+ 1091 038e 74       		.byte	0x74
+ 1092 038f E001     		.sleb128 224
+ 1093 0391 0E       		.uleb128 0xe
+ 1094 0392 01       		.uleb128 0x1
+ 1095 0393 51       		.byte	0x51
+ 1096 0394 03       		.uleb128 0x3
+ 1097 0395 75       		.byte	0x75
+ 1098 0396 E001     		.sleb128 224
+ 1099 0398 0E       		.uleb128 0xe
+ 1100 0399 01       		.uleb128 0x1
+ 1101 039a 52       		.byte	0x52
+ 1102 039b 02       		.uleb128 0x2
+ 1103 039c 76       		.byte	0x76
+ 1104 039d 00       		.sleb128 0
+ 1105 039e 00       		.byte	0
+ 1106 039f 0F       		.uleb128 0xf
+ 1107 03a0 48000000 		.4byte	.LVL21
+ 1108 03a4 6D010000 		.4byte	0x16d
+ 1109 03a8 10       		.uleb128 0x10
+ 1110 03a9 58000000 		.4byte	.LVL22
+ 1111 03ad 03060000 		.4byte	0x603
+ 1112 03b1 D7030000 		.4byte	0x3d7
+ 1113 03b5 0E       		.uleb128 0xe
+ 1114 03b6 01       		.uleb128 0x1
+ 1115 03b7 50       		.byte	0x50
+ 1116 03b8 02       		.uleb128 0x2
+ 1117 03b9 74       		.byte	0x74
+ 1118 03ba 00       		.sleb128 0
+ 1119 03bb 0E       		.uleb128 0xe
+ 1120 03bc 01       		.uleb128 0x1
+ 1121 03bd 51       		.byte	0x51
+ 1122 03be 05       		.uleb128 0x5
+ 1123 03bf 03       		.byte	0x3
+ 1124 03c0 D4010000 		.4byte	.LC7
+ 1125 03c4 0E       		.uleb128 0xe
+ 1126 03c5 01       		.uleb128 0x1
+ 1127 03c6 52       		.byte	0x52
+ 1128 03c7 05       		.uleb128 0x5
+ 1129 03c8 03       		.byte	0x3
+ 1130 03c9 70000000 		.4byte	set_of_tables+112
+ 1131 03cd 0E       		.uleb128 0xe
+ 1132 03ce 01       		.uleb128 0x1
+ 1133 03cf 53       		.byte	0x53
+ 1134 03d0 05       		.uleb128 0x5
+ 1135 03d1 03       		.byte	0x3
+ 1136 03d2 82000000 		.4byte	set_of_tables+130
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 27
+
+
+ 1137 03d6 00       		.byte	0
+ 1138 03d7 10       		.uleb128 0x10
+ 1139 03d8 5E000000 		.4byte	.LVL23
+ 1140 03dc F8050000 		.4byte	0x5f8
+ 1141 03e0 EB030000 		.4byte	0x3eb
+ 1142 03e4 0E       		.uleb128 0xe
+ 1143 03e5 01       		.uleb128 0x1
+ 1144 03e6 50       		.byte	0x50
+ 1145 03e7 02       		.uleb128 0x2
+ 1146 03e8 74       		.byte	0x74
+ 1147 03e9 00       		.sleb128 0
+ 1148 03ea 00       		.byte	0
+ 1149 03eb 10       		.uleb128 0x10
+ 1150 03ec 74000000 		.4byte	.LVL27
+ 1151 03f0 03060000 		.4byte	0x603
+ 1152 03f4 14040000 		.4byte	0x414
+ 1153 03f8 0E       		.uleb128 0xe
+ 1154 03f9 01       		.uleb128 0x1
+ 1155 03fa 50       		.byte	0x50
+ 1156 03fb 02       		.uleb128 0x2
+ 1157 03fc 75       		.byte	0x75
+ 1158 03fd 00       		.sleb128 0
+ 1159 03fe 0E       		.uleb128 0xe
+ 1160 03ff 01       		.uleb128 0x1
+ 1161 0400 51       		.byte	0x51
+ 1162 0401 05       		.uleb128 0x5
+ 1163 0402 03       		.byte	0x3
+ 1164 0403 E4010000 		.4byte	.LC8
+ 1165 0407 0E       		.uleb128 0xe
+ 1166 0408 01       		.uleb128 0x1
+ 1167 0409 53       		.byte	0x53
+ 1168 040a 08       		.uleb128 0x8
+ 1169 040b 74       		.byte	0x74
+ 1170 040c 00       		.sleb128 0
+ 1171 040d 03       		.byte	0x3
+ 1172 040e 71000000 		.4byte	set_of_tables+113
+ 1173 0412 22       		.byte	0x22
+ 1174 0413 00       		.byte	0
+ 1175 0414 10       		.uleb128 0x10
+ 1176 0415 7A000000 		.4byte	.LVL28
+ 1177 0419 F8050000 		.4byte	0x5f8
+ 1178 041d 28040000 		.4byte	0x428
+ 1179 0421 0E       		.uleb128 0xe
+ 1180 0422 01       		.uleb128 0x1
+ 1181 0423 50       		.byte	0x50
+ 1182 0424 02       		.uleb128 0x2
+ 1183 0425 75       		.byte	0x75
+ 1184 0426 00       		.sleb128 0
+ 1185 0427 00       		.byte	0
+ 1186 0428 0F       		.uleb128 0xf
+ 1187 0429 86000000 		.4byte	.LVL31
+ 1188 042d 6D010000 		.4byte	0x16d
+ 1189 0431 00       		.byte	0
+ 1190 0432 0C       		.uleb128 0xc
+ 1191 0433 26000000 		.4byte	.LASF37
+ 1192 0437 01       		.byte	0x1
+ 1193 0438 82       		.byte	0x82
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 28
+
+
+ 1194 0439 00000000 		.4byte	.LFB67
+ 1195 043d E4000000 		.4byte	.LFE67-.LFB67
+ 1196 0441 01       		.uleb128 0x1
+ 1197 0442 9C       		.byte	0x9c
+ 1198 0443 18050000 		.4byte	0x518
+ 1199 0447 0F       		.uleb128 0xf
+ 1200 0448 06000000 		.4byte	.LVL33
+ 1201 044c 6D010000 		.4byte	0x16d
+ 1202 0450 10       		.uleb128 0x10
+ 1203 0451 32000000 		.4byte	.LVL34
+ 1204 0455 F8050000 		.4byte	0x5f8
+ 1205 0459 64040000 		.4byte	0x464
+ 1206 045d 0E       		.uleb128 0xe
+ 1207 045e 01       		.uleb128 0x1
+ 1208 045f 50       		.byte	0x50
+ 1209 0460 02       		.uleb128 0x2
+ 1210 0461 74       		.byte	0x74
+ 1211 0462 00       		.sleb128 0
+ 1212 0463 00       		.byte	0
+ 1213 0464 10       		.uleb128 0x10
+ 1214 0465 58000000 		.4byte	.LVL35
+ 1215 0469 F8050000 		.4byte	0x5f8
+ 1216 046d 78040000 		.4byte	0x478
+ 1217 0471 0E       		.uleb128 0xe
+ 1218 0472 01       		.uleb128 0x1
+ 1219 0473 50       		.byte	0x50
+ 1220 0474 02       		.uleb128 0x2
+ 1221 0475 74       		.byte	0x74
+ 1222 0476 00       		.sleb128 0
+ 1223 0477 00       		.byte	0
+ 1224 0478 10       		.uleb128 0x10
+ 1225 0479 62000000 		.4byte	.LVL36
+ 1226 047d 0E060000 		.4byte	0x60e
+ 1227 0481 9B040000 		.4byte	0x49b
+ 1228 0485 0E       		.uleb128 0xe
+ 1229 0486 01       		.uleb128 0x1
+ 1230 0487 50       		.byte	0x50
+ 1231 0488 02       		.uleb128 0x2
+ 1232 0489 74       		.byte	0x74
+ 1233 048a 00       		.sleb128 0
+ 1234 048b 0E       		.uleb128 0xe
+ 1235 048c 01       		.uleb128 0x1
+ 1236 048d 51       		.byte	0x51
+ 1237 048e 05       		.uleb128 0x5
+ 1238 048f 03       		.byte	0x3
+ 1239 0490 30020000 		.4byte	.LC11
+ 1240 0494 0E       		.uleb128 0xe
+ 1241 0495 01       		.uleb128 0x1
+ 1242 0496 52       		.byte	0x52
+ 1243 0497 02       		.uleb128 0x2
+ 1244 0498 08       		.byte	0x8
+ 1245 0499 5F       		.byte	0x5f
+ 1246 049a 00       		.byte	0
+ 1247 049b 10       		.uleb128 0x10
+ 1248 049c 68000000 		.4byte	.LVL37
+ 1249 04a0 F8050000 		.4byte	0x5f8
+ 1250 04a4 AF040000 		.4byte	0x4af
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 29
+
+
+ 1251 04a8 0E       		.uleb128 0xe
+ 1252 04a9 01       		.uleb128 0x1
+ 1253 04aa 50       		.byte	0x50
+ 1254 04ab 02       		.uleb128 0x2
+ 1255 04ac 74       		.byte	0x74
+ 1256 04ad 00       		.sleb128 0
+ 1257 04ae 00       		.byte	0
+ 1258 04af 10       		.uleb128 0x10
+ 1259 04b0 72000000 		.4byte	.LVL38
+ 1260 04b4 0E060000 		.4byte	0x60e
+ 1261 04b8 D2040000 		.4byte	0x4d2
+ 1262 04bc 0E       		.uleb128 0xe
+ 1263 04bd 01       		.uleb128 0x1
+ 1264 04be 50       		.byte	0x50
+ 1265 04bf 02       		.uleb128 0x2
+ 1266 04c0 74       		.byte	0x74
+ 1267 04c1 00       		.sleb128 0
+ 1268 04c2 0E       		.uleb128 0xe
+ 1269 04c3 01       		.uleb128 0x1
+ 1270 04c4 51       		.byte	0x51
+ 1271 04c5 05       		.uleb128 0x5
+ 1272 04c6 03       		.byte	0x3
+ 1273 04c7 90020000 		.4byte	.LC12
+ 1274 04cb 0E       		.uleb128 0xe
+ 1275 04cc 01       		.uleb128 0x1
+ 1276 04cd 52       		.byte	0x52
+ 1277 04ce 02       		.uleb128 0x2
+ 1278 04cf 08       		.byte	0x8
+ 1279 04d0 5A       		.byte	0x5a
+ 1280 04d1 00       		.byte	0
+ 1281 04d2 10       		.uleb128 0x10
+ 1282 04d3 78000000 		.4byte	.LVL39
+ 1283 04d7 F8050000 		.4byte	0x5f8
+ 1284 04db E6040000 		.4byte	0x4e6
+ 1285 04df 0E       		.uleb128 0xe
+ 1286 04e0 01       		.uleb128 0x1
+ 1287 04e1 50       		.byte	0x50
+ 1288 04e2 02       		.uleb128 0x2
+ 1289 04e3 74       		.byte	0x74
+ 1290 04e4 00       		.sleb128 0
+ 1291 04e5 00       		.byte	0
+ 1292 04e6 10       		.uleb128 0x10
+ 1293 04e7 A2000000 		.4byte	.LVL40
+ 1294 04eb F8050000 		.4byte	0x5f8
+ 1295 04ef FA040000 		.4byte	0x4fa
+ 1296 04f3 0E       		.uleb128 0xe
+ 1297 04f4 01       		.uleb128 0x1
+ 1298 04f5 50       		.byte	0x50
+ 1299 04f6 02       		.uleb128 0x2
+ 1300 04f7 75       		.byte	0x75
+ 1301 04f8 00       		.sleb128 0
+ 1302 04f9 00       		.byte	0
+ 1303 04fa 10       		.uleb128 0x10
+ 1304 04fb C0000000 		.4byte	.LVL41
+ 1305 04ff F8050000 		.4byte	0x5f8
+ 1306 0503 0E050000 		.4byte	0x50e
+ 1307 0507 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 30
+
+
+ 1308 0508 01       		.uleb128 0x1
+ 1309 0509 50       		.byte	0x50
+ 1310 050a 02       		.uleb128 0x2
+ 1311 050b 75       		.byte	0x75
+ 1312 050c 00       		.sleb128 0
+ 1313 050d 00       		.byte	0
+ 1314 050e 0F       		.uleb128 0xf
+ 1315 050f C4000000 		.4byte	.LVL42
+ 1316 0513 6D010000 		.4byte	0x16d
+ 1317 0517 00       		.byte	0
+ 1318 0518 15       		.uleb128 0x15
+ 1319 0519 0B020000 		.4byte	.LASF38
+ 1320 051d 06       		.byte	0x6
+ 1321 051e 1207     		.2byte	0x712
+ 1322 0520 24050000 		.4byte	0x524
+ 1323 0524 06       		.uleb128 0x6
+ 1324 0525 8C000000 		.4byte	0x8c
+ 1325 0529 16       		.uleb128 0x16
+ 1326 052a CA010000 		.4byte	.LASF39
+ 1327 052e 07       		.byte	0x7
+ 1328 052f 1B       		.byte	0x1b
+ 1329 0530 B8000000 		.4byte	0xb8
+ 1330 0534 05       		.uleb128 0x5
+ 1331 0535 03       		.byte	0x3
+ 1332 0536 00000000 		.4byte	FlagReady
+ 1333 053a 16       		.uleb128 0x16
+ 1334 053b C3020000 		.4byte	.LASF40
+ 1335 053f 07       		.byte	0x7
+ 1336 0540 23       		.byte	0x23
+ 1337 0541 B1000000 		.4byte	0xb1
+ 1338 0545 05       		.uleb128 0x5
+ 1339 0546 03       		.byte	0x3
+ 1340 0547 00000000 		.4byte	change_settings_flag
+ 1341 054b 16       		.uleb128 0x16
+ 1342 054c 45000000 		.4byte	.LASF34
+ 1343 0550 07       		.byte	0x7
+ 1344 0551 24       		.byte	0x24
+ 1345 0552 B1000000 		.4byte	0xb1
+ 1346 0556 05       		.uleb128 0x5
+ 1347 0557 03       		.byte	0x3
+ 1348 0558 00000000 		.4byte	start
+ 1349 055c 16       		.uleb128 0x16
+ 1350 055d E8020000 		.4byte	.LASF41
+ 1351 0561 07       		.byte	0x7
+ 1352 0562 25       		.byte	0x25
+ 1353 0563 81000000 		.4byte	0x81
+ 1354 0567 05       		.uleb128 0x5
+ 1355 0568 03       		.byte	0x3
+ 1356 0569 00000000 		.4byte	option_table
+ 1357 056d 16       		.uleb128 0x16
+ 1358 056e 99010000 		.4byte	.LASF42
+ 1359 0572 05       		.byte	0x5
+ 1360 0573 28       		.byte	0x28
+ 1361 0574 B1000000 		.4byte	0xb1
+ 1362 0578 05       		.uleb128 0x5
+ 1363 0579 03       		.byte	0x3
+ 1364 057a 00000000 		.4byte	initialized
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 31
+
+
+ 1365 057e 0A       		.uleb128 0xa
+ 1366 057f 62010000 		.4byte	0x162
+ 1367 0583 8E050000 		.4byte	0x58e
+ 1368 0587 0B       		.uleb128 0xb
+ 1369 0588 C4000000 		.4byte	0xc4
+ 1370 058c 02       		.byte	0x2
+ 1371 058d 00       		.byte	0
+ 1372 058e 16       		.uleb128 0x16
+ 1373 058f 7B000000 		.4byte	.LASF43
+ 1374 0593 05       		.byte	0x5
+ 1375 0594 2A       		.byte	0x2a
+ 1376 0595 7E050000 		.4byte	0x57e
+ 1377 0599 05       		.uleb128 0x5
+ 1378 059a 03       		.byte	0x3
+ 1379 059b 00000000 		.4byte	set_of_tables
+ 1380 059f 17       		.uleb128 0x17
+ 1381 05a0 46535200 		.ascii	"FSR\000"
+ 1382 05a4 08       		.byte	0x8
+ 1383 05a5 13       		.byte	0x13
+ 1384 05a6 B0050000 		.4byte	0x5b0
+ 1385 05aa 05       		.uleb128 0x5
+ 1386 05ab 03       		.byte	0x3
+ 1387 05ac 00000000 		.4byte	FSR
+ 1388 05b0 18       		.uleb128 0x18
+ 1389 05b1 62010000 		.4byte	0x162
+ 1390 05b5 16       		.uleb128 0x16
+ 1391 05b6 61020000 		.4byte	.LASF44
+ 1392 05ba 08       		.byte	0x8
+ 1393 05bb 14       		.byte	0x14
+ 1394 05bc B0050000 		.4byte	0x5b0
+ 1395 05c0 05       		.uleb128 0x5
+ 1396 05c1 03       		.byte	0x3
+ 1397 05c2 00000000 		.4byte	SampFreq
+ 1398 05c6 16       		.uleb128 0x16
+ 1399 05c7 00020000 		.4byte	.LASF45
+ 1400 05cb 08       		.byte	0x8
+ 1401 05cc 15       		.byte	0x15
+ 1402 05cd B0050000 		.4byte	0x5b0
+ 1403 05d1 05       		.uleb128 0x5
+ 1404 05d2 03       		.byte	0x3
+ 1405 05d3 00000000 		.4byte	TempFormat
+ 1406 05d7 0A       		.uleb128 0xa
+ 1407 05d8 B1000000 		.4byte	0xb1
+ 1408 05dc E7050000 		.4byte	0x5e7
+ 1409 05e0 0B       		.uleb128 0xb
+ 1410 05e1 C4000000 		.4byte	0xc4
+ 1411 05e5 31       		.byte	0x31
+ 1412 05e6 00       		.byte	0
+ 1413 05e7 16       		.uleb128 0x16
+ 1414 05e8 00000000 		.4byte	.LASF46
+ 1415 05ec 01       		.byte	0x1
+ 1416 05ed 10       		.byte	0x10
+ 1417 05ee D7050000 		.4byte	0x5d7
+ 1418 05f2 05       		.uleb128 0x5
+ 1419 05f3 03       		.byte	0x3
+ 1420 05f4 00000000 		.4byte	message
+ 1421 05f8 19       		.uleb128 0x19
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 32
+
+
+ 1422 05f9 16030000 		.4byte	.LASF47
+ 1423 05fd 16030000 		.4byte	.LASF47
+ 1424 0601 09       		.byte	0x9
+ 1425 0602 8B       		.byte	0x8b
+ 1426 0603 19       		.uleb128 0x19
+ 1427 0604 25030000 		.4byte	.LASF48
+ 1428 0608 25030000 		.4byte	.LASF48
+ 1429 060c 0A       		.byte	0xa
+ 1430 060d E7       		.byte	0xe7
+ 1431 060e 1A       		.uleb128 0x1a
+ 1432 060f A4020000 		.4byte	.LASF53
+ 1433 0613 A4020000 		.4byte	.LASF53
+ 1434 0617 00       		.byte	0
+ 1435              		.section	.debug_abbrev,"",%progbits
+ 1436              	.Ldebug_abbrev0:
+ 1437 0000 01       		.uleb128 0x1
+ 1438 0001 11       		.uleb128 0x11
+ 1439 0002 01       		.byte	0x1
+ 1440 0003 25       		.uleb128 0x25
+ 1441 0004 0E       		.uleb128 0xe
+ 1442 0005 13       		.uleb128 0x13
+ 1443 0006 0B       		.uleb128 0xb
+ 1444 0007 03       		.uleb128 0x3
+ 1445 0008 0E       		.uleb128 0xe
+ 1446 0009 1B       		.uleb128 0x1b
+ 1447 000a 0E       		.uleb128 0xe
+ 1448 000b 55       		.uleb128 0x55
+ 1449 000c 17       		.uleb128 0x17
+ 1450 000d 11       		.uleb128 0x11
+ 1451 000e 01       		.uleb128 0x1
+ 1452 000f 10       		.uleb128 0x10
+ 1453 0010 17       		.uleb128 0x17
+ 1454 0011 00       		.byte	0
+ 1455 0012 00       		.byte	0
+ 1456 0013 02       		.uleb128 0x2
+ 1457 0014 24       		.uleb128 0x24
+ 1458 0015 00       		.byte	0
+ 1459 0016 0B       		.uleb128 0xb
+ 1460 0017 0B       		.uleb128 0xb
+ 1461 0018 3E       		.uleb128 0x3e
+ 1462 0019 0B       		.uleb128 0xb
+ 1463 001a 03       		.uleb128 0x3
+ 1464 001b 0E       		.uleb128 0xe
+ 1465 001c 00       		.byte	0
+ 1466 001d 00       		.byte	0
+ 1467 001e 03       		.uleb128 0x3
+ 1468 001f 16       		.uleb128 0x16
+ 1469 0020 00       		.byte	0
+ 1470 0021 03       		.uleb128 0x3
+ 1471 0022 0E       		.uleb128 0xe
+ 1472 0023 3A       		.uleb128 0x3a
+ 1473 0024 0B       		.uleb128 0xb
+ 1474 0025 3B       		.uleb128 0x3b
+ 1475 0026 0B       		.uleb128 0xb
+ 1476 0027 49       		.uleb128 0x49
+ 1477 0028 13       		.uleb128 0x13
+ 1478 0029 00       		.byte	0
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 33
+
+
+ 1479 002a 00       		.byte	0
+ 1480 002b 04       		.uleb128 0x4
+ 1481 002c 24       		.uleb128 0x24
+ 1482 002d 00       		.byte	0
+ 1483 002e 0B       		.uleb128 0xb
+ 1484 002f 0B       		.uleb128 0xb
+ 1485 0030 3E       		.uleb128 0x3e
+ 1486 0031 0B       		.uleb128 0xb
+ 1487 0032 03       		.uleb128 0x3
+ 1488 0033 08       		.uleb128 0x8
+ 1489 0034 00       		.byte	0
+ 1490 0035 00       		.byte	0
+ 1491 0036 05       		.uleb128 0x5
+ 1492 0037 16       		.uleb128 0x16
+ 1493 0038 00       		.byte	0
+ 1494 0039 03       		.uleb128 0x3
+ 1495 003a 0E       		.uleb128 0xe
+ 1496 003b 3A       		.uleb128 0x3a
+ 1497 003c 0B       		.uleb128 0xb
+ 1498 003d 3B       		.uleb128 0x3b
+ 1499 003e 05       		.uleb128 0x5
+ 1500 003f 49       		.uleb128 0x49
+ 1501 0040 13       		.uleb128 0x13
+ 1502 0041 00       		.byte	0
+ 1503 0042 00       		.byte	0
+ 1504 0043 06       		.uleb128 0x6
+ 1505 0044 35       		.uleb128 0x35
+ 1506 0045 00       		.byte	0
+ 1507 0046 49       		.uleb128 0x49
+ 1508 0047 13       		.uleb128 0x13
+ 1509 0048 00       		.byte	0
+ 1510 0049 00       		.byte	0
+ 1511 004a 07       		.uleb128 0x7
+ 1512 004b 0F       		.uleb128 0xf
+ 1513 004c 00       		.byte	0
+ 1514 004d 0B       		.uleb128 0xb
+ 1515 004e 0B       		.uleb128 0xb
+ 1516 004f 49       		.uleb128 0x49
+ 1517 0050 13       		.uleb128 0x13
+ 1518 0051 00       		.byte	0
+ 1519 0052 00       		.byte	0
+ 1520 0053 08       		.uleb128 0x8
+ 1521 0054 13       		.uleb128 0x13
+ 1522 0055 01       		.byte	0x1
+ 1523 0056 0B       		.uleb128 0xb
+ 1524 0057 0B       		.uleb128 0xb
+ 1525 0058 3A       		.uleb128 0x3a
+ 1526 0059 0B       		.uleb128 0xb
+ 1527 005a 3B       		.uleb128 0x3b
+ 1528 005b 0B       		.uleb128 0xb
+ 1529 005c 01       		.uleb128 0x1
+ 1530 005d 13       		.uleb128 0x13
+ 1531 005e 00       		.byte	0
+ 1532 005f 00       		.byte	0
+ 1533 0060 09       		.uleb128 0x9
+ 1534 0061 0D       		.uleb128 0xd
+ 1535 0062 00       		.byte	0
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 34
+
+
+ 1536 0063 03       		.uleb128 0x3
+ 1537 0064 0E       		.uleb128 0xe
+ 1538 0065 3A       		.uleb128 0x3a
+ 1539 0066 0B       		.uleb128 0xb
+ 1540 0067 3B       		.uleb128 0x3b
+ 1541 0068 0B       		.uleb128 0xb
+ 1542 0069 49       		.uleb128 0x49
+ 1543 006a 13       		.uleb128 0x13
+ 1544 006b 38       		.uleb128 0x38
+ 1545 006c 0B       		.uleb128 0xb
+ 1546 006d 00       		.byte	0
+ 1547 006e 00       		.byte	0
+ 1548 006f 0A       		.uleb128 0xa
+ 1549 0070 01       		.uleb128 0x1
+ 1550 0071 01       		.byte	0x1
+ 1551 0072 49       		.uleb128 0x49
+ 1552 0073 13       		.uleb128 0x13
+ 1553 0074 01       		.uleb128 0x1
+ 1554 0075 13       		.uleb128 0x13
+ 1555 0076 00       		.byte	0
+ 1556 0077 00       		.byte	0
+ 1557 0078 0B       		.uleb128 0xb
+ 1558 0079 21       		.uleb128 0x21
+ 1559 007a 00       		.byte	0
+ 1560 007b 49       		.uleb128 0x49
+ 1561 007c 13       		.uleb128 0x13
+ 1562 007d 2F       		.uleb128 0x2f
+ 1563 007e 0B       		.uleb128 0xb
+ 1564 007f 00       		.byte	0
+ 1565 0080 00       		.byte	0
+ 1566 0081 0C       		.uleb128 0xc
+ 1567 0082 2E       		.uleb128 0x2e
+ 1568 0083 01       		.byte	0x1
+ 1569 0084 3F       		.uleb128 0x3f
+ 1570 0085 19       		.uleb128 0x19
+ 1571 0086 03       		.uleb128 0x3
+ 1572 0087 0E       		.uleb128 0xe
+ 1573 0088 3A       		.uleb128 0x3a
+ 1574 0089 0B       		.uleb128 0xb
+ 1575 008a 3B       		.uleb128 0x3b
+ 1576 008b 0B       		.uleb128 0xb
+ 1577 008c 27       		.uleb128 0x27
+ 1578 008d 19       		.uleb128 0x19
+ 1579 008e 11       		.uleb128 0x11
+ 1580 008f 01       		.uleb128 0x1
+ 1581 0090 12       		.uleb128 0x12
+ 1582 0091 06       		.uleb128 0x6
+ 1583 0092 40       		.uleb128 0x40
+ 1584 0093 18       		.uleb128 0x18
+ 1585 0094 9742     		.uleb128 0x2117
+ 1586 0096 19       		.uleb128 0x19
+ 1587 0097 01       		.uleb128 0x1
+ 1588 0098 13       		.uleb128 0x13
+ 1589 0099 00       		.byte	0
+ 1590 009a 00       		.byte	0
+ 1591 009b 0D       		.uleb128 0xd
+ 1592 009c 898201   		.uleb128 0x4109
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 35
+
+
+ 1593 009f 01       		.byte	0x1
+ 1594 00a0 11       		.uleb128 0x11
+ 1595 00a1 01       		.uleb128 0x1
+ 1596 00a2 31       		.uleb128 0x31
+ 1597 00a3 13       		.uleb128 0x13
+ 1598 00a4 00       		.byte	0
+ 1599 00a5 00       		.byte	0
+ 1600 00a6 0E       		.uleb128 0xe
+ 1601 00a7 8A8201   		.uleb128 0x410a
+ 1602 00aa 00       		.byte	0
+ 1603 00ab 02       		.uleb128 0x2
+ 1604 00ac 18       		.uleb128 0x18
+ 1605 00ad 9142     		.uleb128 0x2111
+ 1606 00af 18       		.uleb128 0x18
+ 1607 00b0 00       		.byte	0
+ 1608 00b1 00       		.byte	0
+ 1609 00b2 0F       		.uleb128 0xf
+ 1610 00b3 898201   		.uleb128 0x4109
+ 1611 00b6 00       		.byte	0
+ 1612 00b7 11       		.uleb128 0x11
+ 1613 00b8 01       		.uleb128 0x1
+ 1614 00b9 31       		.uleb128 0x31
+ 1615 00ba 13       		.uleb128 0x13
+ 1616 00bb 00       		.byte	0
+ 1617 00bc 00       		.byte	0
+ 1618 00bd 10       		.uleb128 0x10
+ 1619 00be 898201   		.uleb128 0x4109
+ 1620 00c1 01       		.byte	0x1
+ 1621 00c2 11       		.uleb128 0x11
+ 1622 00c3 01       		.uleb128 0x1
+ 1623 00c4 31       		.uleb128 0x31
+ 1624 00c5 13       		.uleb128 0x13
+ 1625 00c6 01       		.uleb128 0x1
+ 1626 00c7 13       		.uleb128 0x13
+ 1627 00c8 00       		.byte	0
+ 1628 00c9 00       		.byte	0
+ 1629 00ca 11       		.uleb128 0x11
+ 1630 00cb 05       		.uleb128 0x5
+ 1631 00cc 00       		.byte	0
+ 1632 00cd 03       		.uleb128 0x3
+ 1633 00ce 0E       		.uleb128 0xe
+ 1634 00cf 3A       		.uleb128 0x3a
+ 1635 00d0 0B       		.uleb128 0xb
+ 1636 00d1 3B       		.uleb128 0x3b
+ 1637 00d2 0B       		.uleb128 0xb
+ 1638 00d3 49       		.uleb128 0x49
+ 1639 00d4 13       		.uleb128 0x13
+ 1640 00d5 02       		.uleb128 0x2
+ 1641 00d6 17       		.uleb128 0x17
+ 1642 00d7 00       		.byte	0
+ 1643 00d8 00       		.byte	0
+ 1644 00d9 12       		.uleb128 0x12
+ 1645 00da 34       		.uleb128 0x34
+ 1646 00db 00       		.byte	0
+ 1647 00dc 03       		.uleb128 0x3
+ 1648 00dd 08       		.uleb128 0x8
+ 1649 00de 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 36
+
+
+ 1650 00df 0B       		.uleb128 0xb
+ 1651 00e0 3B       		.uleb128 0x3b
+ 1652 00e1 0B       		.uleb128 0xb
+ 1653 00e2 49       		.uleb128 0x49
+ 1654 00e3 13       		.uleb128 0x13
+ 1655 00e4 02       		.uleb128 0x2
+ 1656 00e5 17       		.uleb128 0x17
+ 1657 00e6 00       		.byte	0
+ 1658 00e7 00       		.byte	0
+ 1659 00e8 13       		.uleb128 0x13
+ 1660 00e9 34       		.uleb128 0x34
+ 1661 00ea 00       		.byte	0
+ 1662 00eb 03       		.uleb128 0x3
+ 1663 00ec 0E       		.uleb128 0xe
+ 1664 00ed 3A       		.uleb128 0x3a
+ 1665 00ee 0B       		.uleb128 0xb
+ 1666 00ef 3B       		.uleb128 0x3b
+ 1667 00f0 0B       		.uleb128 0xb
+ 1668 00f1 49       		.uleb128 0x49
+ 1669 00f2 13       		.uleb128 0x13
+ 1670 00f3 1C       		.uleb128 0x1c
+ 1671 00f4 0B       		.uleb128 0xb
+ 1672 00f5 00       		.byte	0
+ 1673 00f6 00       		.byte	0
+ 1674 00f7 14       		.uleb128 0x14
+ 1675 00f8 34       		.uleb128 0x34
+ 1676 00f9 00       		.byte	0
+ 1677 00fa 03       		.uleb128 0x3
+ 1678 00fb 0E       		.uleb128 0xe
+ 1679 00fc 3A       		.uleb128 0x3a
+ 1680 00fd 0B       		.uleb128 0xb
+ 1681 00fe 3B       		.uleb128 0x3b
+ 1682 00ff 0B       		.uleb128 0xb
+ 1683 0100 49       		.uleb128 0x49
+ 1684 0101 13       		.uleb128 0x13
+ 1685 0102 02       		.uleb128 0x2
+ 1686 0103 17       		.uleb128 0x17
+ 1687 0104 00       		.byte	0
+ 1688 0105 00       		.byte	0
+ 1689 0106 15       		.uleb128 0x15
+ 1690 0107 34       		.uleb128 0x34
+ 1691 0108 00       		.byte	0
+ 1692 0109 03       		.uleb128 0x3
+ 1693 010a 0E       		.uleb128 0xe
+ 1694 010b 3A       		.uleb128 0x3a
+ 1695 010c 0B       		.uleb128 0xb
+ 1696 010d 3B       		.uleb128 0x3b
+ 1697 010e 05       		.uleb128 0x5
+ 1698 010f 49       		.uleb128 0x49
+ 1699 0110 13       		.uleb128 0x13
+ 1700 0111 3F       		.uleb128 0x3f
+ 1701 0112 19       		.uleb128 0x19
+ 1702 0113 3C       		.uleb128 0x3c
+ 1703 0114 19       		.uleb128 0x19
+ 1704 0115 00       		.byte	0
+ 1705 0116 00       		.byte	0
+ 1706 0117 16       		.uleb128 0x16
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 37
+
+
+ 1707 0118 34       		.uleb128 0x34
+ 1708 0119 00       		.byte	0
+ 1709 011a 03       		.uleb128 0x3
+ 1710 011b 0E       		.uleb128 0xe
+ 1711 011c 3A       		.uleb128 0x3a
+ 1712 011d 0B       		.uleb128 0xb
+ 1713 011e 3B       		.uleb128 0x3b
+ 1714 011f 0B       		.uleb128 0xb
+ 1715 0120 49       		.uleb128 0x49
+ 1716 0121 13       		.uleb128 0x13
+ 1717 0122 3F       		.uleb128 0x3f
+ 1718 0123 19       		.uleb128 0x19
+ 1719 0124 02       		.uleb128 0x2
+ 1720 0125 18       		.uleb128 0x18
+ 1721 0126 00       		.byte	0
+ 1722 0127 00       		.byte	0
+ 1723 0128 17       		.uleb128 0x17
+ 1724 0129 34       		.uleb128 0x34
+ 1725 012a 00       		.byte	0
+ 1726 012b 03       		.uleb128 0x3
+ 1727 012c 08       		.uleb128 0x8
+ 1728 012d 3A       		.uleb128 0x3a
+ 1729 012e 0B       		.uleb128 0xb
+ 1730 012f 3B       		.uleb128 0x3b
+ 1731 0130 0B       		.uleb128 0xb
+ 1732 0131 49       		.uleb128 0x49
+ 1733 0132 13       		.uleb128 0x13
+ 1734 0133 3F       		.uleb128 0x3f
+ 1735 0134 19       		.uleb128 0x19
+ 1736 0135 02       		.uleb128 0x2
+ 1737 0136 18       		.uleb128 0x18
+ 1738 0137 00       		.byte	0
+ 1739 0138 00       		.byte	0
+ 1740 0139 18       		.uleb128 0x18
+ 1741 013a 26       		.uleb128 0x26
+ 1742 013b 00       		.byte	0
+ 1743 013c 49       		.uleb128 0x49
+ 1744 013d 13       		.uleb128 0x13
+ 1745 013e 00       		.byte	0
+ 1746 013f 00       		.byte	0
+ 1747 0140 19       		.uleb128 0x19
+ 1748 0141 2E       		.uleb128 0x2e
+ 1749 0142 00       		.byte	0
+ 1750 0143 3F       		.uleb128 0x3f
+ 1751 0144 19       		.uleb128 0x19
+ 1752 0145 3C       		.uleb128 0x3c
+ 1753 0146 19       		.uleb128 0x19
+ 1754 0147 6E       		.uleb128 0x6e
+ 1755 0148 0E       		.uleb128 0xe
+ 1756 0149 03       		.uleb128 0x3
+ 1757 014a 0E       		.uleb128 0xe
+ 1758 014b 3A       		.uleb128 0x3a
+ 1759 014c 0B       		.uleb128 0xb
+ 1760 014d 3B       		.uleb128 0x3b
+ 1761 014e 0B       		.uleb128 0xb
+ 1762 014f 00       		.byte	0
+ 1763 0150 00       		.byte	0
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 38
+
+
+ 1764 0151 1A       		.uleb128 0x1a
+ 1765 0152 2E       		.uleb128 0x2e
+ 1766 0153 00       		.byte	0
+ 1767 0154 3F       		.uleb128 0x3f
+ 1768 0155 19       		.uleb128 0x19
+ 1769 0156 3C       		.uleb128 0x3c
+ 1770 0157 19       		.uleb128 0x19
+ 1771 0158 6E       		.uleb128 0x6e
+ 1772 0159 0E       		.uleb128 0xe
+ 1773 015a 03       		.uleb128 0x3
+ 1774 015b 0E       		.uleb128 0xe
+ 1775 015c 00       		.byte	0
+ 1776 015d 00       		.byte	0
+ 1777 015e 00       		.byte	0
+ 1778              		.section	.debug_loc,"",%progbits
+ 1779              	.Ldebug_loc0:
+ 1780              	.LLST0:
+ 1781 0000 00000000 		.4byte	.LVL14
+ 1782 0004 14000000 		.4byte	.LVL15
+ 1783 0008 0100     		.2byte	0x1
+ 1784 000a 50       		.byte	0x50
+ 1785 000b 14000000 		.4byte	.LVL15
+ 1786 000f AC000000 		.4byte	.LFE66
+ 1787 0013 0400     		.2byte	0x4
+ 1788 0015 F3       		.byte	0xf3
+ 1789 0016 01       		.uleb128 0x1
+ 1790 0017 50       		.byte	0x50
+ 1791 0018 9F       		.byte	0x9f
+ 1792 0019 00000000 		.4byte	0
+ 1793 001d 00000000 		.4byte	0
+ 1794              	.LLST1:
+ 1795 0021 5E000000 		.4byte	.LVL23
+ 1796 0025 62000000 		.4byte	.LVL24
+ 1797 0029 0300     		.2byte	0x3
+ 1798 002b 08       		.byte	0x8
+ 1799 002c 24       		.byte	0x24
+ 1800 002d 9F       		.byte	0x9f
+ 1801 002e 62000000 		.4byte	.LVL24
+ 1802 0032 7C000000 		.4byte	.LVL29
+ 1803 0036 0100     		.2byte	0x1
+ 1804 0038 54       		.byte	0x54
+ 1805 0039 7E000000 		.4byte	.LVL30
+ 1806 003d 88000000 		.4byte	.LVL32
+ 1807 0041 0100     		.2byte	0x1
+ 1808 0043 54       		.byte	0x54
+ 1809 0044 00000000 		.4byte	0
+ 1810 0048 00000000 		.4byte	0
+ 1811              	.LLST2:
+ 1812 004c 44000000 		.4byte	.LVL20
+ 1813 0050 88000000 		.4byte	.LVL32
+ 1814 0054 0100     		.2byte	0x1
+ 1815 0056 56       		.byte	0x56
+ 1816 0057 00000000 		.4byte	0
+ 1817 005b 00000000 		.4byte	0
+ 1818              	.LLST3:
+ 1819 005f 36000000 		.4byte	.LVL19
+ 1820 0063 64000000 		.4byte	.LVL25
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 39
+
+
+ 1821 0067 0600     		.2byte	0x6
+ 1822 0069 03       		.byte	0x3
+ 1823 006a 70000000 		.4byte	set_of_tables+112
+ 1824 006e 9F       		.byte	0x9f
+ 1825 006f 64000000 		.4byte	.LVL25
+ 1826 0073 6C000000 		.4byte	.LVL26
+ 1827 0077 0100     		.2byte	0x1
+ 1828 0079 52       		.byte	0x52
+ 1829 007a 6C000000 		.4byte	.LVL26
+ 1830 007e AC000000 		.4byte	.LFE66
+ 1831 0082 0600     		.2byte	0x6
+ 1832 0084 03       		.byte	0x3
+ 1833 0085 70000000 		.4byte	set_of_tables+112
+ 1834 0089 9F       		.byte	0x9f
+ 1835 008a 00000000 		.4byte	0
+ 1836 008e 00000000 		.4byte	0
+ 1837              		.section	.debug_aranges,"",%progbits
+ 1838 0000 3C000000 		.4byte	0x3c
+ 1839 0004 0200     		.2byte	0x2
+ 1840 0006 00000000 		.4byte	.Ldebug_info0
+ 1841 000a 04       		.byte	0x4
+ 1842 000b 00       		.byte	0
+ 1843 000c 0000     		.2byte	0
+ 1844 000e 0000     		.2byte	0
+ 1845 0010 00000000 		.4byte	.LFB68
+ 1846 0014 38000000 		.4byte	.LFE68-.LFB68
+ 1847 0018 00000000 		.4byte	.LFB64
+ 1848 001c 74000000 		.4byte	.LFE64-.LFB64
+ 1849 0020 00000000 		.4byte	.LFB65
+ 1850 0024 28000000 		.4byte	.LFE65-.LFB65
+ 1851 0028 00000000 		.4byte	.LFB66
+ 1852 002c AC000000 		.4byte	.LFE66-.LFB66
+ 1853 0030 00000000 		.4byte	.LFB67
+ 1854 0034 E4000000 		.4byte	.LFE67-.LFB67
+ 1855 0038 00000000 		.4byte	0
+ 1856 003c 00000000 		.4byte	0
+ 1857              		.section	.debug_ranges,"",%progbits
+ 1858              	.Ldebug_ranges0:
+ 1859 0000 00000000 		.4byte	.LFB68
+ 1860 0004 38000000 		.4byte	.LFE68
+ 1861 0008 00000000 		.4byte	.LFB64
+ 1862 000c 74000000 		.4byte	.LFE64
+ 1863 0010 00000000 		.4byte	.LFB65
+ 1864 0014 28000000 		.4byte	.LFE65
+ 1865 0018 00000000 		.4byte	.LFB66
+ 1866 001c AC000000 		.4byte	.LFE66
+ 1867 0020 00000000 		.4byte	.LFB67
+ 1868 0024 E4000000 		.4byte	.LFE67
+ 1869 0028 00000000 		.4byte	0
+ 1870 002c 00000000 		.4byte	0
+ 1871              		.section	.debug_line,"",%progbits
+ 1872              	.Ldebug_line0:
+ 1873 0000 CB020000 		.section	.debug_str,"MS",%progbits,1
+ 1873      02001E02 
+ 1873      00000201 
+ 1873      FB0E0D00 
+ 1873      01010101 
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 40
+
+
+ 1874              	.LASF46:
+ 1875 0000 6D657373 		.ascii	"message\000"
+ 1875      61676500 
+ 1876              	.LASF4:
+ 1877 0008 5F5F7569 		.ascii	"__uint8_t\000"
+ 1877      6E74385F 
+ 1877      7400
+ 1878              	.LASF50:
+ 1879 0012 436F6E66 		.ascii	"ConfigurationMenu.c\000"
+ 1879      69677572 
+ 1879      6174696F 
+ 1879      6E4D656E 
+ 1879      752E6300 
+ 1880              	.LASF37:
+ 1881 0026 4B657973 		.ascii	"Keys_menu\000"
+ 1881      5F6D656E 
+ 1881      7500
+ 1882              	.LASF33:
+ 1883 0030 53686F77 		.ascii	"Show_table\000"
+ 1883      5F746162 
+ 1883      6C6500
+ 1884              	.LASF5:
+ 1885 003b 5F5F696E 		.ascii	"__int32_t\000"
+ 1885      7433325F 
+ 1885      7400
+ 1886              	.LASF34:
+ 1887 0045 73746172 		.ascii	"start\000"
+ 1887      7400
+ 1888              	.LASF32:
+ 1889 004b 53776974 		.ascii	"Switch_to_BridgeControlPanel\000"
+ 1889      63685F74 
+ 1889      6F5F4272 
+ 1889      69646765 
+ 1889      436F6E74 
+ 1890              	.LASF31:
+ 1891 0068 5768696C 		.ascii	"While_Working_Menu\000"
+ 1891      655F576F 
+ 1891      726B696E 
+ 1891      675F4D65 
+ 1891      6E7500
+ 1892              	.LASF43:
+ 1893 007b 7365745F 		.ascii	"set_of_tables\000"
+ 1893      6F665F74 
+ 1893      61626C65 
+ 1893      7300
+ 1894              	.LASF24:
+ 1895 0089 6F707469 		.ascii	"option2\000"
+ 1895      6F6E3200 
+ 1896              	.LASF14:
+ 1897 0091 666C6F61 		.ascii	"float\000"
+ 1897      7400
+ 1898              	.LASF51:
+ 1899 0097 433A5C55 		.ascii	"C:\\Users\\Vanessa Aloia.Vanessa\\Desktop\\Group_01"
+ 1899      73657273 
+ 1899      5C56616E 
+ 1899      65737361 
+ 1899      20416C6F 
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 41
+
+
+ 1900 00c6 5F46696E 		.ascii	"_FinalProject\\Group_01_FinalProject\\FinalProject."
+ 1900      616C5072 
+ 1900      6F6A6563 
+ 1900      745C4772 
+ 1900      6F75705F 
+ 1901 00f7 63796473 		.ascii	"cydsn\000"
+ 1901      6E00
+ 1902              	.LASF1:
+ 1903 00fd 756E7369 		.ascii	"unsigned char\000"
+ 1903      676E6564 
+ 1903      20636861 
+ 1903      7200
+ 1904              	.LASF49:
+ 1905 010b 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1905      43313120 
+ 1905      352E342E 
+ 1905      31203230 
+ 1905      31363036 
+ 1906 013e 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1906      20726576 
+ 1906      6973696F 
+ 1906      6E203233 
+ 1906      37373135 
+ 1907 0171 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1907      66756E63 
+ 1907      74696F6E 
+ 1907      2D736563 
+ 1907      74696F6E 
+ 1908              	.LASF42:
+ 1909 0199 696E6974 		.ascii	"initialized\000"
+ 1909      69616C69 
+ 1909      7A656400 
+ 1910              	.LASF7:
+ 1911 01a5 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1911      20756E73 
+ 1911      69676E65 
+ 1911      6420696E 
+ 1911      7400
+ 1912              	.LASF3:
+ 1913 01b7 73686F72 		.ascii	"short unsigned int\000"
+ 1913      7420756E 
+ 1913      7369676E 
+ 1913      65642069 
+ 1913      6E7400
+ 1914              	.LASF39:
+ 1915 01ca 466C6167 		.ascii	"FlagReady\000"
+ 1915      52656164 
+ 1915      7900
+ 1916              	.LASF35:
+ 1917 01d4 73746F70 		.ascii	"stop\000"
+ 1917      00
+ 1918              	.LASF21:
+ 1919 01d9 6B657931 		.ascii	"key1\000"
+ 1919      00
+ 1920              	.LASF23:
+ 1921 01de 6B657932 		.ascii	"key2\000"
+ 1921      00
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 42
+
+
+ 1922              	.LASF25:
+ 1923 01e3 6B657933 		.ascii	"key3\000"
+ 1923      00
+ 1924              	.LASF27:
+ 1925 01e8 6B657934 		.ascii	"key4\000"
+ 1925      00
+ 1926              	.LASF15:
+ 1927 01ed 646F7562 		.ascii	"double\000"
+ 1927      6C6500
+ 1928              	.LASF52:
+ 1929 01f4 696E6465 		.ascii	"index_table\000"
+ 1929      785F7461 
+ 1929      626C6500 
+ 1930              	.LASF45:
+ 1931 0200 54656D70 		.ascii	"TempFormat\000"
+ 1931      466F726D 
+ 1931      617400
+ 1932              	.LASF38:
+ 1933 020b 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1933      52784275 
+ 1933      66666572 
+ 1933      00
+ 1934              	.LASF29:
+ 1935 0218 6F707469 		.ascii	"options_to_display\000"
+ 1935      6F6E735F 
+ 1935      746F5F64 
+ 1935      6973706C 
+ 1935      617900
+ 1936              	.LASF10:
+ 1937 022b 756E7369 		.ascii	"unsigned int\000"
+ 1937      676E6564 
+ 1937      20696E74 
+ 1937      00
+ 1938              	.LASF9:
+ 1939 0238 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1939      206C6F6E 
+ 1939      6720756E 
+ 1939      7369676E 
+ 1939      65642069 
+ 1940              	.LASF11:
+ 1941 024f 75696E74 		.ascii	"uint8_t\000"
+ 1941      385F7400 
+ 1942              	.LASF30:
+ 1943 0257 4D656E75 		.ascii	"Menu_edge\000"
+ 1943      5F656467 
+ 1943      6500
+ 1944              	.LASF44:
+ 1945 0261 53616D70 		.ascii	"SampFreq\000"
+ 1945      46726571 
+ 1945      00
+ 1946              	.LASF12:
+ 1947 026a 696E7433 		.ascii	"int32_t\000"
+ 1947      325F7400 
+ 1948              	.LASF18:
+ 1949 0272 73697A65 		.ascii	"sizetype\000"
+ 1949      74797065 
+ 1949      00
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 43
+
+
+ 1950              	.LASF8:
+ 1951 027b 6C6F6E67 		.ascii	"long long int\000"
+ 1951      206C6F6E 
+ 1951      6720696E 
+ 1951      7400
+ 1952              	.LASF19:
+ 1953 0289 68656164 		.ascii	"header1\000"
+ 1953      65723100 
+ 1954              	.LASF20:
+ 1955 0291 68656164 		.ascii	"header2\000"
+ 1955      65723200 
+ 1956              	.LASF16:
+ 1957 0299 63686172 		.ascii	"char\000"
+ 1957      00
+ 1958              	.LASF36:
+ 1959 029e 696E6465 		.ascii	"index\000"
+ 1959      7800
+ 1960              	.LASF53:
+ 1961 02a4 6D656D63 		.ascii	"memcpy\000"
+ 1961      707900
+ 1962              	.LASF2:
+ 1963 02ab 73686F72 		.ascii	"short int\000"
+ 1963      7420696E 
+ 1963      7400
+ 1964              	.LASF13:
+ 1965 02b5 75696E74 		.ascii	"uint8\000"
+ 1965      3800
+ 1966              	.LASF22:
+ 1967 02bb 6F707469 		.ascii	"option1\000"
+ 1967      6F6E3100 
+ 1968              	.LASF40:
+ 1969 02c3 6368616E 		.ascii	"change_settings_flag\000"
+ 1969      67655F73 
+ 1969      65747469 
+ 1969      6E67735F 
+ 1969      666C6167 
+ 1970              	.LASF26:
+ 1971 02d8 6F707469 		.ascii	"option3\000"
+ 1971      6F6E3300 
+ 1972              	.LASF28:
+ 1973 02e0 6F707469 		.ascii	"option4\000"
+ 1973      6F6E3400 
+ 1974              	.LASF41:
+ 1975 02e8 6F707469 		.ascii	"option_table\000"
+ 1975      6F6E5F74 
+ 1975      61626C65 
+ 1975      00
+ 1976              	.LASF6:
+ 1977 02f5 6C6F6E67 		.ascii	"long int\000"
+ 1977      20696E74 
+ 1977      00
+ 1978              	.LASF17:
+ 1979 02fe 6C6F6E67 		.ascii	"long double\000"
+ 1979      20646F75 
+ 1979      626C6500 
+ 1980              	.LASF0:
+ 1981 030a 7369676E 		.ascii	"signed char\000"
+ARM GAS  C:\Users\Vanessa Aloia.Vanessa\AppData\Local\Temp\ccsmJgfB.s 			page 44
+
+
+ 1981      65642063 
+ 1981      68617200 
+ 1982              	.LASF47:
+ 1983 0316 55415254 		.ascii	"UART_PutString\000"
+ 1983      5F507574 
+ 1983      53747269 
+ 1983      6E6700
+ 1984              	.LASF48:
+ 1985 0325 73707269 		.ascii	"sprintf\000"
+ 1985      6E746600 
+ 1986              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
