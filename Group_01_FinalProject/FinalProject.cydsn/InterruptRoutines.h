@@ -19,9 +19,9 @@
     #define OFFSET_TEMPERATURE_CELSIUS 500.0
     #define SENSITIVITY_TEMPERATURE_CELSIUS 10.0
     
-    #define F 0
-    #define P 1
-    #define T 2
+    #define F_S_R 0
+    #define SAMP_FREQ 1
+    #define TEMP 2
     #define DONT_SHOW_TABLE 3
     
     volatile uint8 FlagReady;
@@ -34,7 +34,7 @@
     
     char change_settings_flag;
     char start;
-    char option_table;
+    uint8_t option_table;
     
     
     CY_ISR_PROTO(Custom_isr_UART);

@@ -125,19 +125,19 @@ CY_ISR(Custom_isr_UART)
                 case 'F':
                 
                     /* show accelerometer full scale range table */
-                    option_table= F;
+                    option_table= F_S_R;
                     break;
                 
                 case 'p':
                 case 'P':
                     /* show accelerometer sampling frequency */
-                    option_table= P;
+                    option_table= SAMP_FREQ;
                     break;
                 
                 case 't':
                 case 'T':
                     /* show temperature sensor unit of measurement table */
-                    option_table= T;
+                    option_table= TEMP;
                     break;
                 
                 case 'q':

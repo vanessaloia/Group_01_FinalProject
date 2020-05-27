@@ -27,8 +27,8 @@ int main(void)
     initialized=0;
     
     
-
-    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+    /*
+    
     Timer_Start();
     UART_Start();
     ADC_DelSig_Start();
@@ -51,7 +51,7 @@ int main(void)
     uint8_t i;
     for(;;)
     {
-        /* Place your application code here. */
+        
             if (PacketReadyFlag) {
                 for (i=0; i<WATERMARK_LEVEL+1; i++) {
                   DataBuffer2[1]=DataBuffer[6*i];  
@@ -60,11 +60,39 @@ int main(void)
                   DataBuffer2[4]=DataBuffer[6*i+3];  
                   DataBuffer2[5]=DataBuffer[6*i+4];  
                   DataBuffer2[6]=DataBuffer[6*i+5];    
-                  UART_PutArray(DataBuffer2, 8); /*API to transmit an array of bytes */
+                  UART_PutArray(DataBuffer2, 8); API to transmit an array of bytes 
         }
         PacketReadyFlag = 0;
         
     }
 }
 }
+/*/
+    While_Working_Menu();
+    
+    for (;;) 
+    {
+        if (change_settings_flag) 
+        {
+            Keys_menu();
+            change_settings_flag=0;
+        }
+        if (option_table != DONT_SHOW_TABLE)
+        {
+            char message[20];
+            sprintf(message,"option table:%d \n", option_table);
+            UART_PutString(message);
+            Show_table(option_table);
+            option_table=DONT_SHOW_TABLE;
+        }
+        
+        
+        
+        
+        
+        
+        
+    }
+}
+    
 /* [] END OF FILE */
