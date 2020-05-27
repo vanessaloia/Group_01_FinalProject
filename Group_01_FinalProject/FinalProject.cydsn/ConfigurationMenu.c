@@ -98,7 +98,7 @@ void Show_table(char index_table)
         initialized=1;
     }
     /* pointer variable "index" points the memory cell of the first element of the struct related with the correct element of set_of_tables array */
-    char *index= &(set_of_tables[index_table].header1);
+    char *index= (set_of_tables[index_table].header1);
     
     
     /* start variable is used in the for loop to define the initial memory cell pointed. 
