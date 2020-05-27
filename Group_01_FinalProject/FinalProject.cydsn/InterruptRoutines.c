@@ -141,7 +141,7 @@ CY_ISR(Custom_isr_UART)
                     break;
                 
                 case 'q':
-                case 'Q': 
+                case 'Q':  
                     
                     /* set flag to 0 to quit the configuration menu */
                     change_settings_flag=0;
@@ -152,11 +152,12 @@ CY_ISR(Custom_isr_UART)
             }
         }
         
-        else {
+        //else {
             
             /* change settings */
-            option_table=DONT_SHOW_TABLE;
-        }
+            //option_table=DONT_SHOW_TABLE;
+            
+        //}
                 
     }
 }

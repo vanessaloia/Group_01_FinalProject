@@ -69,13 +69,16 @@ int main(void)
 }
 /*/
     While_Working_Menu();
-    
+    char v=0;
     for (;;) 
-    {
+    {   /*
         if (change_settings_flag) 
+            v=1;
+        if (v) 
         {
             Keys_menu();
-            change_settings_flag=0;
+            //change_settings_flag=0;
+            v=0;
         }
         if (option_table != DONT_SHOW_TABLE)
         {
@@ -85,8 +88,10 @@ int main(void)
             Show_table(option_table);
             option_table=DONT_SHOW_TABLE;
         }
+        */
         
         
+         Show_table(2);
         
         
         
