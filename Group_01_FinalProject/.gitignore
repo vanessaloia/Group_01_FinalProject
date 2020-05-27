@@ -10,3 +10,8 @@
 *.cydsn/codegentemp        
 *.cydsn/DP8051        
 *.cydsn/Generated_Source
+*/Debug
+*.log
+*.svd
+*.rpt
+*/Export
