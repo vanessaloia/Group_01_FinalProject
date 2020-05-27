@@ -26,7 +26,6 @@ int main(void)
     option_table= DONT_SHOW_TABLE;
     initialized=0;
     
-    
 
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     Timer_Start();
@@ -84,6 +83,17 @@ int main(void)
 //        
 //    }
         }
+    Show_table(0);
+    char v=0;
+    for (;;) 
+    {   
+       
+        
+        
+        
+        
+        
+    }
 }
-}
+    
 /* [] END OF FILE */

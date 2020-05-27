@@ -20,7 +20,7 @@
     
     
     #define LENGTH_MEX 50 
-    #define WORD_SIZE 18
+    #define WORD_SIZE 20
     #define NUMBER_OF_TABLES 3
     
     /* struct that defines the information to display in the table for accelerometer options */
@@ -45,6 +45,7 @@
     void Switch_to_BridgeControlPanel(void);
     void Show_table(char index_table);
     void Keys_menu (void);
+    void Menu_edge(void);
     
 #endif
 
