@@ -1,0 +1,8 @@
+C:\Users\Vanessa Aloia.Vanessa\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\FinalProject.cyprj|d34ddf2d-9df4-4586-9d60-f74b2086a1f8
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|344cc9f3-d3d6-4e7f-880b-4dd8de9f8a3d
+C:\Users\Vanessa Aloia.Vanessa\Documents\PSoC Creator\4.3\Downloads ( 4.3).cylib\Downloads ( 4.3).cyprj|ddcae3d5-f8f7-4850-9307-60f734d76bd4
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|084efc44-495e-437a-be61-c94021ce158c
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|2b2ff157-29bb-4690-b6f0-35e02301efc9
+C:\Program Files (x86)\Cypress\PSoC Creator\4.3\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|5d3a06ee-f091-4b0d-a9d2-493bb3b64503
+C:\Users\Vanessa Aloia.Vanessa\Desktop\Group_01_FinalProject\Group_01_FinalProject\InizializationEEPROM.cydsn\InizializationEEPROM.cyprj|bf187003-e22d-4fa4-97c4-c3970d5bfefe
+C:\Users\Vanessa Aloia.Vanessa\Desktop\biosensors\library_psoc\AnnotationLibrary\AnnotationLibrary_lib\AnnotationLibrary_lib.cylib\AnnotationLibrary_lib.cyprj|fa1c7ac4-44ca-4018-a26c-f4feec3d64c5
