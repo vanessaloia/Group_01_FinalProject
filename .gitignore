@@ -9,7 +9,7 @@
 *.cydsn/codegentemp        
 *.cydsn/DP8051        
 *.cydsn/Generated_Source
-*/Debug
+*/CortexM3
 *.log
 *.svd
 *.rpt
