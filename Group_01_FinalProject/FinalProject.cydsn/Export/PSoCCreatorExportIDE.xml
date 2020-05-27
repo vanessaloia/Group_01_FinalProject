@@ -51,6 +51,7 @@
           <File BuildType="BUILD" Toolchain="">ConfigurationMenu.h</File>
           <File BuildType="BUILD" Toolchain="">25LC256.h</File>
           <File BuildType="BUILD" Toolchain="">SPI_Interface.h</File>
+          <File BuildType="BUILD" Toolchain="">OptionsToBeDisplayed.h</File>
         </Files>
       </Folder>
       <Folder BuildType="STRICT" Path="C:\Users\Vanessa Aloia.Vanessa\Desktop\Group_01_FinalProject\Group_01_FinalProject\FinalProject.cydsn\Generated_Source\PSoC5">
