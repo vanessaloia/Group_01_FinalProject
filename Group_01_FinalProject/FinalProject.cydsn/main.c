@@ -24,25 +24,19 @@ int main(void)
     /****INITIAL EEPROM CONFIGURATION****/
     
     uint8 Flag_cell;
-    uint16 counter;
+    uint16 pointer;
     
     if(Flag_cell == 0){
         /*Setting registers at default value*/
-        counter = FIRST_FREE_CELL;
-        EEPROM_writeByte(COUNTER_ADDRESS_H,(counter&0xFF00)>>8);
-        EEPROM_writeByte(COUNTER_ADDRESS_L,(counter&0xff));
+        pointer = FIRST_FREE_CELL;
+        EEPROM_writeByte(POINTER_ADDRESS_H,(pointer&0xFF00)>>8);
+        EEPROM_writeByte(POINTER_ADDRESS_L,(pointer&0xff));
         EEPROM_writeByte(BEGIN_STOP_ADDRESS,0);
         EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS,1);
         EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS,1);
         EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,'c');
-    }else{
-        /*Obtaining old registers values*/ 
-        counter = (EEPROM_readByte(COUNTER_ADDRESS_H)<<8) & (EEPROM_readByte(COUNTER_ADDRESS_L));
+        Flag_cell = 1;
     }
-    
-    
-    
-    
  
     UART_Start();
     isr_UART_StartEx(Custom_isr_UART);
