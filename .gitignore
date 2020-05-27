@@ -2,8 +2,7 @@
 *.cywrk.*        
 *.cyprj.*        
 *.cycdx        
-*.cyfit        
-*.rpt              
+*.cyfit                    
 *.uvopt        
 *.uvproj        
 *_timing.html        
