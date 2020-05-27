@@ -15,8 +15,8 @@
 #include "LIS3DH_Registers.h"
 
 
-int32 temperature_digit = 0;
-int32 temperature_mv = 0;
+int16 temperature_digit = 0;
+int16 temperature_mv = 0;
 float temperature_celsius = 0;
 char message[20];
 
@@ -27,26 +27,23 @@ uint8_t AccelerometerData[BYTES_READ_FROM_FIFO];
 /* array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
 int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
 
-
-uint8_t DataBuffer[BYTES_READ_FROM_FIFO];
-uint8_t DataBuffer2[DATA_BYTES+2];
-
-volatile uint8_t PacketReadyFlag=0;
+int16_t Temperature_Data[WATERMARK_LEVEL + 1];
+uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
+//uint8_t DataBuffer[BYTES_READ_FROM_FIFO];
+//uint8_t DataBuffer2[ACCELEROMETER_DATA_BYTES+2];
+//volatile uint8_t PacketReadyFlag = 0;
+volatile uint8_t FIFODataReadyFlag = 0;   
+volatile uint8_t TempDataReadyFlag = 0;
 
 CY_ISR(Custom_isr_TIMER){
     Timer_ReadStatusRegister();
     
-    temperature_digit = ADC_DelSig_Read32();
+    temperature_digit = ADC_DelSig_Read16();
     
     if(temperature_digit < 0) temperature_digit = 0;
-    if(temperature_digit > 65535) temperature_digit = 65535;
+    if(temperature_digit > 1023) temperature_digit = 1023;
     
     temperature_mv = ADC_DelSig_CountsTo_mVolts(temperature_digit);
-    
-    temperature_celsius = (temperature_mv - OFFSET_TEMPERATURE_CELSIUS)/SENSITIVITY_TEMPERATURE_CELSIUS;
-
-    sprintf(message,"%d\r\n",(int)temperature_celsius);
-    UART_PutString(message);
     
 }
 
@@ -175,7 +172,7 @@ CY_ISR(Custom_isr_FIFO) {
                                                   &int1_src_reg);
     
     if (error == NO_ERROR) {
-        uint8_t i;
+
         error = I2C_Peripheral_ReadRegisterMulti( LIS3DH_DEVICE_ADDRESS,
                                                   OUT_X_L_ADDR,
                                                   192,
@@ -183,19 +180,18 @@ CY_ISR(Custom_isr_FIFO) {
         
         if (error == NO_ERROR) {
             
+            uint8_t i;
             for(i = 0; i < BYTES_READ_FROM_FIFO/2; i++) {
                 
                 /* right shift of 6 to get right-justified 10 bits */
                 Accelerations_digit[i] = (int16)((AccelerometerData[i*2] | (AccelerometerData[i*2+1] << 8))) >> 6;
-                DataBuffer[i*2]=Accelerations_digit[i] & 0xFF;
-                DataBuffer[i*2+1]=Accelerations_digit[i]>>8;
+//              DataBuffer[i*2]=Accelerations_digit[i] & 0xFF;
+//              DataBuffer[i*2+1]=Accelerations_digit[i]>>8;
                 
-            }
-                
-            PacketReadyFlag=1;
-                
-
+            }      
+            FIFODataReadyFlag = 1;
         }
+
     }
 }
                
