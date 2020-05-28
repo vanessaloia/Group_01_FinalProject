@@ -82,6 +82,9 @@ void Show_table(char index_table)
     * / is initialized and the variable "initialized" is set to 1
     */
     if( !initialized) {
+        options_to_display FSR = {"Character", "Full scale range",'1', "+/- 2g", '2', "+/- 4g",'3', "+/- 8g", '4', "+/- 16g"};
+        options_to_display SampFreq = {"Character", "Sampling Frequency",'1', "1 Hz", '2', "10 Hz",'3', "25 Hz", '4', "50 Hz"};
+        options_to_display TempFormat = {"Character","Temperature format",'c', "Celsius", 'f', "Fahrenheit",' ' , " ",' ' , " "};
         set_of_tables[0]= FSR;
         set_of_tables[1]= SampFreq;
         set_of_tables[2]= TempFormat;

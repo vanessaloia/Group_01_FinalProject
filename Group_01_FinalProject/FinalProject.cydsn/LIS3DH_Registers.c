@@ -9,6 +9,7 @@
 #include "stdio.h"
 #include "InterruptRoutines.h"
 #include "OptionsToBeDisplayed.h"
+#include "ConfigurationMenu.h"
 
 /* 
 * \brief function to configure accelerometer registers
@@ -335,8 +336,9 @@ void Change_Accelerometer_FSR(void)
     */
     
     
-    register_content = (feature_selected <<4);
-    
+    register_content = (feature_selected-1) <<4;
+    sprintf(message, "feature_selected = %d\r\nRegister content = %d\r\n",feature_selected,register_content);
+    UART_PutString(message);
     /* pointer to the correct variable inside the struct of the FSR used later to print */
     char * fsr_to_print = FSR.header2 + 2*feature_selected;
     
@@ -354,6 +356,18 @@ void Change_Accelerometer_FSR(void)
             UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
         }   
     
+    error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,
+                                             CTRL_REG_4_ADDR,
+                                             &register_content);
+    if (error == NO_ERROR)
+        {
+            sprintf(message, "FSR = %d \r\n", register_content);
+            UART_PutString(message); 
+        }
+        else
+        {
+            UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
+        } 
 }
 
 /* This function changes the sampling frequency of the accelerometer depending on the user input.
