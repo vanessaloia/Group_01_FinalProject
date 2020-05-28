@@ -154,16 +154,19 @@ int main(void)
                 
                 case F_S_R:
                     /* change full scale range */
+                    EEPROM_Store_FSR();
                     Change_Accelerometer_FSR();
                     break;
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
+                    EEPROM_Store_Freq();
                     Change_Accelerometer_SampFreq();
                     /* change timer frequency in order to change the fequency of the isr */
                     Timer_WritePeriod(timer_periods[feature_selected-1]);
                     break;
                 case TEMP:
                     /* to do */
+                    EEPROM_Store_Temp();
                     break;
                 default:
                     break;
@@ -175,15 +178,17 @@ int main(void)
             ShowMenuFlag=1;
         }
          
-        if(start){
+        if(start) {
             /* save the value  in the EEPROM */    
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
             start = 0;
         }
         
-        if(stop){
+        if(stop) {
+            
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
             stop = 0;
+            
         }
         
         if(display_error){

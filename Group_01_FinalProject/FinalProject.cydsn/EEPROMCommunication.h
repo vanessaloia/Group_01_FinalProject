@@ -28,5 +28,8 @@
     
     void EEPROM_Data_Write(void);
     void EEPROM_Initialization(void);
+    void EEPROM_Store_FSR(void);
+    void EEPROM_Store_Freq(void);
+    void EEPROM_Store_Temp(void);
 
 #endif

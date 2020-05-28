@@ -49,6 +49,23 @@ void EEPROM_Initialization(void) {
     UART_PutString("Device started up for the first time. You can change default settings through the menu \r\n");
 }
 
+void EEPROM_Store_FSR(void) {
+    
+    EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS, feature_selected);
+    
+}
+
+void EEPROM_Store_Freq(void) {
+    
+    EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS, feature_selected);
+    
+}
+void EEPROM_Store_Temp(void) {
+    
+    EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS, feature_selected);
+    
+}
+
 
 
  
