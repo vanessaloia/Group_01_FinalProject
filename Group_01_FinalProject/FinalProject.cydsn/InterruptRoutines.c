@@ -219,12 +219,12 @@ CY_ISR(Custom_isr_UART)
                     case 'c':
                     case 'C':
                         //todo SELECT TEMPERATURE UNIT
-                        feature_selected = 'c';
+                        feature_selected = 1;
                     break;
                     case 'F':
                     case 'f':
                         //todo SELECT TEMPERATURE UNIT
-                        feature_selected = 'f';
+                        feature_selected = 2;
                     break;
                     default:
                         display_error = 1;
