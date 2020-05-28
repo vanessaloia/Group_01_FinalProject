@@ -40,20 +40,14 @@ int main(void)
     I2C_Master_Start();
     
 
-    
-    
-    //DataBuffer2[0] = 0xA0;
-    //DataBuffer2[7] = 0xC0;
-    isr_FIFO_StartEx(Custom_isr_FIFO);
-    while (!FIFODataReadyFlag);
-    FIFODataReadyFlag = 0;
+
+    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     isr_TIMER_StartEx(Custom_isr_TIMER);
-    
+    isr_FIFO_StartEx(Custom_isr_FIFO);
     
     uint8_t i;
     for(;;)
     {
-        /* Place your application code here. */
         if (FIFODataReadyFlag && TempDataReadyFlag) {
             
             for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
@@ -61,28 +55,22 @@ int main(void)
                 EEPROM_Data[i*6+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >> 6);
                 EEPROM_Data[i*6+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
                 EEPROM_Data[i*6+3] = Accelerations_digit[i*3+2];
-                EEPROM_Data[i*6+4] = Temperature_Data[i]>>8;
-                EEPROM_Data[i*6+5] = Temperature_Data[i];                    
+                if (Temp_Counter > WATERMARK_LEVEL) {
+                    EEPROM_Data[i*6+4] = Temperature_Data[i]>>8;
+                    EEPROM_Data[i*6+5] = Temperature_Data[i];  
+                }
+                else {
+                    EEPROM_Data[i*6+4] = Temperature_Data[i+WATERMARK_LEVEL]>>8;
+                    EEPROM_Data[i*6+5] = Temperature_Data[i+WATERMARK_LEVEL];  
+                }
             }  
             
             //function to send data to EEPROM to be put here
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
-           
-//            if (PacketReadyFlag) {
-//                for (i=0; i<WATERMARK_LEVEL+1; i++) {
-//                  DataBuffer2[1]=DataBuffer[6*i];  
-//                  DataBuffer2[2]=DataBuffer[6*i+1]; 
-//                  DataBuffer2[3]=DataBuffer[6*i+2];  
-//                  DataBuffer2[4]=DataBuffer[6*i+3];  
-//                  DataBuffer2[5]=DataBuffer[6*i+4];  
-//                  DataBuffer2[6]=DataBuffer[6*i+5];    
-//                  UART_PutArray(DataBuffer2, 8); /*API to transmit an array of bytes */
-//        }
-//        PacketReadyFlag = 0;
-//        
-//    }
+    
         }
+    }
     Show_table(0);
     char v=0;
     for (;;) 

@@ -26,25 +26,28 @@
     
     volatile uint8 FlagReady;
     
+    /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
+    extern volatile uint8_t Temp_Counter;
+    
     CY_ISR_PROTO(Custom_isr_TIMER);
 
-
-
-    
-    
     char change_settings_flag;
     char start;
     uint8_t option_table;
     
-    
     CY_ISR_PROTO(Custom_isr_UART);
     
-    
+    /* Number of Bytes to be read from the accelerometer corresponding to one sample (one value of acceleration for each axis) */
     #define ACCELEROMETER_DATA_BYTES 6
+    /* FIFO watermark level: a number of samples equal to (WATERMARK_LEVEL + 1) are available in fifo when an interrupt request on fifo watermark level is generated */
     #define WATERMARK_LEVEL 31
+    /* Number of bytes to be read from the accelerometer FIFO at each ISR on FIFO watermark level */
     #define BYTES_READ_FROM_FIFO ACCELEROMETER_DATA_BYTES * (WATERMARK_LEVEL + 1)
+    /* Number of bytes to be stored in EEPROM for each accelerometer sample */
     #define EEPROM_ACCELEROMETER_DATA_BYTES 4
+    /* Number of bytes to be stored in EEPROM for each temperature sample */
     #define EEPROM_TEMPERATURE_DATA_BYTES 2
+    /* Number of bytes of each packet stored in EEPROM */
     #define EEPROM_PACKET_BYTES EEPROM_ACCELEROMETER_DATA_BYTES + EEPROM_TEMPERATURE_DATA_BYTES
 
 
@@ -53,13 +56,16 @@
     
     /* array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
     extern int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
-    extern int16_t Temperature_Data[WATERMARK_LEVEL + 1];
-    extern uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-    //extern uint8_t DataBuffer[BYTES_READ_FROM_FIFO];    
-    //extern uint8_t DataBuffer2[ACCELEROMETER_DATA_BYTES+2]; 
-    //extern volatile uint8_t PacketReadyFlag;
+    
+    /* Array to store 64 temperature data */
+    extern int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
+
+    /* Flag to indicate that new data have been read from FIFO and must be sent to EEPROM */
     extern volatile uint8_t FIFODataReadyFlag;   
+
+    /* Flag to indicate that 32 new temperature data are available */
     extern volatile uint8_t TempDataReadyFlag;
+    
 #endif
 
 
