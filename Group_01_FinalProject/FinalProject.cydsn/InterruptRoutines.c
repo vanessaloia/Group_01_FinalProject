@@ -14,7 +14,7 @@
 #include "I2C_Interface.h"
 #include "LIS3DH_Registers.h"
 
-
+uint8_t Counter = 0;
 int16 temperature_digit = 0;
 int16 temperature_mv = 0;
 float temperature_celsius = 0;
@@ -37,14 +37,26 @@ volatile uint8_t TempDataReadyFlag = 0;
 
 CY_ISR(Custom_isr_TIMER){
     Timer_ReadStatusRegister();
-    
-    temperature_digit = ADC_DelSig_Read16();
-    
-    if(temperature_digit < 0) temperature_digit = 0;
-    if(temperature_digit > 1023) temperature_digit = 1023;
-    
-    temperature_mv = ADC_DelSig_CountsTo_mVolts(temperature_digit);
-    
+    char message[50];
+    if (!TempDataReadyFlag) {
+        Temperature_Data[Counter] = ADC_DelSig_Read16();
+        
+        if (Temperature_Data[Counter] < 0) Temperature_Data[Counter] = 0;
+        if (Temperature_Data[Counter] > 1023) Temperature_Data[Counter] = 1023;
+        
+        //temperature_mv = ADC_DelSig_CountsTo_mVolts(temperature_digit);
+        
+        if (Counter == WATERMARK_LEVEL) TempDataReadyFlag = 1;
+        Counter = (Counter+1)%(WATERMARK_LEVEL+1);
+        sprintf(message, "Flag low\r\n");
+        UART_PutString(message); 
+    }
+    else {
+            /* String to print out messages on the UART */
+
+            sprintf(message, "Flag still high\r\n");
+            UART_PutString(message); 
+    }
 }
 
 

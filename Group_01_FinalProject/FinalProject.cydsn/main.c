@@ -48,9 +48,8 @@ int main(void)
 
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     
-    
-    /*
-    
+
+    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     Timer_Start();
     UART_Start();
     ADC_DelSig_Start();
@@ -170,9 +169,6 @@ int main(void)
             option_table=DONT_SHOW_TABLE;
         }
         */
-        
-        
-         Show_table(2);
         
         
         
