@@ -33,10 +33,15 @@
 
     char change_settings_flag;
     char start;
+    volatile uint8_t stop;
     uint8_t option_table;
     uint8_t feature_selected;
+    uint8_t display_error;
     
     CY_ISR_PROTO(Custom_isr_UART);
+    
+    volatile uint8 ShowMenuFlag;
+    volatile uint8 KeysMenu;
     
     /* Number of Bytes to be read from the accelerometer corresponding to one sample (one value of acceleration for each axis) */
     #define ACCELEROMETER_DATA_BYTES 6
@@ -51,7 +56,8 @@
     /* Number of bytes of each packet stored in EEPROM */
     #define EEPROM_PACKET_BYTES EEPROM_ACCELEROMETER_DATA_BYTES + EEPROM_TEMPERATURE_DATA_BYTES
     
-    volatile uint8 ShowMenuFlag;
+    void Display_error();
+    
 
     
     CY_ISR_PROTO(Custom_isr_FIFO);

@@ -13,6 +13,8 @@
 #include "project.h"
 #include "I2C_Interface.h"
 #include "LIS3DH_Registers.h"
+#include "25LC256.h"
+#include "MemoryCells.h"
     
 /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
 volatile uint8_t Temp_Counter = 0;
@@ -76,34 +78,19 @@ CY_ISR(Custom_isr_UART)
                 
                     /* show Configuration menu */
                     ShowMenuFlag = 1;
-                    /* futher characters used for changing configurations of the acquisition */
-                    change_settings_flag=1;
-                   
+                    change_settings_flag = 1;
                     break;
                 
-                case 'v': 
-                case 'V':
-                
-                    /* show data in the bridge control panel */
-                
-                    /* stop acquisition and storing in the EEPROM */
-                    break;
-                
-                case 'u':
-                case 'U':
-                
-                    /* stop streaming of data in bridge control panel */
-                    
-                    
-                    break;
+               
             
                 /*for every other character */
                 default:
+                    display_error = 1;
                     break;
             }
-    }
     
-    else {
+    
+     }else {
         
         
         if(option_table == DONT_SHOW_TABLE)
@@ -113,11 +100,14 @@ CY_ISR(Custom_isr_UART)
                 case 'b':
                 case 'B':
                     /* start data acquisition and storage in EEPROM */
-                    
+                    /*Starting timer*/
+                    Timer_Start();
+                    /*Starting ADC*/
+                    ADC_DelSig_Start();
                     /* change the value of the start/stop flag */
-                    start=1;
+                    start = 1;
                     /* save the value of the flag in the EEPROM */
-                
+                    EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
                     break;
                 
                 case 's': 
@@ -126,7 +116,6 @@ CY_ISR(Custom_isr_UART)
                     
                     /* change the value of the start/stop flag */
                     start=0;
-                    /* save the value of the flag in the EEPROM */
                 
                     break;
                 
@@ -155,9 +144,25 @@ CY_ISR(Custom_isr_UART)
                     /* set flag to 0 to quit the configuration menu */
                     change_settings_flag=0;
                     break;
+                
+                case 'v': 
+                case 'V':
+                
+                    /* show data in the bridge control panel */
+                
+                    /* stop acquisition and storing in the EEPROM */
+                    break;
+                
+                case 'u':
+                case 'U':
+                
+                    /* stop streaming of data in bridge control panel */
+                    break;
                 /* do nothing for every other character */
+                
                 default:
-                        break;
+                    display_error = 1;
+                    break;
             }
         }
         
@@ -165,41 +170,48 @@ CY_ISR(Custom_isr_UART)
             
             if(option_table == F_S_R){
                 switch (ch_received){
-                    case 1:
-                    //todo SELECT FSR
-                    feature_selected = 1;
+                    case '1':
+                        //todo SELECT FSR
+                        feature_selected = 1;
                     break;
-                    case 2:
-                    //todo SELECT FSR
-                    feature_selected = 2;
+                    case '2':
+                        //todo SELECT FSR
+                        feature_selected = 2;
                     break;
-                    case 3:
-                    //todo SELECT FSR
-                    feature_selected = 3;
+                    case '3':
+                        //todo SELECT FSR
+                        feature_selected = 3;
                     break;
-                    case 4:
-                    //todo SELECT FSR
-                    feature_selected = 1;
+                    case '4':
+                        //todo SELECT FSR
+                        feature_selected = 4;
                     break;
+                    default:
+                        display_error = 1;
+                    break;
+                    
                 }
               
             }else if(option_table == SAMP_FREQ){
                 switch (ch_received){
-                    case 1:
+                    case '1':
                         //todo SELECT SAMP_FREQ
                         feature_selected = 1;
                     break;
-                    case 2:
+                    case '2':
                         //todo SELECT SAMP_FREQ
-                        feature_selected = 1;
+                        feature_selected = 2;
                     break;
-                    case 3:
+                    case '3':
                         //todo SELECT SAMP_FREQ
-                        feature_selected = 1;
+                        feature_selected = 3;
                     break;
-                    case 4:
+                    case '4':
                         //todo SELECT SAMP_FREQ
-                        feature_selected = 1;
+                        feature_selected = 4;
+                    break;
+                    default:
+                        display_error = 1;
                     break;
                 }
             }else if(option_table == TEMP){
@@ -213,6 +225,9 @@ CY_ISR(Custom_isr_UART)
                     case 'f':
                         //todo SELECT TEMPERATURE UNIT
                         feature_selected = 'f';
+                    break;
+                    default:
+                        display_error = 1;
                     break;
                 }
             
@@ -258,6 +273,6 @@ CY_ISR(Custom_isr_FIFO) {
 
     }
 }
-               
+
 
 /* [] END OF FILE */
