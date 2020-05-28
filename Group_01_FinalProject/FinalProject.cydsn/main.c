@@ -39,6 +39,49 @@ float q_temp_conversion;
 int main(void)
 {
     
+    /****INITIAL EEPROM CONFIGURATION****/
+
+    
+    /*Starting I2C*/
+    I2C_Master_Start();
+    /*SPI start*/
+    SPIM_Start();
+   /*Starting UART*/
+    UART_Start();
+    
+    isr_UART_StartEx(Custom_isr_UART);
+    
+    UART_PutString("\nUART Started\r\n");
+    
+    isr_TIMER_StartEx(Custom_isr_TIMER);
+    ADC_DelSig_StartConvert();
+        
+    
+    uint8 Flag_cell;
+    uint16 pointer;
+    
+    Flag_cell = EEPROM_readByte(FLAG_ADDRESS);
+    
+    if(Flag_cell == 0){
+        UART_PutString("Setting EEPROM registers at default value\r\n");    
+        /*Setting EEPROM registers at default value*/
+        pointer = FIRST_FREE_CELL;
+        EEPROM_writeByte(POINTER_ADDRESS_H,(pointer&0xFF00)>>8);
+        UART_PutString("Pointer first register set\r\n");
+        EEPROM_writeByte(POINTER_ADDRESS_L,(pointer&0xff));
+        UART_PutString("Pointer second registers set\r\n");
+        EEPROM_writeByte(BEGIN_STOP_ADDRESS,0);
+        UART_PutString("Begin/stop cell set in 'stop' condition\r\n");
+        EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS,1);
+        UART_PutString("Full scale range set at +/-2g\r\n");
+        EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS,1);
+        UART_PutString("Sampling frequency set at 1Hz\r\n");
+        EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,'c');
+        UART_PutString("Temperature unit set at celius\r\n");
+        /*Writing 1 on the EEPROM first cell */
+        Flag_cell = 1;
+        EEPROM_writeByte(FLAG_ADDRESS,Flag_cell);
+    }
     CyGlobalIntEnable; /* Enable global interrupts. */
  
     UART_Start();
@@ -68,8 +111,16 @@ int main(void)
     isr_TIMER_StartEx(Custom_isr_TIMER);
     ADC_DelSig_StartConvert();
     FlagReady = 0;
+    start = 0;
+    stop = 0;
+    change_settings_flag = 1;
+    option_table = DONT_SHOW_TABLE;
+    initialized = 0;
+    feature_selected = 0;
+    KeysMenu = 0;
+    display_error = 0;
     
-    
+    *//*
     I2C_Master_Start();
     
 
@@ -111,6 +162,11 @@ int main(void)
     
         }
         
+        if(ShowMenuFlag){
+            Keys_menu();
+            ShowMenuFlag = 0;
+            KeysMenu = 1;
+        }
         /* Value of option table defines which settings have to be modified:
         * option table= FSR -> change the full scale range of the accelerometer
         * option table = SAMP_FREQ -> change the sampling frequency of the acceleromter
@@ -144,7 +200,44 @@ int main(void)
         }
             
         
+        if(KeysMenu == 1){
+            switch (option_table){
+                case F_S_R:
+                    Show_table(0);
+                    KeysMenu = 0;
+                break;
+                case SAMP_FREQ:
+                    Show_table(1);
+                    KeysMenu = 0;
+                break;
+                case TEMP:
+                    Show_table(2);
+                    KeysMenu = 0;
+                break;
+            }
+        }
+        if(start){
+            /* save the value  in the EEPROM */    
+            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+            start = 0;
+        }
+        
+        if(stop){
+            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
+            stop = 0;
+        }
+        
+        if(display_error){
+            Display_error();
+            display_error = 0;
+        }
     }
+        
+    
+void Display_error(){
+    UART_PutString("\nSelection invalid. Please choose one of the available characters\r\n");
+}
+}
 
     
 
