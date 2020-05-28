@@ -16,6 +16,7 @@
 #include "I2C_Interface.h"
 #include "25LC256.h"
 #include "MemoryCells.h"
+#include "EEPROMCommunication.h"
 
 /* Data from the temperature sensors have to be converted in Celsius as:
 * /             (value_mv - 500)* 0.1 
@@ -64,7 +65,7 @@ int main(void)
     
     Flag_cell = EEPROM_readByte(FLAG_ADDRESS);
     
-    
+    if (Flag_Cell == 0) EEPROM_Initialization();
     
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
