@@ -48,14 +48,14 @@ CY_ISR(Custom_isr_TIMER){
         
         if (Counter == WATERMARK_LEVEL) TempDataReadyFlag = 1;
         Counter = (Counter+1)%(WATERMARK_LEVEL+1);
-        sprintf(message, "Flag low\r\n");
-        UART_PutString(message); 
+       // sprintf(message, "Flag low\r\n");
+        //UART_PutString(message); 
     }
     else {
             /* String to print out messages on the UART */
 
-            sprintf(message, "Flag still high\r\n");
-            UART_PutString(message); 
+            //sprintf(message, "Flag still high\r\n");
+            //UART_PutString(message); 
     }
 }
 
@@ -99,6 +99,7 @@ CY_ISR(Custom_isr_UART)
             
                 /*for every other character */
                 default:
+                    display_error = 1;
                     break;
             }
     }
@@ -157,6 +158,7 @@ CY_ISR(Custom_isr_UART)
                     break;
                 /* do nothing for every other character */
                 default:
+                        display_error = 1;
                         break;
             }
         }
@@ -165,41 +167,48 @@ CY_ISR(Custom_isr_UART)
             
             if(option_table == F_S_R){
                 switch (ch_received){
-                    case 1:
-                    //todo SELECT FSR
-                    feature_selected = 1;
+                    case '1':
+                        //todo SELECT FSR
+                        feature_selected = 1;
                     break;
-                    case 2:
-                    //todo SELECT FSR
-                    feature_selected = 2;
+                    case '2':
+                        //todo SELECT FSR
+                        feature_selected = 2;
                     break;
-                    case 3:
-                    //todo SELECT FSR
-                    feature_selected = 3;
+                    case '3':
+                        //todo SELECT FSR
+                        feature_selected = 3;
                     break;
-                    case 4:
-                    //todo SELECT FSR
-                    feature_selected = 1;
+                    case '4':
+                        //todo SELECT FSR
+                        feature_selected = 4;
                     break;
+                    default:
+                        display_error = 1;
+                    break;
+                    
                 }
               
             }else if(option_table == SAMP_FREQ){
                 switch (ch_received){
-                    case 1:
+                    case '1':
                         //todo SELECT SAMP_FREQ
                         feature_selected = 1;
                     break;
-                    case 2:
+                    case '2':
                         //todo SELECT SAMP_FREQ
-                        feature_selected = 1;
+                        feature_selected = 2;
                     break;
-                    case 3:
+                    case '3':
                         //todo SELECT SAMP_FREQ
-                        feature_selected = 1;
+                        feature_selected = 3;
                     break;
-                    case 4:
+                    case '4':
                         //todo SELECT SAMP_FREQ
-                        feature_selected = 1;
+                        feature_selected = 4;
+                    break;
+                    default:
+                        display_error = 1;
                     break;
                 }
             }else if(option_table == TEMP){
@@ -213,6 +222,9 @@ CY_ISR(Custom_isr_UART)
                     case 'f':
                         //todo SELECT TEMPERATURE UNIT
                         feature_selected = 'f';
+                    break;
+                    default:
+                        display_error = 1;
                     break;
                 }
             
@@ -256,6 +268,6 @@ CY_ISR(Custom_isr_FIFO) {
 
     }
 }
-               
+
 
 /* [] END OF FILE */

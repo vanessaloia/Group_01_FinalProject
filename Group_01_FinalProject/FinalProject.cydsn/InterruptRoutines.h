@@ -36,10 +36,12 @@
     char start;
     uint8_t option_table;
     uint8_t feature_selected;
-    
+    uint8_t display_error;
     
     CY_ISR_PROTO(Custom_isr_UART);
     
+    volatile uint8 ShowMenuFlag;
+    volatile uint8 KeysMenu;
     
     #define ACCELEROMETER_DATA_BYTES 6
     #define WATERMARK_LEVEL 31
@@ -48,7 +50,8 @@
     #define EEPROM_TEMPERATURE_DATA_BYTES 2
     #define EEPROM_PACKET_BYTES EEPROM_ACCELEROMETER_DATA_BYTES + EEPROM_TEMPERATURE_DATA_BYTES
     
-    volatile uint8 ShowMenuFlag;
+    void Display_error();
+    
 
     
     CY_ISR_PROTO(Custom_isr_FIFO);

@@ -59,6 +59,7 @@ void While_Working_Menu(void)
     UART_PutString(message);
     
     Menu_edge();
+    
 }
 
 /* when the user presses 'v' this message is displayed to inform to switch to Bridge control panel to visualize the acquired data */
