@@ -7,6 +7,8 @@
 #include "project.h"
 #include "I2C_Interface.h"
 #include "stdio.h"
+#include "InterruptRoutines.h"
+#include "OptionsToBeDisplayed.h"
 
 /* 
 * \brief function to configure accelerometer registers
@@ -14,10 +16,12 @@
 * \settings modifiable by the user are set to default values and will be changed at runtime when the user requires it
 * \(default values for sampling frequency and FSR: 1Hz and Â±2g)
 */
+/* String to print out messages on the UART */
+char message[50];
+
 void Accelerometer_Configuration(void) {
     
-    /* String to print out messages on the UART */
-    char message[50];
+    
     
     /* Variable to check error in I2C communication */
     ErrorCode error;    
@@ -314,6 +318,85 @@ void Accelerometer_Configuration(void) {
         }
     }   
 }
+
+/* This function changes the full scale range of the accelerometer depending on the user input.
+*\   It uses the I2C protocol communication to change the content of the CTRL_REG_4 register content
+*/
+void Change_Accelerometer_FSR(void) 
+{
+    uint8_t register_content;
+    ErrorCode error;
+    
+    /* default value of CTRL_REG_4: 0x00 
+    * \FSR= ±2g -> CTRL_REG_4[5:4]= 00, feature_selected= 1
+    * \FSR= ±4g -> CTRL_REG_4[5:4]= 01, feature_selected= 2
+    * \FSR= ±8g -> CTRL_REG_4[5:4]= 10, feature_selected= 3
+    * \FSR= ±16g -> CTRL_REG_4[5:4]= 11, feature_selected= 4
+    */
+    
+    
+    register_content = (feature_selected <<4);
+    
+    /* pointer to the correct variable inside the struct of the FSR used later to print */
+    char * fsr_to_print = FSR.header2 + 2*feature_selected;
+    
+    error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
+                                             CTRL_REG_4_ADDR,
+                                             register_content);
+    
+        if (error == NO_ERROR)
+        {
+            sprintf(message, "Full scale range successfully changed at: %s \r\n", fsr_to_print);
+            UART_PutString(message); 
+        }
+        else
+        {
+            UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
+        }   
+    
+}
+
+/* This function changes the sampling frequency of the accelerometer depending on the user input.
+*\   It uses the I2C protocol communication to change the content of the CTRL_REG_1 register content.
+*/
+void Change_Accelerometer_SampFreq(void)
+{
+    uint8_t register_content;
+    ErrorCode error;
+    
+    /* default value of CTRL_REG_1: 0x17
+    * \SampFreq= 1 Hz -> CTRL_REG_1[5:4]= 01, feature_selected= 1
+    * \SampFreq= 10 Hz -> CTRL_REG_1[5:4]= 10, feature_selected= 2
+    * \SampFreq= 25 Hz -> CTRL_REG_1[5:4]= 11, feature_selected= 3
+    * \SampFreq= 50 Hz -> CTRL_REG_1[5:4]= 100, feature_selected= 4
+    * \CTRL_REG_1[3:0] has to be maintained to the default value CTRL_REG_CONST (0b111) 
+    */
+    register_content = (feature_selected <<4) + CTRL_REG_1_CONST;
+    
+    /* pointer to the correct variable inside the struct of the FSR used later to ptint */
+    char * sampfreq_to_print = SampFreq.header2 + 2*feature_selected;
+    
+    error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
+                                             CTRL_REG_1_ADDR,
+                                             register_content);
+    
+        if (error == NO_ERROR)
+        {
+            sprintf(message, "Sampling frequency successfully changed at: %s \r\n", sampfreq_to_print);
+            UART_PutString(message); 
+        }
+        else
+        {
+            UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
+        } 
+    
+}
+
+
+
+
+
+
 
 
 /* [] END OF FILE */

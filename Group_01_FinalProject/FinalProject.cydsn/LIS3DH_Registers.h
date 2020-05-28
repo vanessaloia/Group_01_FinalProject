@@ -82,8 +82,15 @@
     #define FIFO_CTRL_REG_ADDR 0x2E
     #define FIFO_CTRL_REG_CONTENT 0x9F
     
+    /* Part of the register that has to be maitained unchanged when the register 
+    * \ is modified according to the sampling frequency required by the user 
+    */
+    #define CTRL_REG_1_CONST 0b111
+    
        
     void Accelerometer_Configuration(void);
+    void Change_Accelerometer_FSR(void);
+    void Change_Accelerometer_SampFreq(void);
     
 #endif
 
