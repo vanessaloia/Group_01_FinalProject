@@ -39,6 +39,9 @@
     
     char initialized;
     
+    options_to_display FSR;
+    options_to_display SampFreq;
+    options_to_display TempFormat;
     options_to_display set_of_tables[NUMBER_OF_TABLES];
 
     void While_Working_Menu(void);

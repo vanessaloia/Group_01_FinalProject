@@ -115,7 +115,7 @@ CY_ISR(Custom_isr_UART)
                     /* stop data acquisition and storage in EEPROM */
                     
                     /* change the value of the start/stop flag */
-                    start=0;
+                    stop = 1;
                 
                     break;
                 
