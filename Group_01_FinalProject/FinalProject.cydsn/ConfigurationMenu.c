@@ -11,7 +11,8 @@
 */
 #include "ConfigurationMenu.h"
 #include "OptionsToBeDisplayed.h"
-
+#include "25LC256.h"
+#include "MemoryCells.h"
 
 char message [LENGTH_MEX];
 
@@ -44,19 +45,7 @@ void While_Working_Menu(void)
         
     /* !!DATA TO BE INSERTED */ 
     
-    /* Accelerometer acquisition configuration displayed */
-    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\nSampling frequency: %d\r\n",1,2);
-    UART_PutString(message);
-    
-    /* !!DATA TO BE INSERTED */ 
-    
-    /* Temperature sensor acquisition configuration displayed */
-    sprintf(message, "Temperature sensor data format:\r\n%s\r\n\n", (1==1)? "Fahrenheit" : "Celsius");
-    UART_PutString(message);
-    
-    /* Keyboard commands to change configuation and to handle data visualization */
-    sprintf(message, "Press '?' to change the configuration settings for data acquisition\r\n");
-    UART_PutString(message);
+   
     
     Menu_edge();
     
@@ -93,6 +82,9 @@ void Show_table(char index_table)
     * / is initialized and the variable "initialized" is set to 1
     */
     if( !initialized) {
+        options_to_display FSR = {"Character", "Full scale range",'1', "+/- 2g", '2', "+/- 4g",'3', "+/- 8g", '4', "+/- 16g"};
+        options_to_display SampFreq = {"Character", "Sampling Frequency",'1', "1 Hz", '2', "10 Hz",'3', "25 Hz", '4', "50 Hz"};
+        options_to_display TempFormat = {"Character","Temperature format",'c', "Celsius", 'f', "Fahrenheit",' ' , " ",' ' , " "};
         set_of_tables[0]= FSR;
         set_of_tables[1]= SampFreq;
         set_of_tables[2]= TempFormat;
@@ -133,33 +125,43 @@ void Show_table(char index_table)
 void Keys_menu (void) 
 {
     Menu_edge();
-    sprintf(message, "Press 'b' to start data acquisition and storage\r\n\n");
+     /* Accelerometer acquisition configuration displayed */
+    
+    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\n",EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS));
+    UART_PutString(message);
+    sprintf(message, "Sampling frequency: %d\r\n",EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
+    UART_PutString(message);
+    /* !!DATA TO BE INSERTED */ 
+    
+    /* Temperature sensor acquisition configuration displayed */
+    sprintf(message, "Temperature sensor data format:\r\n%s\r\n\n", (EEPROM_readByte(TEMPERATURE_UNIT_ADDRESS)==2)? "Fahrenheit" : "Celsius");
     UART_PutString(message);
     
-    sprintf(message, "Press 's' to stop data acquisition and storage\r\n\n");
-    UART_PutString(message);
+    /* Keyboard commands to change configuation and to handle data visualization */
     
-    sprintf(message, "Press 'f' to change the accelerometer full scale range.Previous stored data will be deleted\r\n\n");
-    UART_PutString(message);
+    UART_PutString("Press '?' to change the configuration settings for data acquisition\r\n");
     
-    sprintf(message, "Press 'p' to change the accelerometer sampling frequency.Previous data will be deleted\r\n\n");
-    UART_PutString(message);
+    UART_PutString("Press 'b' to start data acquisition and storage\r\n\n");
     
-    sprintf(message, "Press 't' to change the temperature data format\r\n\n");
-    UART_PutString(message);
+    UART_PutString("Press 's' to stop data acquisition and storage\r\n\n");
     
-    sprintf(message, "Press 'q' to quit the menu\r\n\n");
-    UART_PutString(message);
+    UART_PutString("Press 'f' to change the accelerometer full scale range.Previous stored data will be deleted\r\n\n");
+    
+    UART_PutString("Press 'p' to change the accelerometer sampling frequency.Previous data will be deleted\r\n\n");
+    
+    UART_PutString("Press 't' to change the temperature data format\r\n\n");
+    
+    UART_PutString("Press 'q' to quit the menu\r\n\n");
     
     UART_PutString("Press 'v' to visualize data (Data acquisition will be stopped)\r\n\n");
+    
     UART_PutString("Press 'u' to stop the visualization of data\r\n\n");
     Menu_edge();
 }
 
 void Menu_edge(void)
 {
-    sprintf(message,"\r\n     ************************\r\n\n");
-    UART_PutString(message);
+    UART_PutString("\r\n     ************************\r\n\n");
 }
     
     

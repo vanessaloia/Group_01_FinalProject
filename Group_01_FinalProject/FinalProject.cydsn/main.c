@@ -1,3 +1,4 @@
+
 /* ========================================
  *
  * Copyright YOUR COMPANY, THE YEAR
@@ -43,7 +44,7 @@ int main(void)
     
     /****INITIAL EEPROM CONFIGURATION****/
 
-    
+    //Timer_Start();
     /*Starting I2C*/
     I2C_Master_Start();
     /*SPI start*/
@@ -59,7 +60,7 @@ int main(void)
     isr_TIMER_StartEx(Custom_isr_TIMER);
     
     ADC_DelSig_StartConvert();
-        
+    
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     
@@ -73,13 +74,13 @@ int main(void)
     FlagReady = 0;
     start = 0;
     stop = 0;
-    change_settings_flag = 0;
+    change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
     initialized = 0;
     feature_selected = 0;
     KeysMenu = 0;
     display_error = 0;
-    
+    ShowMenuFlag = 1;
 
 
     uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
