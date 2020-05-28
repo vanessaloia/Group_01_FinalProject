@@ -164,7 +164,23 @@ int main(void)
                     Timer_WritePeriod(timer_periods[feature_selected-1]);
                     break;
                 case TEMP:
-                    /* to do */
+                    /* change the coeffients for the temperature sensor data conversion depending
+                    * \to the user input: 
+                    * \feature_selected = 1 -> Celsius coefficients
+                    * \feature_selected =2 -> Fahrenheit coefficients
+                    */
+                    if (feature_selected == 1) 
+                    {
+                        m_temp_conversion= M_CELSIUS;
+                        q_temp_conversion= Q_CELSIUS;
+                        UART_PutString("Temperature data format: Celsius\r\n\n");
+                    }
+                    else
+                    {
+                        m_temp_conversion= M_FAHRENEIT;
+                        q_temp_conversion= Q_FAHRENHEIT;
+                        UART_PutString("Temperature data format: Fahrenheit\r\n\n");
+                    }
                     break;
                 default:
                     break;
