@@ -16,6 +16,9 @@
 #include "project.h"
 
 
+uint16_t Pointer;    
+uint8_t Flag_Cell;
+
 void EEPROM_Data_Write(void) {
     
     uint8_t i;

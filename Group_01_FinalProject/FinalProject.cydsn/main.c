@@ -61,9 +61,7 @@ int main(void)
     ADC_DelSig_StartConvert();
         
     
-    uint8 Flag_cell;
-    
-    Flag_cell = EEPROM_readByte(FLAG_ADDRESS);
+    Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     
     if (Flag_Cell == 0) EEPROM_Initialization();
     
