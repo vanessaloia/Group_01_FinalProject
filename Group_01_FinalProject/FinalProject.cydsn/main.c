@@ -16,6 +16,9 @@
 #include "I2C_Interface.h"
 #include "25LC256.h"
 #include "MemoryCells.h"
+#include "EEPROMCommunication.h"
+
+
 
 int main(void)
 {
@@ -23,20 +26,7 @@ int main(void)
     
     /****INITIAL EEPROM CONFIGURATION****/
     
-    uint8 Flag_cell;
-    uint16 pointer;
-    
-    if(Flag_cell == 0){
-        /*Setting registers at default value*/
-        pointer = FIRST_FREE_CELL;
-        EEPROM_writeByte(POINTER_ADDRESS_H,(pointer&0xFF00)>>8);
-        EEPROM_writeByte(POINTER_ADDRESS_L,(pointer&0xff));
-        EEPROM_writeByte(BEGIN_STOP_ADDRESS,0);
-        EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS,1);
-        EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS,1);
-        EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,'c');
-        Flag_cell = 1;
-    }
+    if(Flag_Cell == 0) EEPROM_Initialization();
  
     UART_Start();
     isr_UART_StartEx(Custom_isr_UART);
@@ -46,24 +36,16 @@ int main(void)
     initialized=0;
     feature_selected = 0;
 
-    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
-    
 
-    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
-    Timer_Start();
     UART_Start();
     ADC_DelSig_Start();
-    
-    isr_TIMER_StartEx(Custom_isr_TIMER);
     ADC_DelSig_StartConvert();
     FlagReady = 0;
     
-    *//*
     I2C_Master_Start();
     
 
-
-    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
+    Timer_Start();
     isr_TIMER_StartEx(Custom_isr_TIMER);
     isr_FIFO_StartEx(Custom_isr_FIFO);
     
@@ -86,10 +68,11 @@ int main(void)
                     EEPROM_Data[i*6+5] = Temperature_Data[i+WATERMARK_LEVEL];  
                 }
             }  
-            
-            //function to send data to EEPROM to be put here
+           
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
+            
+            EEPROM_Data_Write();   
     
         }
         
