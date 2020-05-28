@@ -37,14 +37,16 @@
 float m_temp_conversion;
 float q_temp_conversion;
 
-
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
-    
+    char message[50];
     /****INITIAL EEPROM CONFIGURATION****/
-
-    //Timer_Start();
+    
+    
+    
+    Timer_Start();
+    ADC_DelSig_Start();
     /*Starting I2C*/
     I2C_Master_Start();
     /*SPI start*/
@@ -52,20 +54,31 @@ int main(void)
    /*Starting UART*/
     UART_Start();
     
-    isr_UART_StartEx(Custom_isr_UART);
-    
     UART_PutString("\nUART Started\r\n");
     
-     isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);
+    isr_UART_StartEx(Custom_isr_UART);
+   // isr_FIFO_StartEx(Custom_isr_FIFO);
+   // isr_TIMER_StartEx(Custom_isr_TIMER);
     
     ADC_DelSig_StartConvert();
     
     
+    uint8_t Flag_Cell;
+    uint8_t Pointer; 
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
+    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
+    UART_PutString(message);
     
     if (Flag_Cell == 0) EEPROM_Initialization();
-    
+        
+    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
+    UART_PutString(message);
+    sprintf(message,"B/S = %d\r\n",EEPROM_readByte(BEGIN_STOP_ADDRESS));
+    UART_PutString(message);
+    sprintf(message,"FSR = %d\r\n",EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS));
+    UART_PutString(message);
+    sprintf(message,"SAMPFREQ = %d\r\n",EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
+    UART_PutString(message);
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
@@ -83,7 +96,7 @@ int main(void)
     ShowMenuFlag = 1;
 
 
-    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
+    //uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     
     uint8_t i;
     
@@ -95,9 +108,9 @@ int main(void)
     
     for(;;)
     {
-        if (FIFODataReadyFlag && TempDataReadyFlag) {
+     //   if (FIFODataReadyFlag && TempDataReadyFlag) {
             
-            for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
+           /* for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
                 EEPROM_Data[i*6] = Accelerations_digit[i*3]>>4;
                 EEPROM_Data[i*6+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >> 6);
                 EEPROM_Data[i*6+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
@@ -110,12 +123,12 @@ int main(void)
                     EEPROM_Data[i*6+4] = Temperature_Data[i+WATERMARK_LEVEL]>>8;
                     EEPROM_Data[i*6+5] = Temperature_Data[i+WATERMARK_LEVEL];  
                 }
-            }  
+            }  */
             
-            FIFODataReadyFlag = 0;
+        /*    FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
     
-        }
+        }*/
         
         if(ShowMenuFlag){
             Keys_menu();
@@ -151,7 +164,7 @@ int main(void)
             switch (option_table) 
             {
                 /* data need to be deleted: the timer is stopped to not generate new data */
-                Timer_Stop();
+                //Timer_Stop();
                 
                 case F_S_R:
                     /* change full scale range */
@@ -201,6 +214,7 @@ void Display_error(){
 
 
     
+
 
 
 
