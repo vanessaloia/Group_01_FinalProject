@@ -17,6 +17,25 @@
 #include "25LC256.h"
 #include "MemoryCells.h"
 
+/* Data from the temperature sensors have to be converted in Celsius as:
+* /             (value_mv - 500)* 0.1 
+* /macros OFFSET_MV, M_CELSIUS, Q_CELSIUS defined to do the conversion
+*/
+#define M_CELSIUS 0.1
+#define Q_CELSIUS 0
+#define OFFSET_mV 500
+/* Conversion from Celsius to Fahrenheit is (°C * 1.8) + 32
+* \So the conversion from the value in mv from the temperature sensor is
+* \     (value_mv -500) *0.18 +32
+* \ macro defined to do the conversion
+*/
+#define M_FAHRENEIT 0.18
+#define Q_FAHRENHEIT 32
+
+float m_temp_conversion;
+float q_temp_conversion;
+
+
 int main(void)
 {
     
@@ -50,7 +69,7 @@ int main(void)
     ADC_DelSig_StartConvert();
     FlagReady = 0;
     
-    *//*
+    
     I2C_Master_Start();
     
 
@@ -60,6 +79,13 @@ int main(void)
     isr_FIFO_StartEx(Custom_isr_FIFO);
     
     uint8_t i;
+    
+     /* default temperature format to send data is Celsius */
+    m_temp_conversion= M_CELSIUS;
+    q_temp_conversion= Q_CELSIUS;
+    
+    
+    
     for(;;)
     {
         if (FIFODataReadyFlag && TempDataReadyFlag) {
@@ -91,26 +117,34 @@ int main(void)
         * option table = TEMP -> change temprature data format
         * Depending on option table the value of feature_selected variable is used 
         * to operate the correct change on the acquisition settings */
-        
-        switch (option_table) 
-        {
-            case F_S_R:
-                /* change full scale range */
-                Change_Accelerometer_FSR();
-            case SAMP_FREQ:
-                /* change sampling freqeuncy */
-                Change_Accelerometer_SampFreq();
-                /* change timer frequency in order to change the fequency of the isr */
-                Timer_WritePeriod(timer_periods[feature_selected-1]);
-            case TEMP:
-                /* to do */
+        if (option_table!= DONT_SHOW_TABLE && feature_selected) {
+            switch (option_table) 
+            {
+                case F_S_R:
+                    /* change full scale range */
+                    Change_Accelerometer_FSR();
+                    break;
+                case SAMP_FREQ:
+                    /* change sampling freqeuncy */
+                    Change_Accelerometer_SampFreq();
+                    /* change timer frequency in order to change the fequency of the isr */
+                    Timer_WritePeriod(timer_periods[feature_selected-1]);
+                    break;
+                case TEMP:
+                    /* to do */
+                    break;
+                default:
+                    break;
+                    
+            }
+            option_table= DONT_SHOW_TABLE;
+            feature_selected = 0;
+            KeysMenu=0;
+            ShowMenuFlag=1;
         }
-        option_table= DONT_SHOW_TABLE;
-        feature_selected = 0;
-    }
+            
         
-    
-}
+    }
 
     
 
