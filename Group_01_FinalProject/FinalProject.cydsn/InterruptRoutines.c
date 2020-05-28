@@ -13,6 +13,8 @@
 #include "project.h"
 #include "I2C_Interface.h"
 #include "LIS3DH_Registers.h"
+#include "25LC256.h"
+#include "MemoryCells.h"
 
 uint8_t Counter = 0;
 int16 temperature_digit = 0;
@@ -76,35 +78,19 @@ CY_ISR(Custom_isr_UART)
                 
                     /* show Configuration menu */
                     ShowMenuFlag = 1;
-                    /* futher characters used for changing configurations of the acquisition */
-                    change_settings_flag=1;
-                   
+                    change_settings_flag = 1;
                     break;
                 
-                case 'v': 
-                case 'V':
-                
-                    /* show data in the bridge control panel */
-                
-                    /* stop acquisition and storing in the EEPROM */
-                    break;
-                
-                case 'u':
-                case 'U':
-                
-                    /* stop streaming of data in bridge control panel */
-                    
-                    
-                    break;
+               
             
                 /*for every other character */
                 default:
                     display_error = 1;
                     break;
             }
-    }
     
-    else {
+    
+     }else {
         
         
         if(option_table == DONT_SHOW_TABLE)
@@ -114,11 +100,14 @@ CY_ISR(Custom_isr_UART)
                 case 'b':
                 case 'B':
                     /* start data acquisition and storage in EEPROM */
-                    
+                    /*Starting timer*/
+                    Timer_Start();
+                    /*Starting ADC*/
+                    ADC_DelSig_Start();
                     /* change the value of the start/stop flag */
-                    start=1;
+                    start = 1;
                     /* save the value of the flag in the EEPROM */
-                
+                    EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
                     break;
                 
                 case 's': 
@@ -127,7 +116,6 @@ CY_ISR(Custom_isr_UART)
                     
                     /* change the value of the start/stop flag */
                     start=0;
-                    /* save the value of the flag in the EEPROM */
                 
                     break;
                 
@@ -156,10 +144,25 @@ CY_ISR(Custom_isr_UART)
                     /* set flag to 0 to quit the configuration menu */
                     change_settings_flag=0;
                     break;
+                
+                case 'v': 
+                case 'V':
+                
+                    /* show data in the bridge control panel */
+                
+                    /* stop acquisition and storing in the EEPROM */
+                    break;
+                
+                case 'u':
+                case 'U':
+                
+                    /* stop streaming of data in bridge control panel */
+                    break;
                 /* do nothing for every other character */
+                
                 default:
-                        display_error = 1;
-                        break;
+                    display_error = 1;
+                    break;
             }
         }
         

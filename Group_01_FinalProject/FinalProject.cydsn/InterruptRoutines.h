@@ -34,6 +34,7 @@
     
     char change_settings_flag;
     char start;
+    volatile uint8_t stop;
     uint8_t option_table;
     uint8_t feature_selected;
     uint8_t display_error;

@@ -22,30 +22,30 @@ int main(void)
     CyGlobalIntEnable; /* Enable global interrupts. */
     
     /****INITIAL EEPROM CONFIGURATION****/
-    
-    
-    uint8 Flag_cell = 0;
-    uint16 pointer;
 
-    /*Starting timer*/
-    Timer_Start();
-    /*Starting ADC*/
-    ADC_DelSig_Start();
+    
     /*Starting I2C*/
     I2C_Master_Start();
     /*SPI start*/
     SPIM_Start();
    /*Starting UART*/
     UART_Start();
+    
     isr_UART_StartEx(Custom_isr_UART);
     
     UART_PutString("\nUART Started\r\n");
     
     isr_TIMER_StartEx(Custom_isr_TIMER);
     ADC_DelSig_StartConvert();
+        
     
-    UART_PutString("Setting EEPROM registers at default value\r\n");    
+    uint8 Flag_cell;
+    uint16 pointer;
+    
+    Flag_cell = EEPROM_readByte(FLAG_ADDRESS);
+    
     if(Flag_cell == 0){
+        UART_PutString("Setting EEPROM registers at default value\r\n");    
         /*Setting EEPROM registers at default value*/
         pointer = FIRST_FREE_CELL;
         EEPROM_writeByte(POINTER_ADDRESS_H,(pointer&0xFF00)>>8);
@@ -60,14 +60,17 @@ int main(void)
         UART_PutString("Sampling frequency set at 1Hz\r\n");
         EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,'c');
         UART_PutString("Temperature unit set at celius\r\n");
+        /*Writing 1 on the EEPROM first cell */
         Flag_cell = 1;
+        EEPROM_writeByte(FLAG_ADDRESS,Flag_cell);
     }
     
     FlagReady = 0;
-    
-    change_settings_flag=0;
-    option_table= DONT_SHOW_TABLE;
-    initialized=0;
+    start = 0;
+    stop = 0;
+    change_settings_flag = 1;
+    option_table = DONT_SHOW_TABLE;
+    initialized = 0;
     feature_selected = 0;
     KeysMenu = 0;
     display_error = 0;
@@ -77,15 +80,15 @@ int main(void)
     //DataBuffer2[0] = 0xA0;
     //DataBuffer2[7] = 0xC0;
     //isr_FIFO_StartEx(Custom_isr_FIFO);
+   // Keys_menu();
     
-    While_Working_Menu();
-    ShowMenuFlag = 0;
+    ShowMenuFlag = 1;
     
     uint8_t i;
     for(;;)
     {
         /* Place your application code here. */
-        /*if (FIFODataReadyFlag && TempDataReadyFlag) {
+        if (FIFODataReadyFlag && TempDataReadyFlag) {
             
             for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
                 EEPROM_Data[i*6] = Accelerations_digit[i*3]>>4;
@@ -98,24 +101,8 @@ int main(void)
             
             //function to send data to EEPROM to be put here
             FIFODataReadyFlag = 0;
-            TempDataReadyFlag = 0;*/
-           
-/*            if (PacketReadyFlag) {
-                for (i=0; i<WATERMARK_LEVEL+1; i++) {
-                  DataBuffer2[1]=DataBuffer[6*i];  
-                  DataBuffer2[2]=DataBuffer[6*i+1]; 
-                  DataBuffer2[3]=DataBuffer[6*i+2];  
-                  DataBuffer2[4]=DataBuffer[6*i+3];  
-                  DataBuffer2[5]=DataBuffer[6*i+4];  
-                  DataBuffer2[6]=DataBuffer[6*i+5];    
-                  UART_PutArray(DataBuffer2, 8);*/ /*API to transmit an array of bytes */
-  /*      }
-        PacketReadyFlag = 0;
+            TempDataReadyFlag = 0;
         
-    }*/
-     //   }//IF FIFO AND TEMPERATURE
-        
-        //
         if(ShowMenuFlag){
             Keys_menu();
             ShowMenuFlag = 0;
@@ -157,6 +144,9 @@ int main(void)
                 UART_PutString("FSR = +/-16g\r\n");
                 feature_selected = 0;
             }
+            ShowMenuFlag = 1; //Dysplay Keys_menu
+            KeysMenu = 0;
+            option_table = DONT_SHOW_TABLE;
         }else if(feature_selected && option_table == SAMP_FREQ){
             if(feature_selected == 1){
                 //SET SAMPLING FREQUENCY 1Hz
@@ -175,6 +165,9 @@ int main(void)
                 UART_PutString("Freq = 50Hz\r\n");
                 feature_selected = 0;
             }
+            ShowMenuFlag = 1; //Dysplay Keys_menu
+            KeysMenu = 0;
+            option_table = DONT_SHOW_TABLE;
         }else if(feature_selected && option_table == TEMP){
             if(feature_selected == 'c'){
                 //SET TEMPERATURE UNIT AT CELSIUS
@@ -185,7 +178,22 @@ int main(void)
                 UART_PutString("Temp in Fahrenheit\r\n");
                 feature_selected = 0;
             }
+            ShowMenuFlag = 1; //Dysplay Keys_menu
+            KeysMenu = 0;
+            option_table = DONT_SHOW_TABLE;
         }
+        
+        if(start){
+            /* save the value  in the EEPROM */    
+            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+            start = 0;
+        }
+        
+        if(stop){
+            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
+            stop = 0;
+        }
+        
         if(display_error){
             Display_error();
             display_error = 0;

@@ -55,7 +55,7 @@ void While_Working_Menu(void)
     UART_PutString(message);
     
     /* Keyboard commands to change configuation and to handle data visualization */
-    sprintf(message, "Press '?' to change the configuration settings for data acquisition\r\nPress 'v' to visualize data (Data acquisition will be stopped)\r\nPress 'u' to stop the visualization of data\r\n\n");
+    sprintf(message, "Press '?' to change the configuration settings for data acquisition\r\n");
     UART_PutString(message);
     
     Menu_edge();
@@ -150,6 +150,9 @@ void Keys_menu (void)
     
     sprintf(message, "Press 'q' to quit the menu\r\n\n");
     UART_PutString(message);
+    
+    UART_PutString("Press 'v' to visualize data (Data acquisition will be stopped)\r\n\n");
+    UART_PutString("Press 'u' to stop the visualization of data\r\n\n");
     Menu_edge();
 }
 
