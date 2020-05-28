@@ -40,6 +40,50 @@ int main(void)
     {  
         /* data need to be deleted: the timer is stopped to not generate new data */
         Timer_Stop();
+
+    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+    Timer_Start();
+    UART_Start();
+    ADC_DelSig_Start();
+    
+    isr_TIMER_StartEx(Custom_isr_TIMER);
+    ADC_DelSig_StartConvert();
+    FlagReady = 0;
+    
+    *//*
+    I2C_Master_Start();
+    
+
+
+    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
+    isr_TIMER_StartEx(Custom_isr_TIMER);
+    isr_FIFO_StartEx(Custom_isr_FIFO);
+    
+    uint8_t i;
+    for(;;)
+    {
+        if (FIFODataReadyFlag && TempDataReadyFlag) {
+            
+            for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
+                EEPROM_Data[i*6] = Accelerations_digit[i*3]>>4;
+                EEPROM_Data[i*6+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >> 6);
+                EEPROM_Data[i*6+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
+                EEPROM_Data[i*6+3] = Accelerations_digit[i*3+2];
+                if (Temp_Counter > WATERMARK_LEVEL) {
+                    EEPROM_Data[i*6+4] = Temperature_Data[i]>>8;
+                    EEPROM_Data[i*6+5] = Temperature_Data[i];  
+                }
+                else {
+                    EEPROM_Data[i*6+4] = Temperature_Data[i+WATERMARK_LEVEL]>>8;
+                    EEPROM_Data[i*6+5] = Temperature_Data[i+WATERMARK_LEVEL];  
+                }
+            }  
+            
+            //function to send data to EEPROM to be put here
+            FIFODataReadyFlag = 0;
+            TempDataReadyFlag = 0;
+    
+        }
         
         /* Value of option table defines which settings have to be modified:
         * option table= FSR -> change the full scale range of the accelerometer
