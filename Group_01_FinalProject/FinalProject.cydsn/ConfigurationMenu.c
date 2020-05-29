@@ -29,6 +29,7 @@ void While_Working_Menu(void)
     
     Menu_edge();
     /* !!DATA TO BE INSERTED */
+    UART_PutString("Press '?' to change the configuration settings for data acquisition\r\n");
     
     /* if the system is acquiring data */
     if(1/* the flag start/stop is in start*/) 
@@ -138,8 +139,6 @@ void Keys_menu (void)
     UART_PutString(message);
     
     /* Keyboard commands to change configuation and to handle data visualization */
-    
-    UART_PutString("Press '?' to change the configuration settings for data acquisition\r\n");
     
     UART_PutString("Press 'b' to start data acquisition and storage\r\n\n");
     

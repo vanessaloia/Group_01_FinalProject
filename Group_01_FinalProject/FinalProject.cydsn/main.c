@@ -18,7 +18,6 @@
 #include "25LC256.h"
 #include "MemoryCells.h"
 #include "EEPROMCommunication.h"
-
 /* Data from the temperature sensors have to be converted in Celsius as:
 * /             (value_mv - 500)* 0.1 
 * /macros OFFSET_MV, M_CELSIUS, Q_CELSIUS defined to do the conversion
@@ -45,45 +44,36 @@ int main(void)
     
     
     
-    Timer_Start();
-    ADC_DelSig_Start();
     /*Starting I2C*/
-    I2C_Master_Start();
-    /*SPI start*/
-    SPIM_Start();
+    I2C_Peripheral_Start();
+    
    /*Starting UART*/
     UART_Start();
-    
     UART_PutString("\nUART Started\r\n");
+    /*SPI start*/
+    SPIM_Start();
+    
+    Timer_Start();
+    ADC_DelSig_Start();
     
     isr_UART_StartEx(Custom_isr_UART);
-   // isr_FIFO_StartEx(Custom_isr_FIFO);
-   // isr_TIMER_StartEx(Custom_isr_TIMER);
+    /*isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);*/
+    
+    CyDelay(10);
     
     ADC_DelSig_StartConvert();
     
+    Accelerometer_Configuration();
     
-    uint8_t Flag_Cell;
-    uint8_t Pointer; 
-    Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
     UART_PutString(message);
     
     if (Flag_Cell == 0) EEPROM_Initialization();
-        
-    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
-    UART_PutString(message);
-    sprintf(message,"B/S = %d\r\n",EEPROM_readByte(BEGIN_STOP_ADDRESS));
-    UART_PutString(message);
-    sprintf(message,"FSR = %d\r\n",EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS));
-    UART_PutString(message);
-    sprintf(message,"SAMPFREQ = %d\r\n",EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
-    UART_PutString(message);
+    else UART_PutString("EEPROM already initialized");
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
-    
-   
     FlagReady = 0;
     start = 0;
     stop = 0;
@@ -94,9 +84,9 @@ int main(void)
     KeysMenu = 0;
     display_error = 0;
     ShowMenuFlag = 1;
+    while_working_menu_flag = 0;
 
-
-    //uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
+    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     
     uint8_t i;
     
@@ -104,13 +94,11 @@ int main(void)
     m_temp_conversion= M_CELSIUS;
     q_temp_conversion= Q_CELSIUS;
     
-    
-    
     for(;;)
     {
-     //   if (FIFODataReadyFlag && TempDataReadyFlag) {
+        if (FIFODataReadyFlag && TempDataReadyFlag) {
             
-           /* for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
+            for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
                 EEPROM_Data[i*6] = Accelerations_digit[i*3]>>4;
                 EEPROM_Data[i*6+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >> 6);
                 EEPROM_Data[i*6+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
@@ -123,13 +111,17 @@ int main(void)
                     EEPROM_Data[i*6+4] = Temperature_Data[i+WATERMARK_LEVEL]>>8;
                     EEPROM_Data[i*6+5] = Temperature_Data[i+WATERMARK_LEVEL];  
                 }
-            }  */
+            }  
             
-        /*    FIFODataReadyFlag = 0;
+            FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
     
-        }*/
+        }
         
+        if(while_working_menu_flag){
+            While_Working_Menu();
+            while_working_menu_flag = 0;
+        }
         if(ShowMenuFlag){
             Keys_menu();
             ShowMenuFlag = 0;
@@ -153,7 +145,7 @@ int main(void)
             }
         }
         
-    
+     
         /* Value of option table defines which settings have to be modified:
         * option table= FSR -> change the full scale range of the accelerometer
         * option table = SAMP_FREQ -> change the sampling frequency of the acceleromter
@@ -162,33 +154,31 @@ int main(void)
         * to operate the correct change on the acquisition settings */
         if (option_table!= DONT_SHOW_TABLE && feature_selected) {
             switch (option_table) 
-            {
+           {
                 /* data need to be deleted: the timer is stopped to not generate new data */
-                //Timer_Stop();
+                Timer_Stop();
                 
                 case F_S_R:
                     /* change full scale range */
                     Change_Accelerometer_FSR();
-                    break;
+                   break;
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
                     Change_Accelerometer_SampFreq();
                     /* change timer frequency in order to change the fequency of the isr */
-                    Timer_WritePeriod(timer_periods[feature_selected-1]);
+                   Timer_WritePeriod(timer_periods[feature_selected-1]);
                     break;
                 case TEMP:
                     /* to do */
                     break;
                 default:
                     break;
-                    
             }
-            option_table= DONT_SHOW_TABLE;
-            feature_selected = 0;
-            KeysMenu=0;
-            ShowMenuFlag=1;
+                option_table= DONT_SHOW_TABLE;
+                feature_selected = 0;
+                KeysMenu=0;
+                ShowMenuFlag=1;
         }
-         
         if(start){
             /* save the value  in the EEPROM */    
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
