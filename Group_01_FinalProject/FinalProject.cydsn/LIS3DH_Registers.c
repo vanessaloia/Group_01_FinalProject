@@ -353,7 +353,7 @@ void Change_Accelerometer_FSR(void)
         }
         else
         {
-            UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
+            UART_PutString("Error occurred during I2C comm to write  control register 4\r\n");   
         }   
     
     error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,
@@ -366,7 +366,7 @@ void Change_Accelerometer_FSR(void)
         }
         else
         {
-            UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
+            UART_PutString("Error occurred during I2C comm to read control register 4\r\n");   
         } 
 }
 

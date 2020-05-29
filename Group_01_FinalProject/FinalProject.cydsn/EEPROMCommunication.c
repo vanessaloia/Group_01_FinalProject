@@ -32,21 +32,28 @@ void EEPROM_Data_Write(void) {
 }
 
 void EEPROM_Initialization(void) {
-
-    /*Setting registers at default value*/ 
+    char message[50];
     Pointer = FIRST_FREE_CELL;
     EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer&0xFF00)>>8);
+    EEPROM_waitForWriteComplete();
     EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer&0xff));
+    EEPROM_waitForWriteComplete();
     EEPROM_writeByte(BEGIN_STOP_ADDRESS,0);
+    EEPROM_waitForWriteComplete();
     EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS,1);
+    EEPROM_waitForWriteComplete();
     EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS,1);
+    EEPROM_waitForWriteComplete();
     EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,'c');
+    EEPROM_waitForWriteComplete();
     /*Writing 1 on the EEPROM first cell */
     Flag_Cell = 1;
     EEPROM_writeByte(FLAG_ADDRESS,Flag_Cell);
+    EEPROM_waitForWriteComplete();
+    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
+    UART_PutString(message);
     UART_PutString("Device started up for the first time. You can change default settings through the menu \r\n");
 }
-
 
 
  

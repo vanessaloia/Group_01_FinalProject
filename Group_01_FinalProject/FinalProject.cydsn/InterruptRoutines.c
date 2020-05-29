@@ -143,6 +143,7 @@ CY_ISR(Custom_isr_UART)
                     
                     /* set flag to 0 to quit the configuration menu */
                     change_settings_flag=0;
+                    while_working_menu_flag = 1;
                     break;
                 
                 case 'v': 
