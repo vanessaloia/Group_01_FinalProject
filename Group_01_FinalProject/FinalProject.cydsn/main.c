@@ -65,8 +65,6 @@ int main(void)
     
     ADC_DelSig_StartConvert();
     
-    Red_LED_Write(1);
-    
     Accelerometer_Configuration();
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
@@ -93,7 +91,8 @@ int main(void)
     display_error = 0;
     ShowMenuFlag = 1;
     while_working_menu_flag = 0;
-
+    EEPROM_Full = 0;
+    
     uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     
     uint8_t i;
@@ -196,6 +195,12 @@ int main(void)
         if(stop){
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
             stop = 0;
+        }
+        
+        if(EEPROM_Full){
+            Red_LED_Write(1);
+        }else{
+            Red_LED_Write(0);
         }
         
         if(display_error){

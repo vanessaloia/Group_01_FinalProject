@@ -152,7 +152,7 @@ CY_ISR(Custom_isr_UART)
                 
                 case 'v': 
                 case 'V':
-                
+                    Red_LED_Write(1);
                     /* show data in the bridge control panel */
                 
                     /* stop acquisition and storing in the EEPROM */
@@ -160,7 +160,7 @@ CY_ISR(Custom_isr_UART)
                 
                 case 'u':
                 case 'U':
-                
+                    Red_LED_Write(0);
                     /* stop streaming of data in bridge control panel */
                     break;
                 /* do nothing for every other character */

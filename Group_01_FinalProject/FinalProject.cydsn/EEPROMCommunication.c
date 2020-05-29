@@ -27,7 +27,7 @@ void EEPROM_Data_Write(void) {
         EEPROM_waitForWriteComplete();
         CyDelay(10);
         Pointer += SPI_EEPROM_PAGE_SIZE;
-    
+        
     }
 }
 
