@@ -54,6 +54,7 @@ int main(void)
     SPIM_Start();
     
     Timer_Start();
+    
     ADC_DelSig_Start();
     
     isr_UART_StartEx(Custom_isr_UART);
@@ -63,6 +64,8 @@ int main(void)
     CyDelay(10);
     
     ADC_DelSig_StartConvert();
+    
+    Red_LED_Write(1);
     
     Accelerometer_Configuration();
     
@@ -199,8 +202,12 @@ int main(void)
             Display_error();
             display_error = 0;
         }
-    }
-}
+        
+        
+        
+    }/*END FOR*/
+    
+}/*END MAIN*/
         
     
 void Display_error(){

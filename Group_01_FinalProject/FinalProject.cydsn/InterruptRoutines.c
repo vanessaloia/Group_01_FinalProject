@@ -104,10 +104,14 @@ CY_ISR(Custom_isr_UART)
                     Timer_Start();
                     /*Starting ADC*/
                     ADC_DelSig_Start();
+                    
+                    Blue_LED_PWM_Start();
+                    
                     /* change the value of the start/stop flag */
                     start = 1;
                     /* save the value of the flag in the EEPROM */
                     EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
+                    EEPROM_waitForWriteComplete();
                     break;
                 
                 case 's': 
@@ -116,7 +120,7 @@ CY_ISR(Custom_isr_UART)
                     
                     /* change the value of the start/stop flag */
                     stop = 1;
-                
+                    Blue_LED_PWM_Stop();
                     break;
                 
                 case 'f':
