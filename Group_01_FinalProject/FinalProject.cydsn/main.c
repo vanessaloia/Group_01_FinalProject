@@ -57,8 +57,8 @@ int main(void)
     ADC_DelSig_Start();
     
     isr_UART_StartEx(Custom_isr_UART);
-    /*isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);*/
+    isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);
     
     CyDelay(10);
     
@@ -66,11 +66,16 @@ int main(void)
     
     Accelerometer_Configuration();
     
+    Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
     UART_PutString(message);
     
-    if (Flag_Cell == 0) EEPROM_Initialization();
-    else UART_PutString("EEPROM already initialized");
+    if (Flag_Cell == 0){
+        EEPROM_Initialization();
+    }
+    else{
+        UART_PutString("EEPROM already initialized");
+    }
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
