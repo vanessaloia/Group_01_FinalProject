@@ -92,6 +92,7 @@
     #define BUTTON_PRESSED 0
     #define BUTTON_RELEASED 1
     volatile uint8_t button_pressed;
+    volatile uint8_t time_counter;
     
 #endif
 

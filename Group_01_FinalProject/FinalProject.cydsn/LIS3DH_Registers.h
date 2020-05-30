@@ -10,7 +10,7 @@
 
 
 #ifndef _REGISTERS_H_ 
-    
+    #include "project.h"
     #define _REGISTERS_H_
     
     /* Address of the LIS3DH slave device */
