@@ -334,25 +334,33 @@ void Change_Accelerometer_FSR(void)
     * \FSR= ±8g -> CTRL_REG_4[5:4]= 10, feature_selected= 3
     * \FSR= ±16g -> CTRL_REG_4[5:4]= 11, feature_selected= 4
     */
-    
-    
+  
     register_content = (feature_selected-1) <<4;
+    /*
     sprintf(message, "feature_selected = %d\r\nRegister content = %d\r\n",feature_selected,register_content);
     UART_PutString(message);
-    /* pointer to the correct variable inside the struct of the FSR used later to print */
-    char * fsr_to_print = FSR.header2 + 2*feature_selected;
+    */
+    /* pointer that points to the correct variable inside the struct of the FSR. It's used to print the FSR.
     
+    * / (n-key + n-option)= WORD_SIZE (string size) +1 (char size)
+    * / the pointer points to option1= ±2g so it has to go to the (feature_selected -1)-option
+    */
+    char * fsr_to_print = set_of_tables[option_table].option1 + (WORD_SIZE+1)* (feature_selected-1);
+    
+    /* Change the value of the Control register 4 according to the user's input */
     error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
                                              CTRL_REG_4_ADDR,
                                              register_content);
     
         if (error == NO_ERROR)
         {
+            /* print the new value */
             sprintf(message, "Full scale range successfully changed at: %s \r\n", fsr_to_print);
             UART_PutString(message); 
         }
         else
         {
+            /* print error message */
             UART_PutString("Error occurred during I2C comm to write  control register 4\r\n");   
         }   
     
