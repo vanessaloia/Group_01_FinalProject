@@ -122,7 +122,7 @@ CY_ISR(Custom_isr_UART)
                 case 's': 
                 case 'S':
                     /* stop data acquisition and storage in EEPROM */
-                    
+                    start = STOP;
                     /* change the value of the start/stop flag */
                     //stop = 1;
                 
