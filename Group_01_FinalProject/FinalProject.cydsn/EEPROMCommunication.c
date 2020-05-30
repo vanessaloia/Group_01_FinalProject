@@ -15,7 +15,8 @@
 #include "MemoryCells.h"
 #include "project.h"
 
-
+uint8_t Flag_Cell;
+uint16_t Pointer;
 
 
 void EEPROM_Data_Write(void) {
