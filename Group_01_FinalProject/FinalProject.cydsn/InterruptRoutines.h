@@ -27,9 +27,10 @@
     #define SHOW_MENU 1
     #define DONT_SHOW_MENU 0
     
+
+    #define STOP 0
     #define START 1
-    #define STOP 2
-    #define BYTE_SAVED 0
+    #define BYTE_SAVED 2
     
     #define SHOW_ERROR 1
     #define DONT_SHOW_ERROR 0

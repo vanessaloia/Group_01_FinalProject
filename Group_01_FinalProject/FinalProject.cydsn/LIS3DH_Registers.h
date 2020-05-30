@@ -95,8 +95,8 @@
     
        
     void Accelerometer_Configuration(void);
-    void Change_Accelerometer_FSR(void);
-    void Change_Accelerometer_SampFreq(void);
+    void Change_Accelerometer_FSR(uint8_t feature_selected);
+    void Change_Accelerometer_SampFreq(uint8_t feature_selected);
     
 #endif
 

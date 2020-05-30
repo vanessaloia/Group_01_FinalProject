@@ -115,8 +115,6 @@ CY_ISR(Custom_isr_UART)
                     
                     /* change the value of the start/stop flag */
                     start = START;
-                    /* save the value of the flag in the EEPROM */
-                    EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
                     break;
                 
                 case 's': 
