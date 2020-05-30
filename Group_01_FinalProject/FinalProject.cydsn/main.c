@@ -160,15 +160,19 @@ int main(void)
                 
                 case F_S_R:
                     /* change full scale range */
+                    EEPROM_Store_FSR();
                     Change_Accelerometer_FSR();
                    break;
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
+                    EEPROM_Store_Freq();
                     Change_Accelerometer_SampFreq();
                     /* change timer frequency in order to change the fequency of the isr */
                    Timer_WritePeriod(timer_periods[feature_selected-1]);
                     break;
                 case TEMP:
+                    /* to do */
+                    EEPROM_Store_Temp();
                     /* change the coeffients for the temperature sensor data conversion depending
                     * \to the user input: 
                     * \feature_selected = 1 -> Celsius coefficients
@@ -195,10 +199,29 @@ int main(void)
                 KeysMenu=0;
                 ShowMenuFlag=1;
         }
-        if(start){
-            /* save the value  in the EEPROM */    
-            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
             start = 0;
+//        if(start == START){
+//            /* save the value  in the EEPROM */    
+//            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+//            EEPROM_waitForWriteComplete();
+//            start = 0;
+//        }if(stop){
+//            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
+//            EEPROM_waitForWriteComplete();
+//            stop = 0;
+//        }
+        
+        switch(start){
+            case (START):
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+                EEPROM_waitForWriteComplete();
+                start = BYTE_SAVED;
+            break;
+            case (STOP):
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+                EEPROM_waitForWriteComplete();
+                start = BYTE_SAVED;
+            break;
         }
         
         if(stop){
