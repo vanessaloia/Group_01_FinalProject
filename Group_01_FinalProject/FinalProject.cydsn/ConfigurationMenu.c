@@ -34,13 +34,13 @@ void While_Working_Menu(void)
     UART_PutString("Press 'u' to stop sending data to the bridge control panel\r\n");
     
     /* if the system is acquiring data */
-    if(1/* the flag start/stop is in start*/) 
+    if(start == START) 
     {
         sprintf(message, "Ongoing data acquisition... \r\n\n");
         UART_PutString(message);
     }
     /* if the acquisition has been stopped */
-    else 
+    else if (start == STOP)
     {
         sprintf(message, "Data acquisition stopped \r\n\n");
         UART_PutString(message);
@@ -58,9 +58,7 @@ void While_Working_Menu(void)
 void Switch_to_BridgeControlPanel(void)
 {
     Menu_edge();
-    /* !! DATA TO BE INSERTED */
-    sprintf(message, "Data will be displayed in %d seconds. Open Bridge Control Panel\n\n",1);
-    UART_PutString(message);
+    UART_PutString("Open Bridge Control Panel to visualize data.\r\n Press 'u' to stop the visualization\r\n\n");
     Menu_edge();
 }
 
@@ -146,9 +144,9 @@ void Keys_menu (void)
     
     UART_PutString("Press 's' to stop data acquisition and storage\r\n\n");
     
-    UART_PutString("Press 'f' to change the accelerometer full scale range.Previous stored data will be deleted\r\n\n");
+    UART_PutString("Press 'f' to change the accelerometer full scale range .Previous stored data will be deleted\r\n\n");
     
-    UART_PutString("Press 'p' to change the accelerometer sampling frequency.Previous data will be deleted\r\n\n");
+    UART_PutString("Press 'p' to change the accelerometer sampling frequency. Previous data will be deleted\r\n\n");
     
     UART_PutString("Press 't' to change the temperature data format\r\n\n");
     
