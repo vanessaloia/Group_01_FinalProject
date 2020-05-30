@@ -77,10 +77,23 @@ CY_ISR(Custom_isr_UART)
                 case '?':
                 
                     /* show Configuration menu */
-                    ShowMenuFlag = 1;
+                    ShowMenuFlag = SHOW_MENU;
                     change_settings_flag = 1;
                     break;
+            
+                case 'v': 
+                case 'V':
+                    Red_LED_Write(1);
+                    /* show data in the bridge control panel */
                 
+                    /* stop acquisition and storing in the EEPROM */
+                    break;
+                
+                case 'u':
+                case 'U':
+                    Red_LED_Write(0);
+                    /* stop streaming of data in bridge control panel */
+                    break;
                
             
                 /*for every other character */
@@ -101,13 +114,17 @@ CY_ISR(Custom_isr_UART)
                 case 'B':
                     /* start data acquisition and storage in EEPROM */
                     /*Starting timer*/
-                    Timer_Start();
+                    //Timer_Start();
                     /*Starting ADC*/
-                    ADC_DelSig_Start();
+                    //ADC_DelSig_Start();
+                    
+                    Blue_LED_PWM_Start();
+                    
                     /* change the value of the start/stop flag */
                     start = 1;
                     /* save the value of the flag in the EEPROM */
-                    EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
+                    /*EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
+                    EEPROM_waitForWriteComplete();*/
                     break;
                 
                 case 's': 
@@ -116,12 +133,11 @@ CY_ISR(Custom_isr_UART)
                     
                     /* change the value of the start/stop flag */
                     stop = 1;
-                
+                    Blue_LED_PWM_Stop();
                     break;
                 
                 case 'f':
                 case 'F':
-                
                     /* show accelerometer full scale range table */
                     option_table= F_S_R;
                     break;
@@ -143,11 +159,12 @@ CY_ISR(Custom_isr_UART)
                     
                     /* set flag to 0 to quit the configuration menu */
                     change_settings_flag=0;
+                    while_working_menu_flag = SHOW_MENU;
                     break;
                 
                 case 'v': 
                 case 'V':
-                
+                    Red_LED_Write(1);
                     /* show data in the bridge control panel */
                 
                     /* stop acquisition and storing in the EEPROM */
@@ -155,7 +172,7 @@ CY_ISR(Custom_isr_UART)
                 
                 case 'u':
                 case 'U':
-                
+                    Red_LED_Write(0);
                     /* stop streaming of data in bridge control panel */
                     break;
                 /* do nothing for every other character */
@@ -235,6 +252,7 @@ CY_ISR(Custom_isr_UART)
                 
         }
     }
+    UART_ClearRxBuffer();
 }
 
 /*

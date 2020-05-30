@@ -9,8 +9,8 @@
  *
  * ========================================
 */
-#ifndef __ERRORCODES_H
-    #define __ERRORCODES_H
+#ifndef __ERRORECODES_H
+    #define __ERRORECODES_H
     
     typedef enum {
         NO_ERROR,           /* No error generated */
