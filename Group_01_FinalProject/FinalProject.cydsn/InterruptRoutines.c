@@ -15,6 +15,9 @@
 #include "LIS3DH_Registers.h"
 #include "25LC256.h"
 #include "MemoryCells.h"
+
+//Questo da rimuovere
+#include "EEPROMCommunication.h"
     
 /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
 volatile uint8_t Temp_Counter = 0;
@@ -49,7 +52,9 @@ CY_ISR(Custom_isr_TIMER){
     
     Timer_ReadStatusRegister();
     
-    time_counter ++;
+    if(button_pressed == BUTTON_PRESSED){
+        time_counter ++;
+    }
     
     Temperature_Data[Temp_Counter] = ADC_DelSig_Read16();
     
@@ -285,5 +290,9 @@ CY_ISR(Custom_isr_FIFO) {
     }
 }
 
+CY_ISR(Custom_isr_BUTTON){
+    button_pressed = (!button_pressed);
+    if(button_pressed == BUTTON_RELEASED) time_counter = 0;
+}
 
 /* [] END OF FILE */

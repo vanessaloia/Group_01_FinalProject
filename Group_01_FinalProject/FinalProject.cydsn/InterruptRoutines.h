@@ -84,6 +84,11 @@
     /* Flag to indicate that 32 new temperature data are available */
     extern volatile uint8_t TempDataReadyFlag;
     
+    CY_ISR_PROTO(Custom_isr_BUTTON);
+    #define BUTTON_PRESSED 0
+    #define BUTTON_RELEASED 1
+    volatile uint8_t button_pressed;
+    
 #endif
 
 

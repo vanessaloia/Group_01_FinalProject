@@ -58,8 +58,9 @@ int main(void)
    
     
     isr_UART_StartEx(Custom_isr_UART);
-    /*isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);*/
+    isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);
+    isr_BUTTON_StartEx(Custom_isr_BUTTON);
     
     CyDelay(10);
     
@@ -90,7 +91,9 @@ int main(void)
     display_error = DONT_SHOW_ERROR;
     ShowMenuFlag = SHOW_MENU;
     while_working_menu_flag = DONT_SHOW_MENU;
+    EEPROM_Full = 0;
     time_counter = 0;
+    button_pressed = BUTTON_RELEASED;
     
     uint8_t i;
     
@@ -279,6 +282,9 @@ int main(void)
             EEPROM_waitForWriteComplete();
             EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
             EEPROM_waitForWriteComplete();
+            sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
+            UART_PutString(message);
+            time_counter = 0;
         }
         
     }//END FOR CYCLE
