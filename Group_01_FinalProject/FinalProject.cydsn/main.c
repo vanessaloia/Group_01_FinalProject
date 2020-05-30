@@ -35,12 +35,22 @@
 
 void blue_led_PWM_behaviour(uint16_t);
 
+void Buffer_Creation(void);
+void Digit_To_Unit_Of_Measurement_Conversion (void); 
+void EEPROM_To_Digit_Conversion (void); 
+
+
+
+
 float m_temp_conversion;
 float q_temp_conversion;
 
 uint8_t BeginFlag;
 
-int16_t  EEPROM_Data_digit [ 4*(WATERMARK_LEVEL +1)];
+int16_t  EEPROM_Data_digit [4*(WATERMARK_LEVEL +1)];
+float  Data_UOM [4*(WATERMARK_LEVEL +1)];
+uint8_t Data_Buffer[8*(WATERMARK_LEVEL +1)];
+uint8_t Data_To_Send[8+2];
 
 int main(void)
 {
@@ -50,6 +60,15 @@ int main(void)
     
     
     uint8_t sending_data=0;
+    Data_To_Send[0] = 0xA0;
+    Data_To_Send[8]= 0xC0;
+    
+     /* default temperature format to send data is Celsius */
+    m_temp_conversion= M_CELSIUS;
+    q_temp_conversion= Q_CELSIUS;
+    
+    uint8_t PacketReadyFlag=0;
+    
     
     
     
@@ -118,9 +137,7 @@ int main(void)
 
     uint8_t i;
     
-     /* default temperature format to send data is Celsius */
-    m_temp_conversion= M_CELSIUS;
-    q_temp_conversion= Q_CELSIUS;
+    
 
     
     
@@ -187,12 +204,40 @@ int main(void)
             while (Read_Pointer < Pointer ) 
             {
                 EEPROM_Data_Read();
-               
-                
+                EEPROM_To_Digit_Conversion();
+                Digit_To_Unit_Of_Measurement_Conversion ();
+                Buffer_Creation();
+                PacketReadyFlag=1;
             }
             
-            
+        }
         
+        if( PacketReadyFlag)
+        {
+            for (i=0; i< (WATERMARK_LEVEL+1); i++) 
+            {
+                Data_To_Send[1] = Data_Buffer[i*8];
+                
+                Data_To_Send[2] = Data_Buffer[i*8+1];
+                
+                Data_To_Send[3] = Data_Buffer[i*8+2];
+                
+                Data_To_Send[4] = Data_Buffer[i*8+3];
+                
+                Data_To_Send[5] = Data_Buffer[i*8+4];
+                
+                Data_To_Send[6] = Data_Buffer[i*8+5];
+                
+                Data_To_Send[7] = Data_Buffer[i*8+6];
+                
+                Data_To_Send[8] = Data_Buffer[i*8+7];
+            
+                UART_PutArray(Data_To_Send, 10);
+            }
+            
+            PacketReadyFlag=0;
+            
+            
         }
         
         
@@ -364,7 +409,7 @@ int main(void)
             display_error = DONT_SHOW_ERROR;
         }
     }
-}
+
 
         
         if(time_counter == 5000 / (1 + Timer_ReadPeriod())){
@@ -379,7 +424,7 @@ int main(void)
         }
         
     }//END FOR CYCLE
-}//END MAIN
+//}//END MAIN
         
     
 void Display_error(){
@@ -403,16 +448,60 @@ void EEPROM_To_Digit_Conversion (void)
         EEPROM_Data_digit[i*4+2] = (int16_t) ((EEPROM_Data[i*6+2] & 0x03)<<8) | (EEPROM_Data[i*6+3]);
         EEPROM_Data_digit[i*4+3] = (int16_t) ((EEPROM_Data[i*6+4] <<8) | (EEPROM_Data[i*6+5]));
     }
-        
-        
-        
-        
+       
+}
+
+void Digit_To_Unit_Of_Measurement_Conversion (void) 
+{
+    uint8_t i;
+    uint8_t fsr = EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS);
+    uint8_t sensitivity = (2*fsr*1000)/ (1024);
     
-    
-    
-    
+    for(i=0; i< (WATERMARK_LEVEL+1); i++) 
+    {
+        Data_UOM[i*4] = EEPROM_Data_digit[i*4]* sensitivity * 0.00981;
+        Data_UOM[i*4+1] = EEPROM_Data_digit[i*4+1]* sensitivity * 0.00981;
+        Data_UOM[i*4+2] = EEPROM_Data_digit[i*4+2]* sensitivity * 0.00981;
+        EEPROM_Data_digit[i*4+3]= ADC_DelSig_CountsTo_mVolts(EEPROM_Data_digit[i*4+3]);
+        Data_UOM[i*4+3] = m_temp_conversion* (EEPROM_Data_digit[i*4+3]-OFFSET_mV) +q_temp_conversion;
+    }
     
 }
+void Buffer_Creation(void)
+{
+    uint8_t i;
+    int16_t data_int;
+    
+    for (i=0; i< (WATERMARK_LEVEL+1); i++)
+    {
+        data_int= (int)(Data_UOM[i*4]*100);
+        Data_Buffer[i*8] =  data_int & 0xff;
+        
+        data_int= (int)(Data_UOM[i*4]*100);
+        Data_Buffer[i*8+1] =  (data_int>>8);
+        
+        data_int= (int)(Data_UOM[i*4+1]*100);
+        Data_Buffer[i*8+2] =  data_int &0xff;
+        
+        data_int= (int)(Data_UOM[i*4+1]*100);
+        Data_Buffer[i*8+3] =  data_int>>8;
+        
+        data_int= (int)(Data_UOM[i*4+2]*100);
+        Data_Buffer[i*8+4] =  data_int & 0xff;
+        
+        data_int= (int)(Data_UOM[i*4+2]*100);
+        Data_Buffer[i*8+5] =  data_int >>8;
+        
+        data_int= (int)(Data_UOM[i*4+3]*100);
+        Data_Buffer[i*8+6] =  data_int & 0xff;
+        
+        data_int= (int)(Data_UOM[i*4+3]*100);
+        Data_Buffer[i*8+7] =  data_int >>8;
+    }
+}
+        
+
+
 
     
 /* [] END OF FILE */
