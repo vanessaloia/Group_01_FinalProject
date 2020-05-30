@@ -37,7 +37,7 @@
         char option4[WORD_SIZE];
     } options_to_display;
     
-    char struct_initialized;
+    char initialized;
     
     options_to_display FSR;
     options_to_display SampFreq;
@@ -46,7 +46,7 @@
 
     void While_Working_Menu(void);
     void Switch_to_BridgeControlPanel(void);
-    void Show_table(uint8_t index_table);
+    void Show_table(char index_table);
     void Keys_menu (void);
     void Menu_edge(void);
     

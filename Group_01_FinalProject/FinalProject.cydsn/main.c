@@ -33,17 +33,13 @@
 #define M_FAHRENEIT 0.18
 #define Q_FAHRENHEIT 32
 
-#define START 1
-#define STOP 2
-#define BYTE_SAVED 0
-
 float m_temp_conversion;
 float q_temp_conversion;
 
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
-    char message[100];
+    char message[50];
     /****INITIAL EEPROM CONFIGURATION****/
     
     
@@ -58,12 +54,11 @@ int main(void)
     SPIM_Start();
     
     Timer_Start();
-    
     ADC_DelSig_Start();
     
     isr_UART_StartEx(Custom_isr_UART);
-    isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);
+    /*isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);*/
     
     CyDelay(10);
     
@@ -71,31 +66,27 @@ int main(void)
     
     Accelerometer_Configuration();
     
-    Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
     UART_PutString(message);
     
-    if (Flag_Cell == 0){
-        EEPROM_Initialization();
-    }
-    else{
-        UART_PutString("EEPROM already initialized");
-    }
+    if (Flag_Cell == 0) EEPROM_Initialization();
+    else UART_PutString("EEPROM already initialized");
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
-    //FlagReady = 0;
-    start = BYTE_SAVED;
-    //stop = 0;
+    FlagReady = 0;
+    start = 0;
+    stop = 0;
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
+    initialized = 0;
     feature_selected = 0;
     KeysMenu = 0;
-    display_error = DONT_SHOW_ERROR;
-    ShowMenuFlag = SHOW_MENU;
-    while_working_menu_flag = DONT_SHOW_MENU;
-    EEPROM_Full = 0;
-    struct_initialized = 0;
+    display_error = 0;
+    ShowMenuFlag = 1;
+    while_working_menu_flag = 0;
+
+    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     
     uint8_t i;
     
@@ -124,16 +115,16 @@ int main(void)
             
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
-            EEPROM_Data_Write();
+    
         }
         
         if(while_working_menu_flag){
             While_Working_Menu();
-            while_working_menu_flag = DONT_SHOW_MENU;
+            while_working_menu_flag = 0;
         }
         if(ShowMenuFlag){
             Keys_menu();
-            ShowMenuFlag = DONT_SHOW_MENU;
+            ShowMenuFlag = 0;
             KeysMenu = 1;
         }
         
@@ -168,7 +159,6 @@ int main(void)
         * option table = TEMP -> change temprature data format
         * Depending on option table the value of feature_selected variable is used 
         * to operate the correct change on the acquisition settings */
-        
         if (option_table!= DONT_SHOW_TABLE && feature_selected) {
             switch (option_table) 
            {
@@ -177,26 +167,46 @@ int main(void)
                 
                 case F_S_R:
                     /* change full scale range */
+                    EEPROM_Store_FSR();
                     Change_Accelerometer_FSR();
                    break;
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
+                    EEPROM_Store_Freq();
                     Change_Accelerometer_SampFreq();
                     /* change timer frequency in order to change the fequency of the isr */
-                    Timer_WritePeriod(timer_periods[feature_selected-1]);
+                   Timer_WritePeriod(timer_periods[feature_selected-1]);
                     break;
                 case TEMP:
                     /* to do */
+                    EEPROM_Store_Temp();
+                    /* change the coeffients for the temperature sensor data conversion depending
+                    * \to the user input: 
+                    * \feature_selected = 1 -> Celsius coefficients
+                    * \feature_selected =2 -> Fahrenheit coefficients
+                    */
+                    if (feature_selected == 1) 
+                    {
+                        m_temp_conversion= M_CELSIUS;
+                        q_temp_conversion= Q_CELSIUS;
+                        UART_PutString("Temperature data format: Celsius\r\n\n");
+                    }
+                    else
+                    {
+                        m_temp_conversion= M_FAHRENEIT;
+                        q_temp_conversion= Q_FAHRENHEIT;
+                        UART_PutString("Temperature data format: Fahrenheit\r\n\n");
+                    }
                     break;
                 default:
                     break;
             }
                 option_table= DONT_SHOW_TABLE;
                 feature_selected = 0;
-                //KeysMenu=0;
-                while_working_menu_flag = SHOW_MENU;
-                change_settings_flag = 0;
+                KeysMenu=0;
+                ShowMenuFlag=1;
         }
+            start = 0;
 //        if(start == START){
 //            /* save the value  in the EEPROM */    
 //            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
@@ -221,23 +231,17 @@ int main(void)
             break;
         }
         
-        
-        if(EEPROM_Full){
-            Red_LED_Write(1);
-        }else{
-            Red_LED_Write(0);
+        if(stop){
+            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
+            stop = 0;
         }
         
         if(display_error){
             Display_error();
             display_error = 0;
         }
-        
-        
-        
-    }/*END FOR*/
-    
-}/*END MAIN*/
+    }
+}
         
     
 void Display_error(){

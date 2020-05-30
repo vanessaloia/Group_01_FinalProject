@@ -72,7 +72,7 @@ void Switch_to_BridgeControlPanel(void)
 * \ The elements of the struct are printed though a foor loop using the pointer.
 */
 
-void Show_table(uint8_t index_table) 
+void Show_table(char index_table) 
 {   
     
     uint8_t i;
@@ -82,14 +82,14 @@ void Show_table(uint8_t index_table)
     /* global variable "initialized" is set in main.c to 0. The first time that the function is called the array set_of_tables
     * / is initialized and the variable "initialized" is set to 1
     */
-    if( !struct_initialized) {
+    if( !initialized) {
         options_to_display FSR = {"Character", "Full scale range",'1', "+/- 2g", '2', "+/- 4g",'3', "+/- 8g", '4', "+/- 16g"};
         options_to_display SampFreq = {"Character", "Sampling Frequency",'1', "1 Hz", '2', "10 Hz",'3', "25 Hz", '4', "50 Hz"};
         options_to_display TempFormat = {"Character","Temperature format",'c', "Celsius", 'f', "Fahrenheit",' ' , " ",' ' , " "};
-        set_of_tables[0] = FSR;
-        set_of_tables[1] = SampFreq;
-        set_of_tables[2] = TempFormat;
-        struct_initialized = 1;
+        set_of_tables[0]= FSR;
+        set_of_tables[1]= SampFreq;
+        set_of_tables[2]= TempFormat;
+        initialized=1;
     }
     /* pointer variable "index" points the memory cell of the first element of the struct related with the correct element of set_of_tables array */
     char *index= (set_of_tables[index_table].header1);

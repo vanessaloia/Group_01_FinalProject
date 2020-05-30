@@ -24,12 +24,12 @@
     
     extern uint8_t Flag_Cell;
     
-    
-    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-    
-    uint8_t EEPROM_Full;
+    extern uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     
     void EEPROM_Data_Write(void);
     void EEPROM_Initialization(void);
+    void EEPROM_Store_FSR(void);
+    void EEPROM_Store_Freq(void);
+    void EEPROM_Store_Temp(void);
 
 #endif

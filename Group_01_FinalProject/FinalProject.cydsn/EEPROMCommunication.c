@@ -17,6 +17,8 @@
 
 uint8_t Flag_Cell;
 uint16_t Pointer;
+
+
 void EEPROM_Data_Write(void) {
     
     uint8_t i;
@@ -27,7 +29,7 @@ void EEPROM_Data_Write(void) {
         EEPROM_waitForWriteComplete();
         CyDelay(10);
         Pointer += SPI_EEPROM_PAGE_SIZE;
-        
+    
     }
 }
 
@@ -53,7 +55,28 @@ void EEPROM_Initialization(void) {
     sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
     UART_PutString(message);
     UART_PutString("Device started up for the first time. You can change default settings through the menu \r\n");
+
 }
+
+void EEPROM_Store_FSR(void) {
+    
+    EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS, feature_selected);
+    EEPROM_waitForWriteComplete();
+    
+}
+
+void EEPROM_Store_Freq(void) {
+    
+    EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS, feature_selected);
+    EEPROM_waitForWriteComplete();
+}
+void EEPROM_Store_Temp(void) {
+    
+    EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS, feature_selected);
+    EEPROM_waitForWriteComplete();
+    
+}
+
 
 
  
