@@ -72,7 +72,7 @@ void Switch_to_BridgeControlPanel(void)
 * \ The elements of the struct are printed though a foor loop using the pointer.
 */
 
-void Show_table(char index_table) 
+void Show_table(uint8_t index_table) 
 {   
     
     uint8_t i;
