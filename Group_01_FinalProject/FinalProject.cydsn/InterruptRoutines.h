@@ -46,6 +46,7 @@
     volatile uint8_t feature_selected;
     uint8_t display_error;
     uint8_t while_working_menu_flag;
+    volatile uint16_t time_counter;
     
     CY_ISR_PROTO(Custom_isr_UART);
     

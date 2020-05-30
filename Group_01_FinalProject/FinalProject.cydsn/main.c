@@ -90,12 +90,15 @@ int main(void)
     display_error = DONT_SHOW_ERROR;
     ShowMenuFlag = SHOW_MENU;
     while_working_menu_flag = DONT_SHOW_MENU;
-
+    time_counter = 0;
+    
     uint8_t i;
     
      /* default temperature format to send data is Celsius */
     m_temp_conversion= M_CELSIUS;
     q_temp_conversion= Q_CELSIUS;
+
+    
     
     for(;;)
     {
@@ -231,10 +234,10 @@ int main(void)
                 ADC_DelSig_Start();
                 /*ADC start conversion*/
                 ADC_DelSig_StartConvert();
-                
                 EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
                 EEPROM_waitForWriteComplete();
-                
+                sprintf(message,"Period = %d\r\n",Timer_ReadPeriod());
+                UART_PutString(message);
                 Blue_LED_PWM_Start();
                 start = BYTE_SAVED;
             break;
@@ -269,8 +272,17 @@ int main(void)
             Display_error();
             display_error = DONT_SHOW_ERROR;
         }
-    }
-}
+        
+        if(time_counter == 5000 / (1 + Timer_ReadPeriod())){
+            Pointer = FIRST_FREE_CELL;
+            EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer & 0xFF00) >> 8);
+            EEPROM_waitForWriteComplete();
+            EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
+            EEPROM_waitForWriteComplete();
+        }
+        
+    }//END FOR CYCLE
+}//END MAIN
         
     
 void Display_error(){
