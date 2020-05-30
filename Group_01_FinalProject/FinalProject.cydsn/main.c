@@ -45,6 +45,9 @@ int main(void)
     /****INITIAL EEPROM CONFIGURATION****/
     
     
+    uint8_t sending_data=0;
+    
+    
     
     /*Starting I2C*/
     I2C_Peripheral_Start();
@@ -91,6 +94,8 @@ int main(void)
     ShowMenuFlag = SHOW_MENU;
     while_working_menu_flag = DONT_SHOW_MENU;
     
+    Read_Pointer = FIRST_FREE_CELL;
+    
     /* flag that is set high when the user want to visualize the data */
     display_data=DONT_DISPLAY;
 
@@ -123,6 +128,50 @@ int main(void)
             TempDataReadyFlag = 0;
             EEPROM_Data_Write();
         }
+        
+        
+        /* if the user presses 'v' display_data flag is set to START.
+        * \a message is diaplyed to warn him to switch to the bridge control panel.
+        * \data are read from the EEPROM and packets to send thorugh UART are prepared.
+        * \data are sent until the user press 'u'
+        */
+        
+        int16_t Data_to_display [200];
+        
+        switch (display_data) 
+        {
+            case START :
+                /* function that display a message waring to switch in the bridge control panel */
+                Switch_to_BridgeControlPanel();
+            
+                sending_data = START;
+                
+                break;
+                
+            case STOP :
+                /* stop sending data throygh UART to the Brisdge Control Panel */
+            
+                /* display data set to DONT_DISPLAY */
+                display_data = DONT_DISPLAY;
+                
+                sending_data = STOP;
+                
+                break;
+            default :
+                break;
+        }
+        
+        if (sending_data == START) 
+        {
+            
+            
+        
+        }
+        
+        
+            
+        
+        
         
         if(while_working_menu_flag){
             While_Working_Menu();
@@ -274,6 +323,7 @@ int main(void)
         }
     }
 }
+
         
     
 void Display_error(){
