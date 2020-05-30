@@ -138,23 +138,28 @@ int main(void)
         }
         
         if(KeysMenu == 1){
-            switch (option_table){
-                case F_S_R:
-                    Show_table(0);
-                    KeysMenu = 0;
-                break;
-                case SAMP_FREQ:
-                    Show_table(1);
-                    KeysMenu = 0;
-                break;
-                case TEMP:
-                    Show_table(2);
-                    KeysMenu = 0;
-                break;
-                default:
-                break;
-            }
+//            switch (option_table){
+//                case F_S_R:
+//                    Show_table(0);
+//                    KeysMenu = 0;
+//                break;
+//                case SAMP_FREQ:
+//                    Show_table(1);
+//                    KeysMenu = 0;
+//                break;
+//                case TEMP:
+//                    Show_table(2);
+//                    KeysMenu = 0;
+//                break;
+//                default:
+//                break;
+//    }
+            if(option_table != DONT_SHOW_TABLE){
+                Show_table(option_table);
+                KeysMenu = 0;
+           }
         }
+
         
      
         /* Value of option table defines which settings have to be modified:
