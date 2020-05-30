@@ -3,8 +3,12 @@
 * \header file for the configuration of accelerometer registers 
 * \this file contains, for all the registers of the LIS3DH accelerometer used in this project:
 * \-the definition of the register address
-* \-the definition of the content written in the register (if the register is written)
+* \-the definition of the content written in the register at the first start up configuration (if the register is written)
+* \accelerometer registers are non volatile so they are all configured only at the first start up
+* \control register 1 and 4 are then changed at runtime according to the user settings
 */
+
+
 #ifndef _REGISTERS_H_ 
     
     #define _REGISTERS_H_
@@ -30,14 +34,16 @@
     
     /*
     * \CONTROL REGISTER 1 (READ AND WRITE) configured in this way:
-    * \-ctrl_reg_1[7:4] = 0001 --> data rate output set to 1 Hz (default value used until the user set the desired sampling frequency)
+    * \-ctrl_reg_1[7:4] = 0000 --> data rate output set to 0 Hz (these bits will be then modified to the correct frequency when the user insert the begin command)
+    * \(when the begin command is received, if the rate has never been set by the user, 1 Hz will be used as default value)
+    * \(when the stop command is received the rate is set again to 0 Hz to stop acquisition of accelerometer data)
     * \-ctrl_reg_1[3] = 0      --> low power mode disabled
     * \-ctrl_reg_1[2] = 1      --> Z axis enabled
     * \-ctrl_reg_1[1] = 1      --> Y axis enabled    
     * \-ctrl_reg_1[0] = 1      --> X axis enabled    
     */
     #define CTRL_REG_1_ADDR 0x20
-    #define CTRL_REG_1_CONTENT 0x17
+    #define CTRL_REG_1_CONTENT 0x07
     
     /*
     * \CONTROL REGISTER 4 (READ AND WRITE) configured in this way:
