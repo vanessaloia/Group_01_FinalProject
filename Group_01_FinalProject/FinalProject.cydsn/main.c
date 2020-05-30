@@ -39,7 +39,7 @@ float q_temp_conversion;
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
-    char message[50];
+    char message[100];
     /****INITIAL EEPROM CONFIGURATION****/
     
     
@@ -53,24 +53,29 @@ int main(void)
     /*SPI start*/
     SPIM_Start();
     
-    Timer_Start();
-    ADC_DelSig_Start();
-    
     isr_UART_StartEx(Custom_isr_UART);
-    /*isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);*/
+    isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);
     
     CyDelay(10);
     
-    ADC_DelSig_StartConvert();
+
     
-    Accelerometer_Configuration();
-    
+    Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
     UART_PutString(message);
     
-    if (Flag_Cell == 0) EEPROM_Initialization();
-    else UART_PutString("EEPROM already initialized");
+    if (Flag_Cell == 0) {
+        
+        EEPROM_Initialization();
+        Accelerometer_Configuration();
+    
+    }
+    else {
+        
+        UART_PutString("EEPROM already initialized");
+        
+    }
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
@@ -218,18 +223,18 @@ int main(void)
 //            stop = 0;
 //        }
         
-        switch(start){
-            case (START):
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
-                EEPROM_waitForWriteComplete();
-                start = BYTE_SAVED;
-            break;
-            case (STOP):
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
-                EEPROM_waitForWriteComplete();
-                start = BYTE_SAVED;
-            break;
-        }
+//        switch(start){
+//            case (START):
+//                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+//                EEPROM_waitForWriteComplete();
+//                start = BYTE_SAVED;
+//            break;
+//            case (STOP):
+//                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+//                EEPROM_waitForWriteComplete();
+//                start = BYTE_SAVED;
+//            break;
+//        }
         
         if(stop){
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
