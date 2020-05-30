@@ -33,6 +33,8 @@
 #define M_FAHRENEIT 0.18
 #define Q_FAHRENHEIT 32
 
+void blue_led_PWM_behaviour(uint16_t);
+
 float m_temp_conversion;
 float q_temp_conversion;
 
@@ -53,8 +55,7 @@ int main(void)
     /*SPI start*/
     SPIM_Start();
     
-    Timer_Start();
-    ADC_DelSig_Start();
+   
     
     isr_UART_StartEx(Custom_isr_UART);
     /*isr_FIFO_StartEx(Custom_isr_FIFO);
@@ -62,7 +63,7 @@ int main(void)
     
     CyDelay(10);
     
-    ADC_DelSig_StartConvert();
+    
     
     Accelerometer_Configuration();
     
@@ -76,6 +77,8 @@ int main(void)
     else UART_PutString("EEPROM already initialized");
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
+    
+    uint16_t PWM_period = 0;
     
     start = BYTE_SAVED;
     //stop = STOP;
@@ -222,13 +225,27 @@ int main(void)
         
         switch(start){
             case (START):
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+                /*Starting timer*/
+                Timer_Start();
+                /*Starting ADC*/
+                ADC_DelSig_Start();
+                /*ADC start conversion*/
+                ADC_DelSig_StartConvert();
+                
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
                 EEPROM_waitForWriteComplete();
+                
+                Blue_LED_PWM_Start();
                 start = BYTE_SAVED;
             break;
             case (STOP):
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, BYTE_SAVED);
                 EEPROM_waitForWriteComplete();
+                /*Stopping timer*/
+                Timer_Stop();
+                /*Stopping ADC*/
+                ADC_DelSig_Stop();
+                Blue_LED_PWM_Stop();
                 start = BYTE_SAVED;
             break;
         }
@@ -239,9 +256,13 @@ int main(void)
         }*/
         
         if(EEPROM_Full){
-            Red_LED_Write(1);
+            /*set PWM period to 250 ms*/
+            PWM_period = 14999;
+            blue_led_PWM_behaviour(PWM_period);
         }else{
-            Red_LED_Write(0);
+            /*set PWM period to 1 s*/
+            PWM_period = 60000;
+            blue_led_PWM_behaviour(PWM_period);
         }
         
         if(display_error){
@@ -257,10 +278,10 @@ void Display_error(){
 }
 
 
-    
-
-
-
+void blue_led_PWM_behaviour(uint16_t period){    
+    Blue_LED_PWM_WritePeriod(period);
+    Blue_LED_PWM_WriteCompare(period/2);    
+}
 
     
 /* [] END OF FILE */

@@ -30,6 +30,8 @@ void While_Working_Menu(void)
     Menu_edge();
     /* !!DATA TO BE INSERTED */
     UART_PutString("Press '?' to change the configuration settings for data acquisition\r\n");
+    UART_PutString("Press 'v' to send data to the bridge control panel\r\n");
+    UART_PutString("Press 'u' to stop sending data to the bridge control panel\r\n");
     
     /* if the system is acquiring data */
     if(start == START) 
