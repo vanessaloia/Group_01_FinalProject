@@ -38,6 +38,8 @@ void blue_led_PWM_behaviour(uint16_t);
 float m_temp_conversion;
 float q_temp_conversion;
 
+int16_t  EEPROM_Data_digit [ 4*(WATERMARK_LEVEL +1)];
+
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
@@ -161,8 +163,16 @@ int main(void)
                 break;
         }
         
+        
+        
         if (sending_data == START) 
         {
+            while (Read_Pointer < Pointer ) 
+            {
+                EEPROM_Data_Read();
+               
+                
+            }
             
             
         
@@ -334,6 +344,28 @@ void Display_error(){
 void blue_led_PWM_behaviour(uint16_t period){    
     Blue_LED_PWM_WritePeriod(period);
     Blue_LED_PWM_WriteCompare(period/2);    
+}
+
+void EEPROM_To_Digit_Conversion (void) 
+{
+    uint8_t i;
+    
+    for( i=0 ; i< (WATERMARK_LEVEL+1); i++ ) 
+    {
+        EEPROM_Data_digit[i*4]= (int16_t) ((EEPROM_Data[i*6]<<4) | (EEPROM_Data[i*6 +1] >>4)) ;
+        EEPROM_Data_digit[i*4+1] = (int16_t) ((EEPROM_Data[i*6+1] & 0x0f)<<6) | (EEPROM_Data[i*6+2]>>2);
+        EEPROM_Data_digit[i*4+2] = (int16_t) ((EEPROM_Data[i*6+2] & 0x03)<<8) | (EEPROM_Data[i*6+3]);
+        EEPROM_Data_digit[i*4+3] = (int16_t) ((EEPROM_Data[i*6+4] <<8) | (EEPROM_Data[i*6+5]));
+    }
+        
+        
+        
+        
+    
+    
+    
+    
+    
 }
 
     
