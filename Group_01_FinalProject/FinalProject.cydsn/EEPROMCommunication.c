@@ -17,7 +17,8 @@
 
 uint8_t Flag_Cell;
 uint16_t Pointer;
-
+uint8_t EEPROM_Full;
+uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
 
 void EEPROM_Data_Write(void) {
     

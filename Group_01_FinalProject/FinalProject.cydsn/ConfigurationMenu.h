@@ -37,7 +37,7 @@
         char option4[WORD_SIZE];
     } options_to_display;
     
-    char initialized;
+    char struct_initialized;
     
     options_to_display FSR;
     options_to_display SampFreq;

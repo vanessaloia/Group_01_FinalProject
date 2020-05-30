@@ -77,7 +77,7 @@ CY_ISR(Custom_isr_UART)
                 case '?':
                 
                     /* show Configuration menu */
-                    ShowMenuFlag = 1;
+                    ShowMenuFlag = SHOW_MENU;
                     change_settings_flag = 1;
                     break;
                 
@@ -85,7 +85,7 @@ CY_ISR(Custom_isr_UART)
             
                 /*for every other character */
                 default:
-                    display_error = 1;
+                    display_error = SHOW_ERROR;
                     break;
             }
     
@@ -105,7 +105,7 @@ CY_ISR(Custom_isr_UART)
                     /*Starting ADC*/
                     ADC_DelSig_Start();
                     /* change the value of the start/stop flag */
-                    start = 1;
+                    start = START;
                     /* save the value of the flag in the EEPROM */
                     EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
                     break;
@@ -115,7 +115,7 @@ CY_ISR(Custom_isr_UART)
                     /* stop data acquisition and storage in EEPROM */
                     
                     /* change the value of the start/stop flag */
-                    stop = 1;
+                    //stop = 1;
                 
                     break;
                 
@@ -143,7 +143,7 @@ CY_ISR(Custom_isr_UART)
                     
                     /* set flag to 0 to quit the configuration menu */
                     change_settings_flag=0;
-                    while_working_menu_flag = 1;
+                    while_working_menu_flag = SHOW_MENU;
                     break;
                 
                 case 'v': 
@@ -162,7 +162,7 @@ CY_ISR(Custom_isr_UART)
                 /* do nothing for every other character */
                 
                 default:
-                    display_error = 1;
+                    display_error = SHOW_ERROR;
                     break;
             }
         }
@@ -188,7 +188,7 @@ CY_ISR(Custom_isr_UART)
                         feature_selected = 4;
                     break;
                     default:
-                        display_error = 1;
+                        display_error = SHOW_ERROR;
                     break;
                     
                 }
@@ -212,7 +212,7 @@ CY_ISR(Custom_isr_UART)
                         feature_selected = 4;
                     break;
                     default:
-                        display_error = 1;
+                        display_error = SHOW_ERROR;
                     break;
                 }
             }else if(option_table == TEMP){
@@ -228,7 +228,7 @@ CY_ISR(Custom_isr_UART)
                         feature_selected = 2;
                     break;
                     default:
-                        display_error = 1;
+                        display_error = SHOW_ERROR;
                     break;
                 }
             
