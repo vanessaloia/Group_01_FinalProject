@@ -340,10 +340,11 @@ void Change_Accelerometer_FSR(void)
     sprintf(message, "feature_selected = %d\r\nRegister content = %d\r\n",feature_selected,register_content);
     UART_PutString(message);
     */
-    /* pointer that points to the correct variable inside the struct of the FSR. It's used to print the FSR.
     
-    * / (n-key + n-option)= WORD_SIZE (string size) +1 (char size)
-    * / the pointer points to option1= ±2g so it has to go to the (feature_selected -1)-option
+    /* pointer that points to the correct variable inside the struct of the FSR. It's used to print the FSR
+    * \ set up in the accelerometer according to the user's input.
+    * \(n-key + n-option)= WORD_SIZE (string size) +1 (char size)
+    * \the pointer points to option1= ±2g so it has to go to the (feature_selected -1)option
     */
     char * fsr_to_print = set_of_tables[option_table].option1 + (WORD_SIZE+1)* (feature_selected-1);
     
@@ -395,8 +396,13 @@ void Change_Accelerometer_SampFreq(void)
     */
     register_content = (feature_selected <<4) + CTRL_REG_1_CONST;
     
-    /* pointer to the correct variable inside the struct of the FSR used later to ptint */
-    char * sampfreq_to_print = SampFreq.header2 + 2*feature_selected;
+    
+    /* pointer that points to the correct variable inside the struct of SampFreq. It's used to print the sampling
+    * \ frequency set up in the accelerometer according to the user's input.
+    * / (n-key + n-option)= WORD_SIZE (string size) +1 (char size)
+    * / the pointer points to option1= 1 Hz so it has to go to the (feature_selected -1)option
+    */
+    char * sampfreq_to_print = set_of_tables[option_table].option1 + (WORD_SIZE + 1)* (feature_selected -1);
     
     error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
                                              CTRL_REG_1_ADDR,
