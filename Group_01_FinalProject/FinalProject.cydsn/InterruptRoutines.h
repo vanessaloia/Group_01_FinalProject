@@ -35,6 +35,8 @@
     #define SHOW_ERROR 1
     #define DONT_SHOW_ERROR 0
     
+    #define DONT_DISPLAY 0
+    
     /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
     extern volatile uint8_t Temp_Counter;
     
@@ -45,13 +47,15 @@
     //volatile uint8_t stop;
     volatile uint8_t option_table;
     volatile uint8_t feature_selected;
-    uint8_t display_error;
-    uint8_t while_working_menu_flag;
+    volatile uint8_t display_error;
+    volatile uint8_t while_working_menu_flag;
+    volatile uint8 ShowMenuFlag;
+    volatile uint8 KeysMenu;
+    volatile uint8_t display_data;
     
     CY_ISR_PROTO(Custom_isr_UART);
     
-    volatile uint8 ShowMenuFlag;
-    volatile uint8 KeysMenu;
+   
     
     /* Number of Bytes to be read from the accelerometer corresponding to one sample (one value of acceleration for each axis) */
     #define ACCELEROMETER_DATA_BYTES 6
