@@ -18,7 +18,7 @@
 * \(default values for sampling frequency and FSR: 1Hz and Â±2g)
 */
 /* String to print out messages on the UART */
-char message[50];
+char message[100];
 
 void Accelerometer_Configuration(void) {
     

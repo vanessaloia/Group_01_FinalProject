@@ -26,6 +26,8 @@
     
     extern uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
     
+    extern uint8_t EEPROM_Full;
+    
     void EEPROM_Data_Write(void);
     void EEPROM_Initialization(void);
     void EEPROM_Store_FSR(void);

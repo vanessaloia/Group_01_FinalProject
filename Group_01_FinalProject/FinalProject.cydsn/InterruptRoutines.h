@@ -24,7 +24,15 @@
     #define TEMP 2
     #define DONT_SHOW_TABLE 3
     
-    volatile uint8 FlagReady;
+    #define SHOW_MENU 1
+    #define DONT_SHOW_MENU 0
+    
+    #define START 1
+    #define STOP 2
+    #define BYTE_SAVED 0
+    
+    #define SHOW_ERROR 1
+    #define DONT_SHOW_ERROR 0
     
     /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
     extern volatile uint8_t Temp_Counter;
@@ -33,7 +41,7 @@
 
     char change_settings_flag;
     char start;
-    volatile uint8_t stop;
+    //volatile uint8_t stop;
     volatile uint8_t option_table;
     volatile uint8_t feature_selected;
     uint8_t display_error;

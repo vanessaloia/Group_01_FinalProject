@@ -33,6 +33,8 @@
 #define M_FAHRENEIT 0.18
 #define Q_FAHRENHEIT 32
 
+void blue_led_PWM_behaviour(uint16_t);
+
 float m_temp_conversion;
 float q_temp_conversion;
 
@@ -79,20 +81,19 @@ int main(void)
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
-    FlagReady = 0;
-    start = 0;
-    stop = 0;
+    uint16_t PWM_period = 0;
+    
+    start = BYTE_SAVED;
+    //stop = STOP;
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
-    initialized = 0;
+    struct_initialized = 0;
     feature_selected = 0;
     KeysMenu = 0;
-    display_error = 0;
-    ShowMenuFlag = 1;
-    while_working_menu_flag = 0;
+    display_error = DONT_SHOW_ERROR;
+    ShowMenuFlag = SHOW_MENU;
+    while_working_menu_flag = DONT_SHOW_MENU;
 
-    uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-    
     uint8_t i;
     
      /* default temperature format to send data is Celsius */
@@ -120,16 +121,16 @@ int main(void)
             
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
-    
+            EEPROM_Data_Write();
         }
         
         if(while_working_menu_flag){
             While_Working_Menu();
-            while_working_menu_flag = 0;
+            while_working_menu_flag = DONT_SHOW_MENU;
         }
         if(ShowMenuFlag){
             Keys_menu();
-            ShowMenuFlag = 0;
+            ShowMenuFlag = DONT_SHOW_MENU;
             KeysMenu = 1;
         }
         
@@ -208,10 +209,11 @@ int main(void)
             }
                 option_table= DONT_SHOW_TABLE;
                 feature_selected = 0;
-                KeysMenu=0;
-                ShowMenuFlag=1;
+                //KeysMenu=0;
+                while_working_menu_flag = SHOW_MENU;
+                change_settings_flag = 0;
         }
-            start = 0;
+            
 //        if(start == START){
 //            /* save the value  in the EEPROM */    
 //            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
@@ -222,28 +224,53 @@ int main(void)
 //            EEPROM_waitForWriteComplete();
 //            stop = 0;
 //        }
+      
         
-//        switch(start){
-//            case (START):
-//                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
-//                EEPROM_waitForWriteComplete();
-//                start = BYTE_SAVED;
-//            break;
-//            case (STOP):
-//                EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
-//                EEPROM_waitForWriteComplete();
-//                start = BYTE_SAVED;
-//            break;
-//        }
+        switch(start){
+            case (START):
+                /*Starting timer*/
+                Timer_Start();
+                /*Starting ADC*/
+                ADC_DelSig_Start();
+                /*ADC start conversion*/
+                ADC_DelSig_StartConvert();
+                
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
+                EEPROM_waitForWriteComplete();
+                
+                Blue_LED_PWM_Start();
+                start = BYTE_SAVED;
+            break;
+            case (STOP):
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, BYTE_SAVED);
+                EEPROM_waitForWriteComplete();
+                /*Stopping timer*/
+                Timer_Stop();
+                /*Stopping ADC*/
+                ADC_DelSig_Stop();
+                Blue_LED_PWM_Stop();
+                start = BYTE_SAVED;
+            break;
+        }
         
-        if(stop){
+       /* if(stop){
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
             stop = 0;
+        }*/
+        
+        if(EEPROM_Full){
+            /*set PWM period to 250 ms*/
+            PWM_period = 14999;
+            blue_led_PWM_behaviour(PWM_period);
+        }else{
+            /*set PWM period to 1 s*/
+            PWM_period = 60000;
+            blue_led_PWM_behaviour(PWM_period);
         }
         
         if(display_error){
             Display_error();
-            display_error = 0;
+            display_error = DONT_SHOW_ERROR;
         }
     }
 }
@@ -254,10 +281,10 @@ void Display_error(){
 }
 
 
-    
-
-
-
+void blue_led_PWM_behaviour(uint16_t period){    
+    Blue_LED_PWM_WritePeriod(period);
+    Blue_LED_PWM_WriteCompare(period/2);    
+}
 
     
 /* [] END OF FILE */
