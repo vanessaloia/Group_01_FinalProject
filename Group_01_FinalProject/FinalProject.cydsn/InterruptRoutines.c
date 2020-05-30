@@ -80,7 +80,19 @@ CY_ISR(Custom_isr_UART)
                     ShowMenuFlag = SHOW_MENU;
                     change_settings_flag = 1;
                     break;
+                 case 'v': 
+                 case 'V':
+                    Red_LED_Write(1);
+                    /* show data in the bridge control panel */
                 
+                    /* stop acquisition and storing in the EEPROM */
+                    break;
+                
+                 case 'u':
+                 case 'U':
+                    Red_LED_Write(0);
+                    /* stop streaming of data in bridge control panel */
+                    break;
                
             
                 /*for every other character */
@@ -100,10 +112,7 @@ CY_ISR(Custom_isr_UART)
                 case 'b':
                 case 'B':
                     /* start data acquisition and storage in EEPROM */
-                    /*Starting timer*/
-                    Timer_Start();
-                    /*Starting ADC*/
-                    ADC_DelSig_Start();
+                    
                     /* change the value of the start/stop flag */
                     start = START;
                     /* save the value of the flag in the EEPROM */
@@ -148,15 +157,14 @@ CY_ISR(Custom_isr_UART)
                 
                 case 'v': 
                 case 'V':
-                
+                    Red_LED_Write(1);
                     /* show data in the bridge control panel */
-                
                     /* stop acquisition and storing in the EEPROM */
                     break;
                 
                 case 'u':
                 case 'U':
-                
+                    Red_LED_Write(0);
                     /* stop streaming of data in bridge control panel */
                     break;
                 /* do nothing for every other character */
