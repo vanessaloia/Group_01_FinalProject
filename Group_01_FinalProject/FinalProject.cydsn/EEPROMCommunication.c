@@ -46,7 +46,7 @@ void EEPROM_Initialization(void) {
     EEPROM_waitForWriteComplete();
     EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS,1);
     EEPROM_waitForWriteComplete();
-    EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,'c');
+    EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS,1);
     EEPROM_waitForWriteComplete();
     /*Writing 1 on the EEPROM first cell */
     Flag_Cell = 1;
