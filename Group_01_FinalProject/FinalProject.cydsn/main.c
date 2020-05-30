@@ -53,8 +53,7 @@ int main(void)
     /*SPI start*/
     SPIM_Start();
     
-    Timer_Start();
-    ADC_DelSig_Start();
+   
     
     isr_UART_StartEx(Custom_isr_UART);
     /*isr_FIFO_StartEx(Custom_isr_FIFO);
@@ -62,7 +61,7 @@ int main(void)
     
     CyDelay(10);
     
-    ADC_DelSig_StartConvert();
+    
     
     Accelerometer_Configuration();
     
@@ -222,13 +221,27 @@ int main(void)
         
         switch(start){
             case (START):
+                /*Starting timer*/
+                Timer_Start();
+                /*Starting ADC*/
+                ADC_DelSig_Start();
+                /*ADC start conversion*/
+                ADC_DelSig_StartConvert();
+                
                 EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
                 EEPROM_waitForWriteComplete();
+                
+                Blue_LED_PWM_Start();
                 start = BYTE_SAVED;
             break;
             case (STOP):
                 EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
                 EEPROM_waitForWriteComplete();
+                /*Stopping timer*/
+                Timer_Stop();
+                /*Stopping ADC*/
+                ADC_DelSig_Stop();
+                Blue_LED_PWM_Stop();
                 start = BYTE_SAVED;
             break;
         }
