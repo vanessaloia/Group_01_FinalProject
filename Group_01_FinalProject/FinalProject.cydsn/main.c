@@ -90,6 +90,9 @@ int main(void)
     display_error = DONT_SHOW_ERROR;
     ShowMenuFlag = SHOW_MENU;
     while_working_menu_flag = DONT_SHOW_MENU;
+    
+    /* flag that is set high when the user want to visualize the data */
+    display_data=DONT_DISPLAY;
 
     uint8_t i;
     
