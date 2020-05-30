@@ -15,6 +15,9 @@
 #include "LIS3DH_Registers.h"
 #include "25LC256.h"
 #include "MemoryCells.h"
+
+//Questo da rimuovere
+#include "EEPROMCommunication.h"
     
 /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
 volatile uint8_t Temp_Counter = 0;
@@ -28,7 +31,7 @@ int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
 volatile uint8_t TempDataReadyFlag = 0;
 
 
-char message[20];
+char message[100];
 
 
 /* Array to store accelerometer output data read from FIFO (starting from the position zero, for 32 samples: LSB and MSB (left-justified) of X,Y and Z axis acceleration ) */
@@ -49,6 +52,10 @@ CY_ISR(Custom_isr_TIMER){
     
     Timer_ReadStatusRegister();
     
+    if(button_pressed == BUTTON_PRESSED){
+        time_counter ++;
+    }
+    
     Temperature_Data[Temp_Counter] = ADC_DelSig_Read16();
     
     if (Temperature_Data[Temp_Counter] < 0) Temperature_Data[Temp_Counter] = 0;
@@ -67,7 +74,7 @@ CY_ISR(Custom_isr_UART)
       char ch_received;
        /* character on the Rx line stored */
        ch_received= UART_GetChar();
-    
+        
        if (change_settings_flag==0)
        {
             
@@ -118,8 +125,6 @@ CY_ISR(Custom_isr_UART)
                     
                     /* change the value of the start/stop flag */
                     start = START;
-                    /* save the value of the flag in the EEPROM */
-                    EEPROM_writeByte(BEGIN_STOP_ADDRESS,1);
                     break;
                 
                 case 's': 
@@ -286,5 +291,9 @@ CY_ISR(Custom_isr_FIFO) {
     }
 }
 
+CY_ISR(Custom_isr_BUTTON){
+    button_pressed = (!button_pressed);
+    if(button_pressed == BUTTON_RELEASED) time_counter = 0;
+}
 
 /* [] END OF FILE */

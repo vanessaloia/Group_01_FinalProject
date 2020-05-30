@@ -38,6 +38,8 @@ void blue_led_PWM_behaviour(uint16_t);
 float m_temp_conversion;
 float q_temp_conversion;
 
+uint8_t BeginFlag;
+
 int16_t  EEPROM_Data_digit [ 4*(WATERMARK_LEVEL +1)];
 
 int main(void)
@@ -60,26 +62,36 @@ int main(void)
     /*SPI start*/
     SPIM_Start();
     
-   
-    
     isr_UART_StartEx(Custom_isr_UART);
-    /*isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);*/
+    isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);
+    isr_BUTTON_StartEx(Custom_isr_BUTTON);
     
     CyDelay(10);
     
-    
-    
-    Accelerometer_Configuration();
+
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
     UART_PutString(message);
     
-
+    if (Flag_Cell == 0) {
+        
+        EEPROM_Initialization();
+        Accelerometer_Configuration();
     
-    if (Flag_Cell == 0) EEPROM_Initialization();
-    else UART_PutString("EEPROM already initialized");
+    }
+    else {
+        
+        UART_PutString("EEPROM already initialized");
+        start = EEPROM_readByte(BEGIN_STOP_ADDRESS);
+        BeginFlag = 1;
+        
+        Pointer = (uint16_t)(EEPROM_readByte(POINTER_ADDRESS_L) | (EEPROM_readByte(POINTER_ADDRESS_H)<<8));
+        
+
+        
+    }
     /* array used to change the period of the timer when the user changes the sampling frequency] */
     uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
@@ -95,6 +107,9 @@ int main(void)
     display_error = DONT_SHOW_ERROR;
     ShowMenuFlag = SHOW_MENU;
     while_working_menu_flag = DONT_SHOW_MENU;
+    EEPROM_Full = 0;
+    time_counter = 0;
+    button_pressed = BUTTON_RELEASED;
     
     Read_Pointer = FIRST_FREE_CELL;
     
@@ -106,6 +121,8 @@ int main(void)
      /* default temperature format to send data is Celsius */
     m_temp_conversion= M_CELSIUS;
     q_temp_conversion= Q_CELSIUS;
+
+    
     
     for(;;)
     {
@@ -233,12 +250,12 @@ int main(void)
                 case F_S_R:
                     /* change full scale range */
                     EEPROM_Store_FSR();
-                    Change_Accelerometer_FSR();
+                    Change_Accelerometer_FSR(feature_selected);
                    break;
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
                     EEPROM_Store_Freq();
-                    Change_Accelerometer_SampFreq();
+                    Change_Accelerometer_SampFreq(feature_selected);
                     /* change timer frequency in order to change the fequency of the isr */
                    Timer_WritePeriod(timer_periods[feature_selected-1]);
                     break;
@@ -287,29 +304,44 @@ int main(void)
         
         switch(start){
             case (START):
+                if (BeginFlag == 0) {
+                    Change_Accelerometer_SampFreq(EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
+                    EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
+                    EEPROM_waitForWriteComplete();
+                }
+                else BeginFlag = 0;
+                
+                Timer_WritePeriod(timer_periods[EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS)-1]);   
                 /*Starting timer*/
                 Timer_Start();
                 /*Starting ADC*/
                 ADC_DelSig_Start();
                 /*ADC start conversion*/
                 ADC_DelSig_StartConvert();
-                
                 EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
                 EEPROM_waitForWriteComplete();
-                
+                sprintf(message,"Period = %d\r\n",Timer_ReadPeriod());
+                UART_PutString(message);
                 Blue_LED_PWM_Start();
                 start = BYTE_SAVED;
             break;
             case (STOP):
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, BYTE_SAVED);
-                EEPROM_waitForWriteComplete();
+                if (BeginFlag == 0) {
+                Change_Accelerometer_SampFreq(0);
                 /*Stopping timer*/
                 Timer_Stop();
                 /*Stopping ADC*/
                 ADC_DelSig_Stop();
                 Blue_LED_PWM_Stop();
+                EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
+                EEPROM_waitForWriteComplete();
                 start = BYTE_SAVED;
+                }
+                else BeginFlag = 0;
+
             break;
+            default:
+                break;
         }
         
        /* if(stop){
@@ -334,6 +366,20 @@ int main(void)
     }
 }
 
+        
+        if(time_counter == 5000 / (1 + Timer_ReadPeriod())){
+            Pointer = FIRST_FREE_CELL;
+            EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer & 0xFF00) >> 8);
+            EEPROM_waitForWriteComplete();
+            EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
+            EEPROM_waitForWriteComplete();
+            sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
+            UART_PutString(message);
+            time_counter = 0;
+        }
+        
+    }//END FOR CYCLE
+}//END MAIN
         
     
 void Display_error(){

@@ -323,7 +323,7 @@ void Accelerometer_Configuration(void) {
 /* This function changes the full scale range of the accelerometer depending on the user input.
 *\   It uses the I2C protocol communication to change the content of the CTRL_REG_4 register content
 */
-void Change_Accelerometer_FSR(void) 
+void Change_Accelerometer_FSR(uint8_t feature_selected) 
 {
     uint8_t register_content;
     ErrorCode error;
@@ -382,7 +382,7 @@ void Change_Accelerometer_FSR(void)
 /* This function changes the sampling frequency of the accelerometer depending on the user input.
 *\   It uses the I2C protocol communication to change the content of the CTRL_REG_1 register content.
 */
-void Change_Accelerometer_SampFreq(void)
+void Change_Accelerometer_SampFreq(uint8_t feature_selected)
 {
     uint8_t register_content;
     ErrorCode error;

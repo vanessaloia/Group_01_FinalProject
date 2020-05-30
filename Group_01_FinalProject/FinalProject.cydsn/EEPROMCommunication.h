@@ -27,8 +27,8 @@
     extern uint8_t Flag_Cell;
     
     extern uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-    
-    extern uint8_t EEPROM_Full;
+
+    uint8_t EEPROM_Full;
     
     
     

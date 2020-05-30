@@ -27,6 +27,7 @@
     #define SHOW_MENU 1
     #define DONT_SHOW_MENU 0
     
+
     #define STOP 0
     #define START 1
     #define BYTE_SAVED 2
@@ -86,6 +87,11 @@
 
     /* Flag to indicate that 32 new temperature data are available */
     extern volatile uint8_t TempDataReadyFlag;
+    
+    CY_ISR_PROTO(Custom_isr_BUTTON);
+    #define BUTTON_PRESSED 0
+    #define BUTTON_RELEASED 1
+    volatile uint8_t button_pressed;
     
 #endif
 
