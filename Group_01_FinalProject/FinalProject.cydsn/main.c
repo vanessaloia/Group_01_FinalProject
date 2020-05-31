@@ -163,7 +163,6 @@ int main(void)
             case START :
                 /* function that display a message waring to switch in the bridge control panel */
                 Switch_to_BridgeControlPanel();
-            
                 sending_data = START;
                 display_data = DONT_DISPLAY;
                 break;
@@ -251,16 +250,20 @@ int main(void)
                 Timer_Stop();
                 
                 case F_S_R:
-                    /* change full scale range */
+                    /* change full scale range and store it in EEPROM*/
                     EEPROM_Store_FSR();
                     Change_Accelerometer_FSR(feature_selected);
+                    /* Pointer resetted at the first available cell (0x0007)*/
+                    Pointer_resetter();
                    break;
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
                     EEPROM_Store_Freq();
                     Change_Accelerometer_SampFreq(feature_selected);
                     /* change timer frequency in order to change the fequency of the isr */
-                   Timer_WritePeriod(timer_periods[feature_selected-1]);
+                    Timer_WritePeriod(timer_periods[feature_selected-1]);
+                    /* Pointer resetted at the first available cell (0x0007)*/
+                    Pointer_resetter();
                     break;
                 case TEMP:
                     /* to do */
@@ -282,6 +285,8 @@ int main(void)
                         q_temp_conversion= Q_FAHRENHEIT;
                         UART_PutString("Temperature data format: Fahrenheit\r\n\n");
                     }
+                    /* Pointer resetted at the first available cell (0x0007)*/
+                    Pointer_resetter();
                     break;
                 default:
                     break;
@@ -365,13 +370,8 @@ int main(void)
 
         
         if(time_counter == 5000 / (1 + Timer_ReadPeriod())){
-            Pointer = FIRST_FREE_CELL;
-            EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer & 0xFF00) >> 8);
-            EEPROM_waitForWriteComplete();
-            EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
-            EEPROM_waitForWriteComplete();
-            sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
-            UART_PutString(message);
+            /*Reset the pointer if the button has been pressed for 5 seconds*/
+            Pointer_resetter();
             time_counter = 0;
         }
         
@@ -381,6 +381,7 @@ int main(void)
 
 void blue_led_PWM_behaviour(uint16_t period){    
     Blue_LED_PWM_WritePeriod(period);
+    /*Set duty cycle to 50%*/
     Blue_LED_PWM_WriteCompare(period/2);    
 }
 
@@ -396,6 +397,17 @@ void EEPROM_To_Digit_Conversion (void)
         EEPROM_Data_digit[i*4+3] = (int16_t) ((EEPROM_Data[i*6+4] <<8) | (EEPROM_Data[i*6+5]));
     }
     
+}
+
+void Pointer_resetter(){
+        char message[100];
+        Pointer = FIRST_FREE_CELL;
+        EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer & 0xFF00) >> 8);
+        EEPROM_waitForWriteComplete();
+        EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
+        EEPROM_waitForWriteComplete();
+        sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
+        UART_PutString(message);
 }
 
     

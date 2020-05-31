@@ -50,6 +50,7 @@
     void Keys_menu (void);
     void Menu_edge(void);
     void Display_error(void);
+    void Pointer_resetter(void);
     
 #endif
 

@@ -49,18 +49,15 @@ volatile uint8_t FIFODataReadyFlag = 0;
 * \-if so, rise the flag to allow preparation of data to be sent to EEPROM in main.c 
 */
 CY_ISR(Custom_isr_TIMER){
-    
+    /*Read status register to reset the isr*/
     Timer_ReadStatusRegister();
-    sprintf(message,"button = %d\r\n",button_pressed);
-    UART_PutString(message);
     
+    /*Counting time only if the button is pressed*/
     if(button_pressed == BUTTON_PRESSED){
         time_counter ++;
     }
     
-    sprintf(message,"tc = %d\r\n",time_counter);
-    UART_PutString(message);
-    
+    /*Read temperature data from the 10 bit adc*/
     Temperature_Data[Temp_Counter] = ADC_DelSig_Read16();
     
     if (Temperature_Data[Temp_Counter] < 0) Temperature_Data[Temp_Counter] = 0;
@@ -79,7 +76,8 @@ CY_ISR(Custom_isr_UART)
       char ch_received;
        /* character on the Rx line stored */
        ch_received= UART_GetChar();
-        
+       
+       /*Initial menu (While_Working_Menu) possible options*/
        if (change_settings_flag==0)
        {
             
@@ -116,7 +114,7 @@ CY_ISR(Custom_isr_UART)
                     break;
             }
     
-    
+     /*Main menu (Keys_Menu) possible options*/
      }else {
         
         
@@ -127,7 +125,6 @@ CY_ISR(Custom_isr_UART)
                 case 'b':
                 case 'B':
                     /* start data acquisition and storage in EEPROM */
-                    
                     /* change the value of the start/stop flag */
                     start = START;
                     break;
@@ -135,22 +132,19 @@ CY_ISR(Custom_isr_UART)
                 case 's': 
                 case 'S':
                     /* stop data acquisition and storage in EEPROM */
-                    start = STOP;
                     /* change the value of the start/stop flag */
-                    //stop = 1;
-                
+                    start = STOP;
                     break;
                 
                 case 'f':
                 case 'F':
-                
                     /* show accelerometer full scale range table */
                     option_table= F_S_R;
                     break;
                 
                 case 'p':
                 case 'P':
-                    /* show accelerometer sampling frequency */
+                    /* show accelerometer sampling frequency table */
                     option_table= SAMP_FREQ;
                     break;
                 
@@ -163,13 +157,15 @@ CY_ISR(Custom_isr_UART)
                 case 'q':
                 case 'Q':  
                     
-                    /* set flag to 0 to quit the configuration menu */
+                    /* set flag to enable the options of the initial menu (While_Working_Menu) */
                     change_settings_flag=0;
+                    /* set flag to display the initial menu */
                     while_working_menu_flag = SHOW_MENU;
                     break;
                 
                 case 'v': 
                 case 'V':
+                    /*Turn Red_LED on*/
                     Red_LED_Write(1);
                     /* show data in the bridge control panel */
                     /* stop acquisition and storing in the EEPROM */
@@ -178,13 +174,14 @@ CY_ISR(Custom_isr_UART)
                 
                 case 'u':
                 case 'U':
+                    /*Turn Red_LED off*/
                     Red_LED_Write(0);
                     /* stop streaming of data in bridge control panel */
                     display_data=STOP;
                     break;
-                /* do nothing for every other character */
                 
                 default:
+                    /* display an error for every other character */
                     display_error = SHOW_ERROR;
                     break;
             }
@@ -194,30 +191,28 @@ CY_ISR(Custom_isr_UART)
             
             if(option_table == F_S_R){
                 switch (ch_received){
+                    /*Set 4 flags, one for each possible FSR configuration*/
                     case '1':
-                        //todo SELECT FSR
                         feature_selected = 1;
                     break;
                     case '2':
-                        //todo SELECT FSR
                         feature_selected = 2;
                     break;
                     case '3':
-                        //todo SELECT FSR
                         feature_selected = 3;
                     break;
                     case '4':
-                        //todo SELECT FSR
                         feature_selected = 4;
                     break;
                     case 'q':
                     case 'Q':  
-                        /* set flag to 0 to quit the configuration menu */
+                        /* set flags to go to the main menu (Keys_Menu) */
                         change_settings_flag=1;
                         ShowMenuFlag = SHOW_MENU;
                         option_table = DONT_SHOW_TABLE;
                     break;
                     default:
+                        /* display an error for every other character */
                         display_error = SHOW_ERROR;
                     break;
                     
@@ -225,53 +220,51 @@ CY_ISR(Custom_isr_UART)
               
             }else if(option_table == SAMP_FREQ){
                 switch (ch_received){
+                    /*Set 4 flags, one for each possible sampling frequency configuration*/
                     case '1':
-                        //todo SELECT SAMP_FREQ
                         feature_selected = 1;
                     break;
                     case '2':
-                        //todo SELECT SAMP_FREQ
                         feature_selected = 2;
                     break;
                     case '3':
-                        //todo SELECT SAMP_FREQ
                         feature_selected = 3;
                     break;
                     case '4':
-                        //todo SELECT SAMP_FREQ
                         feature_selected = 4;
                     break;
                     case 'q':
                     case 'Q':  
-                        /* set flag to 0 to quit the configuration menu */
+                        /* set flags to go to the main menu */
                         change_settings_flag=1;
                         ShowMenuFlag = SHOW_MENU;
                         option_table = DONT_SHOW_TABLE;
                     break;
                     default:
+                        /* display an error for every other character */
                         display_error = SHOW_ERROR;
                     break;
                 }
             }else if(option_table == TEMP){
                 switch (ch_received){
+                    /*Set 2 flags, one for each possible temperature unit measurement*/
                     case 'c':
                     case 'C':
-                        //todo SELECT TEMPERATURE UNIT
                         feature_selected = 1;
                     break;
                     case 'F':
                     case 'f':
-                        //todo SELECT TEMPERATURE UNIT
                         feature_selected = 2;
                     break;
                     case 'q':
                     case 'Q':  
-                        /* set flag to 0 to quit the configuration menu */
+                        /* set flags to go to the main menu */
                         change_settings_flag=1;
                         ShowMenuFlag = SHOW_MENU;
                         option_table = DONT_SHOW_TABLE;
                     break;
                     default:
+                        /* display an error for every other character */
                         display_error = SHOW_ERROR;
                     break;
                 }
@@ -320,7 +313,9 @@ CY_ISR(Custom_isr_FIFO) {
 }
 
 CY_ISR(Custom_isr_BUTTON){
+    /*button_pressed value commutated on every rising or falling edge*/
     button_pressed = (!button_pressed);
+    /*time counter resetted to 0 if the button is released*/
     if(button_pressed == BUTTON_RELEASED) time_counter = 0;
 }
 
