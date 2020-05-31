@@ -25,14 +25,12 @@ void blue_led_PWM_behaviour(uint16_t);
 
 
 
-
-
-
-
+void Begin_Acquisition(void);
+void Stop_Acquisition(void);
 
 uint8_t BeginFlag;
-
-
+/* array used to change the period of the timer when the user changes the sampling frequency] */
+uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
 
 int main(void)
 {
@@ -45,9 +43,6 @@ int main(void)
     
     
     uint8_t sending_data=0;
-    
-    /* array used to change the period of the timer when the user changes the sampling frequency] */
-    uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
     uint16_t PWM_period = 0;
     
@@ -127,6 +122,30 @@ int main(void)
     
     for(;;)
     {
+        
+        switch(start){
+            case (START):
+                if (BeginFlag == 0) {
+                    EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
+                    EEPROM_waitForWriteComplete();
+                }
+                else BeginFlag = 0;
+                
+                Begin_Acquisition();
+            break;
+            case (STOP):
+                if (BeginFlag == 0) {
+                    Stop_Acquisition();
+                }
+                else BeginFlag = 0;
+
+            break;
+            default:
+                break;
+        }
+        
+        
+        
         if (FIFODataReadyFlag && TempDataReadyFlag) {
             
              Digit_To_EEPROM_Conversion();
@@ -148,7 +167,7 @@ int main(void)
             case START :
                 /* function that display a message waring to switch in the bridge control panel */
                 Switch_to_BridgeControlPanel();
-            
+                Stop_Acquisition();
                 sending_data = START;
                 
                 break;
@@ -158,8 +177,8 @@ int main(void)
             
                 /* display data set to DONT_DISPLAY */
                 display_data = DONT_DISPLAY;
-                
                 sending_data = STOP;
+                Begin_Acquisition();
                 
                 break;
             default :
@@ -302,47 +321,7 @@ int main(void)
 //        }
       
         
-        switch(start){
-            case (START):
-                if (BeginFlag == 0) {
-                    Change_Accelerometer_SampFreq(EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
-                    EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
-                    EEPROM_waitForWriteComplete();
-                }
-                else BeginFlag = 0;
-                
-                Timer_WritePeriod(timer_periods[EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS)-1]);   
-                /*Starting timer*/
-                Timer_Start();
-                /*Starting ADC*/
-                ADC_DelSig_Start();
-                /*ADC start conversion*/
-                ADC_DelSig_StartConvert();
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
-                EEPROM_waitForWriteComplete();
-                sprintf(message,"Period = %d\r\n",Timer_ReadPeriod());
-                UART_PutString(message);
-                Blue_LED_PWM_Start();
-                start = BYTE_SAVED;
-            break;
-            case (STOP):
-                if (BeginFlag == 0) {
-                Change_Accelerometer_SampFreq(0);
-                /*Stopping timer*/
-                Timer_Stop();
-                /*Stopping ADC*/
-                ADC_DelSig_Stop();
-                Blue_LED_PWM_Stop();
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
-                EEPROM_waitForWriteComplete();
-                start = BYTE_SAVED;
-                }
-                else BeginFlag = 0;
 
-            break;
-            default:
-                break;
-        }
         
        /* if(stop){
             EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
@@ -392,6 +371,35 @@ void blue_led_PWM_behaviour(uint16_t period){
     Blue_LED_PWM_WriteCompare(period/2);    
 }
 
+void Begin_Acquisition(void) {
+    
+    if (BeginFlag == 0) {
+        Change_Accelerometer_SampFreq(EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
+    }
+    Timer_WritePeriod(timer_periods[EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS)-1]);   
+    /*Starting timer*/
+    Timer_Start();
+    /*Starting ADC*/
+    ADC_DelSig_Start();
+    /*ADC start conversion*/
+    ADC_DelSig_StartConvert();
+    Blue_LED_PWM_Start();
+    start = BYTE_SAVED;
+    
+}
+void Stop_Acquisition(void) {
+    
+    Change_Accelerometer_SampFreq(0);
+    /*Stopping timer*/
+    Timer_Stop();
+    /*Stopping ADC*/
+    ADC_DelSig_Stop();
+    Blue_LED_PWM_Stop();
+    EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
+    EEPROM_waitForWriteComplete();
+    start = BYTE_SAVED;
+    
+}
      
 
 
