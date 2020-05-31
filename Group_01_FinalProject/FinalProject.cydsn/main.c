@@ -18,39 +18,21 @@
 #include "25LC256.h"
 #include "MemoryCells.h"
 #include "EEPROMCommunication.h"
-/* Data from the temperature sensors have to be converted in Celsius as:
-* /             (value_mv - 500)* 0.1 
-* /macros OFFSET_MV, M_CELSIUS, Q_CELSIUS defined to do the conversion
-*/
-#define M_CELSIUS 0.1
-#define Q_CELSIUS 0
-#define OFFSET_mV 500
-/* Conversion from Celsius to Fahrenheit is (°C * 1.8) + 32
-* \So the conversion from the value in mv from the temperature sensor is
-* \     (value_mv -500) *0.18 +32
-* \ macro defined to do the conversion
-*/
-#define M_FAHRENEIT 0.18
-#define Q_FAHRENHEIT 32
+#include "DataProcessing.h"
+
 
 void blue_led_PWM_behaviour(uint16_t);
 
-void Buffer_Creation(void);
-void Digit_To_Unit_Of_Measurement_Conversion (void); 
-void EEPROM_To_Digit_Conversion (void); 
 
 
 
 
-float m_temp_conversion;
-float q_temp_conversion;
+
+
 
 uint8_t BeginFlag;
 
-int16_t  EEPROM_Data_digit [4*(WATERMARK_LEVEL +1)];
-float  Data_UOM [4*(WATERMARK_LEVEL +1)];
-uint8_t Data_Buffer[8*(WATERMARK_LEVEL +1)];
-uint8_t Data_To_Send[8+2];
+
 
 int main(void)
 {
@@ -58,17 +40,25 @@ int main(void)
     char message[100];
     /****INITIAL EEPROM CONFIGURATION****/
     
+    uint8_t PacketReadyFlag=0;
+    
+    
     
     uint8_t sending_data=0;
-    Data_To_Send[0] = 0xA0;
-    Data_To_Send[8]= 0xC0;
+    
+    /* array used to change the period of the timer when the user changes the sampling frequency] */
+    uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
+    
+    uint16_t PWM_period = 0;
+    
     
      /* default temperature format to send data is Celsius */
     m_temp_conversion= M_CELSIUS;
     q_temp_conversion= Q_CELSIUS;
     
-    uint8_t PacketReadyFlag=0;
-    
+   
+    Packet_To_Send[0] = 0xA0;
+    Packet_To_Send[9]= 0xC0;
     
     
     
@@ -111,10 +101,7 @@ int main(void)
 
         
     }
-    /* array used to change the period of the timer when the user changes the sampling frequency] */
-    uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
     
-    uint16_t PWM_period = 0;
     
     start = BYTE_SAVED;
     //stop = STOP;
@@ -135,30 +122,14 @@ int main(void)
     /* flag that is set high when the user want to visualize the data */
     display_data=DONT_DISPLAY;
 
-    uint8_t i;
-    
-    
-
-    
+   
+   
     
     for(;;)
     {
         if (FIFODataReadyFlag && TempDataReadyFlag) {
             
-            for(i = 0; i < (WATERMARK_LEVEL+1); i++) {
-                EEPROM_Data[i*6] = Accelerations_digit[i*3]>>4;
-                EEPROM_Data[i*6+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >> 6);
-                EEPROM_Data[i*6+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
-                EEPROM_Data[i*6+3] = Accelerations_digit[i*3+2];
-                if (Temp_Counter > WATERMARK_LEVEL) {
-                    EEPROM_Data[i*6+4] = Temperature_Data[i]>>8;
-                    EEPROM_Data[i*6+5] = Temperature_Data[i];  
-                }
-                else {
-                    EEPROM_Data[i*6+4] = Temperature_Data[i+WATERMARK_LEVEL]>>8;
-                    EEPROM_Data[i*6+5] = Temperature_Data[i+WATERMARK_LEVEL];  
-                }
-            }  
+             Digit_To_EEPROM_Conversion();
             
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
@@ -167,12 +138,10 @@ int main(void)
         
         
         /* if the user presses 'v' display_data flag is set to START.
-        * \a message is diaplyed to warn him to switch to the bridge control panel.
+        * \a message is displayed to warn him to switch to the bridge control panel.
         * \data are read from the EEPROM and packets to send thorugh UART are prepared.
         * \data are sent until the user press 'u'
         */
-        
-        int16_t Data_to_display [200];
         
         switch (display_data) 
         {
@@ -199,13 +168,19 @@ int main(void)
         
         
         
+        
         if (sending_data == START) 
         {
             while (Read_Pointer < Pointer ) 
             {
+                if (Read_Pointer <POINTER_LIMIT)
+                    number_of_packets = WATERMARK_LEVEL + 1;
+                else 
+                    number_of_packets = END_EEPROM_PACKETS;
+                
                 EEPROM_Data_Read();
                 EEPROM_To_Digit_Conversion();
-                Digit_To_Unit_Of_Measurement_Conversion ();
+                Digit_To_UOM_Conversion ();
                 Buffer_Creation();
                 PacketReadyFlag=1;
             }
@@ -214,29 +189,9 @@ int main(void)
         
         if( PacketReadyFlag)
         {
-            for (i=0; i< (WATERMARK_LEVEL+1); i++) 
-            {
-                Data_To_Send[1] = Data_Buffer[i*8];
-                
-                Data_To_Send[2] = Data_Buffer[i*8+1];
-                
-                Data_To_Send[3] = Data_Buffer[i*8+2];
-                
-                Data_To_Send[4] = Data_Buffer[i*8+3];
-                
-                Data_To_Send[5] = Data_Buffer[i*8+4];
-                
-                Data_To_Send[6] = Data_Buffer[i*8+5];
-                
-                Data_To_Send[7] = Data_Buffer[i*8+6];
-                
-                Data_To_Send[8] = Data_Buffer[i*8+7];
+            Packets_To_Send_Creation();
             
-                UART_PutArray(Data_To_Send, 10);
-            }
-            
-            PacketReadyFlag=0;
-            
+            PacketReadyFlag=0;    
             
         }
         
@@ -437,69 +392,7 @@ void blue_led_PWM_behaviour(uint16_t period){
     Blue_LED_PWM_WriteCompare(period/2);    
 }
 
-void EEPROM_To_Digit_Conversion (void) 
-{
-    uint8_t i;
-    
-    for( i=0 ; i< (WATERMARK_LEVEL+1); i++ ) 
-    {
-        EEPROM_Data_digit[i*4]= (int16_t) ((EEPROM_Data[i*6]<<4) | (EEPROM_Data[i*6 +1] >>4)) ;
-        EEPROM_Data_digit[i*4+1] = (int16_t) ((EEPROM_Data[i*6+1] & 0x0f)<<6) | (EEPROM_Data[i*6+2]>>2);
-        EEPROM_Data_digit[i*4+2] = (int16_t) ((EEPROM_Data[i*6+2] & 0x03)<<8) | (EEPROM_Data[i*6+3]);
-        EEPROM_Data_digit[i*4+3] = (int16_t) ((EEPROM_Data[i*6+4] <<8) | (EEPROM_Data[i*6+5]));
-    }
-       
-}
-
-void Digit_To_Unit_Of_Measurement_Conversion (void) 
-{
-    uint8_t i;
-    uint8_t fsr = EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS);
-    uint8_t sensitivity = (2*fsr*1000)/ (1024);
-    
-    for(i=0; i< (WATERMARK_LEVEL+1); i++) 
-    {
-        Data_UOM[i*4] = EEPROM_Data_digit[i*4]* sensitivity * 0.00981;
-        Data_UOM[i*4+1] = EEPROM_Data_digit[i*4+1]* sensitivity * 0.00981;
-        Data_UOM[i*4+2] = EEPROM_Data_digit[i*4+2]* sensitivity * 0.00981;
-        EEPROM_Data_digit[i*4+3]= ADC_DelSig_CountsTo_mVolts(EEPROM_Data_digit[i*4+3]);
-        Data_UOM[i*4+3] = m_temp_conversion* (EEPROM_Data_digit[i*4+3]-OFFSET_mV) +q_temp_conversion;
-    }
-    
-}
-void Buffer_Creation(void)
-{
-    uint8_t i;
-    int16_t data_int;
-    
-    for (i=0; i< (WATERMARK_LEVEL+1); i++)
-    {
-        data_int= (int)(Data_UOM[i*4]*100);
-        Data_Buffer[i*8] =  data_int & 0xff;
-        
-        data_int= (int)(Data_UOM[i*4]*100);
-        Data_Buffer[i*8+1] =  (data_int>>8);
-        
-        data_int= (int)(Data_UOM[i*4+1]*100);
-        Data_Buffer[i*8+2] =  data_int &0xff;
-        
-        data_int= (int)(Data_UOM[i*4+1]*100);
-        Data_Buffer[i*8+3] =  data_int>>8;
-        
-        data_int= (int)(Data_UOM[i*4+2]*100);
-        Data_Buffer[i*8+4] =  data_int & 0xff;
-        
-        data_int= (int)(Data_UOM[i*4+2]*100);
-        Data_Buffer[i*8+5] =  data_int >>8;
-        
-        data_int= (int)(Data_UOM[i*4+3]*100);
-        Data_Buffer[i*8+6] =  data_int & 0xff;
-        
-        data_int= (int)(Data_UOM[i*4+3]*100);
-        Data_Buffer[i*8+7] =  data_int >>8;
-    }
-}
-        
+     
 
 
 
