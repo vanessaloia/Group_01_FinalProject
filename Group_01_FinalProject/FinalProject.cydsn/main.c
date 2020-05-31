@@ -40,8 +40,6 @@ int main(void)
     
     uint8_t PacketReadyFlag=0;
     
-    
-    
     uint8_t sending_data=0;
     
     uint16_t PWM_period = 0;
@@ -110,7 +108,6 @@ int main(void)
     EEPROM_Full = 0;
     time_counter = 0;
     
-    Read_Pointer = FIRST_FREE_CELL;
     
     /* flag that is set high when the user want to visualize the data */
     display_data=DONT_DISPLAY;
@@ -168,6 +165,7 @@ int main(void)
                 if(begin_pressed == START)
                     Stop_Acquisition();
                 sending_data = START;
+                Read_Pointer = FIRST_FREE_CELL;
                 display_data = DONT_DISPLAY;
                 break;
                 
@@ -193,7 +191,7 @@ int main(void)
         
         if (sending_data == START) 
         {
-            while (Read_Pointer < Pointer ) 
+            if (Read_Pointer < Pointer) 
             {
                 if (Read_Pointer <POINTER_LIMIT)
                     number_of_packets = WATERMARK_LEVEL + 1;
@@ -202,11 +200,11 @@ int main(void)
                 
                 EEPROM_Data_Read();
                 EEPROM_To_Digit_Conversion();
-                Digit_To_UOM_Conversion ();
+                Digit_To_UOM_Conversion();
                 Buffer_Creation();
-                PacketReadyFlag=1;
+                PacketReadyFlag = 1;
             }
-            
+            else Read_Pointer = FIRST_FREE_CELL;   
         }
         
         if( PacketReadyFlag)

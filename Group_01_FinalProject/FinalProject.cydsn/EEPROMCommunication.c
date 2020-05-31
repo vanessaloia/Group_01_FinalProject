@@ -15,29 +15,24 @@
 #include "MemoryCells.h"
 #include "project.h"
 
-uint8_t Flag_Cell;
-uint16_t Pointer;
-uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-
 
 void EEPROM_Data_Write(void) {
     
     uint8_t i;
     
-    if ( Pointer < POINTER_LIMIT ) 
-    {
-    
-        for(i = 0; i < 3; i++) {
+    if (Pointer < POINTER_LIMIT) {
+        
+        for(i = 0; i < 3; i++) { 
             
             EEPROM_writePage(Pointer, &EEPROM_Data[i * SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
             EEPROM_waitForWriteComplete();
             CyDelay(10);
             Pointer += SPI_EEPROM_PAGE_SIZE;
-        
-        }
+   
+        }  
     }
-    else 
-    {
+    else {
+        
         EEPROM_writePage(Pointer, EEPROM_Data , SPI_EEPROM_PAGE_SIZE);
         EEPROM_waitForWriteComplete();
         Pointer+= 64;
@@ -47,37 +42,32 @@ void EEPROM_Data_Write(void) {
         EEPROM_Full = 1;
     }
     
+    EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer&0xFF00)>>8);
+    EEPROM_waitForWriteComplete();
+    EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer&0xff));
+    EEPROM_waitForWriteComplete(); 
 }
 
 void EEPROM_Data_Read (void) {
     
     uint8_t i;
-    
-    
-    
-    if ( Read_Pointer < POINTER_LIMIT ) 
-    {
-    
+   
+    if (Read_Pointer < POINTER_LIMIT) {
+   
         for (i=0; i < 3 ; i++) {
             EEPROM_readPage (Read_Pointer, &EEPROM_Data[i*SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
             Read_Pointer+= SPI_EEPROM_PAGE_SIZE;
-            }
+        }
     }
     
-    else 
-    {
+    else {
         EEPROM_readPage(Read_Pointer, EEPROM_Data , SPI_EEPROM_PAGE_SIZE);
         Read_Pointer+= 64;
         EEPROM_readPage( Read_Pointer, &EEPROM_Data[SPI_EEPROM_PAGE_SIZE], 56);
         Pointer += 56;
-       }
+    }
 }
 
-       
-        
-        
-    
-    
 
 void EEPROM_Initialization(void) {
     char message[50];

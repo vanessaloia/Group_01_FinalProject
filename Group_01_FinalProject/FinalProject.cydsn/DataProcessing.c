@@ -115,7 +115,7 @@ void Packets_To_Send_Creation(void)
                 
                 Packet_To_Send[6] = Data_Buffer[i*PACKET_BYTES+5];
                 
-                Packet_To_Send[7] = Data_Buffer[i*PACKET_BYTES+ 6 ];
+                Packet_To_Send[7] = Data_Buffer[i*PACKET_BYTES+6];
                 
                 Packet_To_Send[8] = Data_Buffer[i*PACKET_BYTES+7];
             
