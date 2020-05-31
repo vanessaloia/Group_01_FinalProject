@@ -65,6 +65,8 @@ int main(void)
     isr_UART_StartEx(Custom_isr_UART);
     isr_FIFO_StartEx(Custom_isr_FIFO);
     isr_TIMER_StartEx(Custom_isr_TIMER);
+    
+    button_pressed = BUTTON_PRESSED;
     isr_BUTTON_StartEx(Custom_isr_BUTTON);
     
     CyDelay(10);
@@ -97,7 +99,7 @@ int main(void)
     
     uint16_t PWM_period = 0;
     
-    start = BYTE_SAVED;
+    //start = BYTE_SAVED;
     //stop = STOP;
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
@@ -109,7 +111,6 @@ int main(void)
     while_working_menu_flag = DONT_SHOW_MENU;
     EEPROM_Full = 0;
     time_counter = 0;
-    button_pressed = BUTTON_RELEASED;
     
     Read_Pointer = FIRST_FREE_CELL;
     
@@ -164,7 +165,7 @@ int main(void)
                 Switch_to_BridgeControlPanel();
             
                 sending_data = START;
-                
+                display_data = DONT_DISPLAY;
                 break;
                 
             case STOP :
@@ -174,7 +175,9 @@ int main(void)
                 display_data = DONT_DISPLAY;
                 
                 sending_data = STOP;
-                
+                UART_PutString("Visualization data stopped\r\n");
+                while_working_menu_flag = SHOW_MENU;
+                change_settings_flag = 0;
                 break;
             default :
                 break;
@@ -318,24 +321,20 @@ int main(void)
                 ADC_DelSig_Start();
                 /*ADC start conversion*/
                 ADC_DelSig_StartConvert();
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
-                EEPROM_waitForWriteComplete();
-                sprintf(message,"Period = %d\r\n",Timer_ReadPeriod());
-                UART_PutString(message);
                 Blue_LED_PWM_Start();
                 start = BYTE_SAVED;
             break;
             case (STOP):
                 if (BeginFlag == 0) {
-                Change_Accelerometer_SampFreq(0);
-                /*Stopping timer*/
-                Timer_Stop();
-                /*Stopping ADC*/
-                ADC_DelSig_Stop();
-                Blue_LED_PWM_Stop();
-                EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
-                EEPROM_waitForWriteComplete();
-                start = BYTE_SAVED;
+                    Change_Accelerometer_SampFreq(0);
+                    /*Stopping timer*/
+                    Timer_Stop();
+                    /*Stopping ADC*/
+                    ADC_DelSig_Stop();
+                    Blue_LED_PWM_Stop();
+                    EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
+                    EEPROM_waitForWriteComplete();
+                    start = BYTE_SAVED;
                 }
                 else BeginFlag = 0;
 
@@ -363,8 +362,6 @@ int main(void)
             Display_error();
             display_error = DONT_SHOW_ERROR;
         }
-    }
-}
 
         
         if(time_counter == 5000 / (1 + Timer_ReadPeriod())){
@@ -380,11 +377,6 @@ int main(void)
         
     }//END FOR CYCLE
 }//END MAIN
-        
-    
-void Display_error(){
-    UART_PutString("\nSelection invalid. Please choose one of the available characters\r\n");
-}
 
 
 void blue_led_PWM_behaviour(uint16_t period){    
@@ -403,14 +395,6 @@ void EEPROM_To_Digit_Conversion (void)
         EEPROM_Data_digit[i*4+2] = (int16_t) ((EEPROM_Data[i*6+2] & 0x03)<<8) | (EEPROM_Data[i*6+3]);
         EEPROM_Data_digit[i*4+3] = (int16_t) ((EEPROM_Data[i*6+4] <<8) | (EEPROM_Data[i*6+5]));
     }
-        
-        
-        
-        
-    
-    
-    
-    
     
 }
 

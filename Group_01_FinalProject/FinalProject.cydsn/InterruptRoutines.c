@@ -51,10 +51,15 @@ volatile uint8_t FIFODataReadyFlag = 0;
 CY_ISR(Custom_isr_TIMER){
     
     Timer_ReadStatusRegister();
+    sprintf(message,"button = %d\r\n",button_pressed);
+    UART_PutString(message);
     
     if(button_pressed == BUTTON_PRESSED){
         time_counter ++;
     }
+    
+    sprintf(message,"tc = %d\r\n",time_counter);
+    UART_PutString(message);
     
     Temperature_Data[Temp_Counter] = ADC_DelSig_Read16();
     
@@ -168,12 +173,14 @@ CY_ISR(Custom_isr_UART)
                     Red_LED_Write(1);
                     /* show data in the bridge control panel */
                     /* stop acquisition and storing in the EEPROM */
+                    display_data=START;
                     break;
                 
                 case 'u':
                 case 'U':
                     Red_LED_Write(0);
                     /* stop streaming of data in bridge control panel */
+                    display_data=STOP;
                     break;
                 /* do nothing for every other character */
                 
@@ -203,6 +210,13 @@ CY_ISR(Custom_isr_UART)
                         //todo SELECT FSR
                         feature_selected = 4;
                     break;
+                    case 'q':
+                    case 'Q':  
+                        /* set flag to 0 to quit the configuration menu */
+                        change_settings_flag=1;
+                        ShowMenuFlag = SHOW_MENU;
+                        option_table = DONT_SHOW_TABLE;
+                    break;
                     default:
                         display_error = SHOW_ERROR;
                     break;
@@ -227,6 +241,13 @@ CY_ISR(Custom_isr_UART)
                         //todo SELECT SAMP_FREQ
                         feature_selected = 4;
                     break;
+                    case 'q':
+                    case 'Q':  
+                        /* set flag to 0 to quit the configuration menu */
+                        change_settings_flag=1;
+                        ShowMenuFlag = SHOW_MENU;
+                        option_table = DONT_SHOW_TABLE;
+                    break;
                     default:
                         display_error = SHOW_ERROR;
                     break;
@@ -242,6 +263,13 @@ CY_ISR(Custom_isr_UART)
                     case 'f':
                         //todo SELECT TEMPERATURE UNIT
                         feature_selected = 2;
+                    break;
+                    case 'q':
+                    case 'Q':  
+                        /* set flag to 0 to quit the configuration menu */
+                        change_settings_flag=1;
+                        ShowMenuFlag = SHOW_MENU;
+                        option_table = DONT_SHOW_TABLE;
                     break;
                     default:
                         display_error = SHOW_ERROR;

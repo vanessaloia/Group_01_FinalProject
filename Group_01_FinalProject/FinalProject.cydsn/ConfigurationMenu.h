@@ -19,7 +19,7 @@
     
     
     
-    #define LENGTH_MEX 50 
+    #define LENGTH_MEX 100 
     #define WORD_SIZE 20
     #define NUMBER_OF_TABLES 3
     
@@ -49,6 +49,7 @@
     void Show_table(uint8_t index_table);
     void Keys_menu (void);
     void Menu_edge(void);
+    void Display_error(void);
     
 #endif
 

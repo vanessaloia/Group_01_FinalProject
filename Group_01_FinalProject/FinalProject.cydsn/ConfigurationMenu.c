@@ -58,7 +58,8 @@ void While_Working_Menu(void)
 void Switch_to_BridgeControlPanel(void)
 {
     Menu_edge();
-    UART_PutString("Open Bridge Control Panel to visualize data.\r\n Press 'u' to stop the visualization\r\n\n");
+    UART_PutString("Open Bridge Control Panel to visualize data.\r\n");
+    UART_PutString("Press 'u' to stop the visualization and to go to the initial menu.\r\n\n");
     Menu_edge();
 }
 
@@ -120,7 +121,10 @@ void Show_table(uint8_t index_table)
     {
         sprintf(message, "       %c     |   %s\r\n", *(index+i) , index+i+1);
         UART_PutString( message);
-    }  
+    }
+    
+    UART_PutString("\nPress 'q' to go back to the main menu\r\n");
+    
     Menu_edge();
 }
 void Keys_menu (void) 
@@ -164,7 +168,12 @@ void Menu_edge(void)
 }
     
     
+            
     
+void Display_error(){
+    UART_PutString("\nSelection invalid. Please choose one of the available characters\r\n");
+}
+
     
     
     

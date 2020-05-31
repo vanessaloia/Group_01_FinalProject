@@ -70,8 +70,6 @@
     /* Number of bytes of each packet stored in EEPROM */
     #define EEPROM_PACKET_BYTES EEPROM_ACCELEROMETER_DATA_BYTES + EEPROM_TEMPERATURE_DATA_BYTES
     
-    void Display_error();
-    
 
     
     CY_ISR_PROTO(Custom_isr_FIFO);
