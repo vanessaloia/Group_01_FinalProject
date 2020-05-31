@@ -53,6 +53,7 @@
     volatile uint8 KeysMenu;
     volatile uint8_t display_data;
     volatile uint8_t time_counter;
+    volatile uint8_t begin_pressed;
     
     CY_ISR_PROTO(Custom_isr_UART);
     

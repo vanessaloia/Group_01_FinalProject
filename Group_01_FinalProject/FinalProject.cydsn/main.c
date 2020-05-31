@@ -92,16 +92,13 @@ int main(void)
         UART_PutString("EEPROM already initialized");
         start = EEPROM_readByte(BEGIN_STOP_ADDRESS);
         BeginFlag = 1;
-        
+        begin_pressed = start;
         Pointer = (uint16_t)(EEPROM_readByte(POINTER_ADDRESS_L) | (EEPROM_readByte(POINTER_ADDRESS_H)<<8));
         
 
         
     }
     
-    
-    //start = BYTE_SAVED;
-    //stop = STOP;
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
     struct_initialized = 0;
@@ -149,7 +146,7 @@ int main(void)
         
         if (FIFODataReadyFlag && TempDataReadyFlag) {
             
-             Digit_To_EEPROM_Conversion();
+            Digit_To_EEPROM_Conversion();
             
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
@@ -168,7 +165,8 @@ int main(void)
             case START :
                 /* function that display a message waring to switch in the bridge control panel */
                 Switch_to_BridgeControlPanel();
-                Stop_Acquisition();
+                if(begin_pressed == START)
+                    Stop_Acquisition();
                 sending_data = START;
                 display_data = DONT_DISPLAY;
                 break;
@@ -179,7 +177,8 @@ int main(void)
                 /* display data set to DONT_DISPLAY */
                 display_data = DONT_DISPLAY;
                 sending_data = STOP;
-                Begin_Acquisition();
+                if(begin_pressed == START)
+                    Begin_Acquisition();
                 
                 UART_PutString("Visualization data stopped\r\n");
                 while_working_menu_flag = SHOW_MENU;
@@ -218,11 +217,6 @@ int main(void)
             
         }
         
-        
-            
-        
-        
-        
         if(while_working_menu_flag){
             While_Working_Menu();
             while_working_menu_flag = DONT_SHOW_MENU;
@@ -234,22 +228,6 @@ int main(void)
         }
         
         if(KeysMenu == 1){
-//            switch (option_table){
-//                case F_S_R:
-//                    Show_table(0);
-//                    KeysMenu = 0;
-//                break;
-//                case SAMP_FREQ:
-//                    Show_table(1);
-//                    KeysMenu = 0;
-//                break;
-//                case TEMP:
-//                    Show_table(2);
-//                    KeysMenu = 0;
-//                break;
-//                default:
-//                break;
-//    }
             if(option_table != DONT_SHOW_TABLE){
                 Show_table(option_table);
                 KeysMenu = 0;
@@ -319,24 +297,6 @@ int main(void)
                 change_settings_flag = 0;
         }
             
-//        if(start == START){
-//            /* save the value  in the EEPROM */    
-//            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 1);
-//            EEPROM_waitForWriteComplete();
-//            start = 0;
-//        }if(stop){
-//            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
-//            EEPROM_waitForWriteComplete();
-//            stop = 0;
-//        }
-      
-        
-
-        
-       /* if(stop){
-            EEPROM_writeByte(BEGIN_STOP_ADDRESS, 0);
-            stop = 0;
-        }*/
         
         if(EEPROM_Full){
             /*set PWM period to 250 ms*/
@@ -352,7 +312,7 @@ int main(void)
             Display_error();
             display_error = DONT_SHOW_ERROR;
         }
-    }
+    
 
 
         
