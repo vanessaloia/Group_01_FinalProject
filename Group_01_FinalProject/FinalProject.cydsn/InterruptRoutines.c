@@ -287,6 +287,8 @@ CY_ISR(Custom_isr_UART)
 
 CY_ISR(Custom_isr_FIFO) {
     
+    UART_PutString("ISR_FIfo\r\n");
+    
     uint8_t int1_src_reg;
     ErrorCode error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,
                                                   INT1_SRC_ADDR,
