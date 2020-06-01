@@ -69,17 +69,17 @@ void EEPROM_To_Digit_Conversion (void)
       */  
 //        EEPROM_Data_digit[i*PACKET_DATA+3] = (int16_t) ((EEPROM_Data[i*EEPROM_PACKET_BYTES+4] <<8) | (EEPROM_Data[i*EEPROM_PACKET_BYTES+5]));
       
-        xl=(uint8_t) (EEPROM_Data[i*EEPROM_PACKET_BYTES+1]&0x30)<<2;
-        xh=(uint8_t) (((EEPROM_Data[i*EEPROM_PACKET_BYTES+1]&0xC0)>>6) |  ((EEPROM_Data[i*EEPROM_PACKET_BYTES]&0x3f)<<2));  
-        yl=(uint8_t) ((EEPROM_Data[i*EEPROM_PACKET_BYTES+2]&0x0C)<<4);  
-        yh=(uint8_t) (((EEPROM_Data[i*EEPROM_PACKET_BYTES+2]&0xF0)>>4) |  ((EEPROM_Data[i*EEPROM_PACKET_BYTES+1]&0x0F)<<4));  
-        zl=(uint8_t) ((EEPROM_Data[i*EEPROM_PACKET_BYTES+3]&0x03)<<6);
-        zh=(uint8_t) (((EEPROM_Data[i*EEPROM_PACKET_BYTES+3]&0xFC)>>2) |  ((EEPROM_Data[i*EEPROM_PACKET_BYTES+2]&0x03)<<6));   
+        xl=(uint8_t) (EEPROM_Data_read[i*EEPROM_PACKET_BYTES+1]&0x30)<<2;
+        xh=(uint8_t) (((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+1]&0xC0)>>6) |  ((EEPROM_Data_read[i*EEPROM_PACKET_BYTES]&0x3f)<<2));  
+        yl=(uint8_t) ((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+2]&0x0C)<<4);  
+        yh=(uint8_t) (((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+2]&0xF0)>>4) |  ((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+1]&0x0F)<<4));  
+        zl=(uint8_t) ((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+3]&0x03)<<6);
+        zh=(uint8_t) (((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+3]&0xFC)>>2) |  ((EEPROM_Data_read[i*EEPROM_PACKET_BYTES+2]&0x03)<<6));   
         
         /**********************************************************************************/
         //NON SO NIENTE DEL SENSORE DI TEMPERATURA SISTEMATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        th = (uint8_t) (EEPROM_Data[i*EEPROM_PACKET_BYTES+4]);
-        tl = (uint8_t) (EEPROM_Data[i*EEPROM_PACKET_BYTES+5]);
+        th = (uint8_t) (EEPROM_Data_read[i*EEPROM_PACKET_BYTES+4]);
+        tl = (uint8_t) (EEPROM_Data_read[i*EEPROM_PACKET_BYTES+5]);
         /**********************************************************************************/
         
         x =(int16_t) ((xh<<8)|(xl))>>6;
@@ -110,7 +110,7 @@ void Digit_To_UOM_Conversion (void)
     char mess[50];
     uint8_t i;
     uint8_t fsr = EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS);
-    uint8_t sensitivity = ((2*(1<<fsr)*1000)/ (MAX_VALUE_DIGIT)+1);
+    uint8_t sensitivity = (2*(1<<fsr)*1000)/ (MAX_VALUE_DIGIT)+1;
     
     for(i=0; i< (number_of_packets); i++) 
     {/*
