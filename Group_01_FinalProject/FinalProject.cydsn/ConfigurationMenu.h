@@ -18,14 +18,17 @@
     
     
     
-    
+    /* size of the message to print */
     #define LENGTH_MEX 100 
+    /* size of the strings inside the struct "options_to_display */
     #define WORD_SIZE 20
+    /* tables to display: full scale range, sampling frequency, temperature format */
     #define NUMBER_OF_TABLES 3
     
-    /* struct that defines the information to display in the table for accelerometer options */
+    /* struct that defines the variables to display in the tables for the accelerometer options */
     typedef struct 
-    {   char header1[WORD_SIZE];
+    {   
+        char header1[WORD_SIZE];
         char header2[WORD_SIZE];
         char key1;
         char option1[WORD_SIZE];
@@ -37,16 +40,17 @@
         char option4[WORD_SIZE];
     } options_to_display;
     
+    /* array of three elements containing the structs "option to display" */
     options_to_display set_of_tables[NUMBER_OF_TABLES];
    
-
+    /* declaration of functions that display different menu to the user */ 
     void While_Working_Menu(void);
     void Switch_to_BridgeControlPanel(void);
-    void Show_table(uint8_t index_table);
-    void Keys_menu (void);
-    void Menu_edge(void);
-    void Display_error(void);
-    void Pointer_resetter(void);
+    void Show_Table(uint8_t index_table);
+    void Keys_Menu (void);
+    void Menu_Edge(void);
+    void Display_Error(void);
+   
     
 #endif
 

@@ -404,7 +404,7 @@ void Change_Accelerometer_SampFreq(uint8_t feature_selected)
         if (error == NO_ERROR)
         
         {
-            if (display_data != DONT_DISPLAY && start== BYTE_SAVED) 
+            if (display_data != ACTIONS_DONE && start== ACTIONS_DONE) 
             {
                 /* pointer that points to the correct variable inside the struct of SampFreq. It's used to print the sampling
                 * \ frequency set up in the accelerometer according to the user's input.

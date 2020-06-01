@@ -16,27 +16,36 @@
     #include "project.h"
     #include "InterruptRoutines.h"
     
-    /* Data from the temperature sensors have to be converted in Celsius as:
+    /* Data from the temperature sensor have to be converted in Celsius as:
     * /             (value_mv - 500)* 0.1 
     * /macros OFFSET_MV, M_CELSIUS, Q_CELSIUS defined to do the conversion
     */
     #define M_CELSIUS 0.1
     #define Q_CELSIUS 0
     #define OFFSET_mV 500
+    
     /* Conversion from Celsius to Fahrenheit is (°C * 1.8) + 32
     * \So the conversion from the value in mv from the temperature sensor is
-    * \     (value_mv -500) *0.18 +32
+    * \     (value_mv - 500) *0.18 +32
     * \ macro defined to do the conversion
     */
     #define M_FAHRENEIT 0.18
     #define Q_FAHRENHEIT 32
     
+    
     #define PACKET_DATA 4
     #define PACKET_BYTES PACKET_DATA * 2
     
+    /* coefficient to make the conversion from 1 mg to m/s^2
+    * \ 1 mg = 0.00981 m/s^2
+    */
     #define MG_TO_MS2 0.00981
+    
+    /* 10 bits resolution data */
     #define ADC_RESOLUTION 10
-    #define MAX_VALUE_DIGIT 1<<10
+    /* 1024 possible values with 10 bits  */
+    #define MAX_VALUE_DIGIT 1024
+   
     #define END_EEPROM_PACKETS 20
     
     

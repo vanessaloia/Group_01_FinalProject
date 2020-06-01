@@ -19,6 +19,7 @@
 #include "MemoryCells.h"
 #include "EEPROMCommunication.h"
 #include "DataProcessing.h"
+ void Pointer_resetter(void);
 
 
 void blue_led_PWM_behaviour(uint16_t);
@@ -54,6 +55,10 @@ int main(void)
    
     Packet_To_Send[0] = 0xA0;
     Packet_To_Send[9]= 0xC0;
+    
+FIFODataReadyFlag = 0;
+TempDataReadyFlag = 0;
+temp_counter = 0;
     
     
     
@@ -119,15 +124,15 @@ int main(void)
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
     feature_selected = 0;
-    KeysMenu = 0;
+    keys_menu = 0;
     display_error = DONT_SHOW_ERROR;
-    ShowMenuFlag = SHOW_MENU;
+    show_menu_lag = SHOW_MENU;
     while_working_menu_flag = DONT_SHOW_MENU;
     EEPROM_Full = 0;
     time_counter = 0;
-    Temp_Counter = 0;
+    temp_counter = 0;
     /* flag that is set high when the user want to visualize the data */
-    display_data=DONT_DISPLAY;
+    display_data=ACTIONS_DONE;
 
    
 //     uint8_t buffer[64];
@@ -205,14 +210,14 @@ int main(void)
                     Stop_Acquisition();
                 sending_data = START;
                 Read_Pointer = FIRST_FREE_CELL;
-                display_data = DONT_DISPLAY;
+                display_data = ACTIONS_DONE;
                 break;
                 
             case STOP :
                 /* stop sending data throygh UART to the Brisdge Control Panel */
             
-                /* display data set to DONT_DISPLAY */
-                display_data = DONT_DISPLAY;
+                /* display data set to ACTIONS_DONE */
+                display_data = ACTIONS_DONE;
                 sending_data = STOP;
                 if(begin_pressed == START)
                     Begin_Acquisition();
@@ -274,16 +279,16 @@ int main(void)
             While_Working_Menu();
             while_working_menu_flag = DONT_SHOW_MENU;
         }
-        if(ShowMenuFlag){
-            Keys_menu();
-            ShowMenuFlag = DONT_SHOW_MENU;
-            KeysMenu = 1;
+        if(show_menu_flag){
+            Keys_Menu();
+            show_menu_flag = DONT_SHOW_MENU;
+            keys_menu = 1;
         }
         
-        if(KeysMenu == 1){
+        if(keys_menu == 1){
             if(option_table != DONT_SHOW_TABLE){
-                Show_table(option_table);
-                KeysMenu = 0;
+                Show_Table(option_table);
+                keys_menu = 0;
            }
         }
 
@@ -362,7 +367,7 @@ int main(void)
         }
         
         if(display_error){
-            Display_error();
+            Display_Error();
             display_error = DONT_SHOW_ERROR;
         }
     
@@ -399,7 +404,7 @@ void Begin_Acquisition(void) {
     ADC_DelSig_StartConvert();
     Blue_LED_PWM_Start();
     UART_PutString("Data acquisition ON... \r\n");
-    start = BYTE_SAVED;
+    start = ACTIONS_DONE;
     
 }
 void Stop_Acquisition(void) {
@@ -413,7 +418,7 @@ void Stop_Acquisition(void) {
     EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
     EEPROM_waitForWriteComplete();
     UART_PutString("Data acquisition OFF \r\n");
-    start = BYTE_SAVED;
+    start = ACTIONS_DONE;
     
 }
      
