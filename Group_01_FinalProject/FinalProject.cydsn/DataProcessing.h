@@ -66,14 +66,6 @@
     
     uint8_t number_of_packets;
         
-    uint8_t xl;
-    uint8_t xh;
-    uint8_t yl;
-    uint8_t yh;
-    uint8_t zl;
-    uint8_t zh;
-    uint8_t tl;
-    uint8_t th;
     
     void Digit_To_EEPROM_Conversion(void);
     void EEPROM_To_Digit_Conversion (void); 

@@ -15,7 +15,11 @@
 #include "MemoryCells.h"
 #include "project.h"
 
-
+/*
+\ brief function to write in the eeprom
+\ this function write 192 bytes (or 60 if the end of the eeprom is reached) every time 32 new packets are acquired 
+\ when the end of the memory is reached the flag EEPROMFull is raised
+*/
 void EEPROM_Data_Write(void) {
     
     uint8_t i;
@@ -55,6 +59,10 @@ void EEPROM_Data_Write(void) {
     CyExitCriticalSection(InterruptStatus);
 }
 
+/*
+\ brief function to read from the eeprom
+\ this function read 192 bytes (or 60 if the end of the eeprom is reached) 
+*/
 void EEPROM_Data_Read (void) {
     //UART_PutString("SONO IN DATA READ\r\n");
     uint8_t i;
@@ -83,7 +91,10 @@ void EEPROM_Data_Read (void) {
     CyExitCriticalSection(InterruptStatus); 
 }
 
-
+/*
+\brief function to initialize the memory cells to store settings
+\this function is called only once at the first device start up
+*/
 void EEPROM_Initialization(void) {
     
     char message[50];
@@ -111,6 +122,9 @@ void EEPROM_Initialization(void) {
 
 }
 
+/*
+\brief function to store new FSR setting in the eeprom when the user change it
+*/
 void EEPROM_Store_FSR(void) {
     
     uint8_t InterruptStatus;
@@ -121,7 +135,9 @@ void EEPROM_Store_FSR(void) {
     
     CyExitCriticalSection(InterruptStatus);
 }
-
+/*
+\brief function to store new frequency setting in the eeprom when the user change it
+*/
 void EEPROM_Store_Freq(void) {
     
     uint8_t InterruptStatus;
@@ -133,6 +149,9 @@ void EEPROM_Store_Freq(void) {
     
     CyExitCriticalSection(InterruptStatus);
 }
+/*
+\brief function to store new temperature unit setting in the eeprom when the user change it
+*/
 void EEPROM_Store_Temp(void) {
     
     uint8_t InterruptStatus;
