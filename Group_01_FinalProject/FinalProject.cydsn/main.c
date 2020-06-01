@@ -237,9 +237,10 @@ int main(void)
         
         
         if (sending_data == START) 
-        {   
-//            sprintf(message,"Pointer=%u,readPointer=%u\r\n",Pointer,Read_Pointer);
-//            UART_PutString(message);
+        {   /*when the user presses 'v', if data are available in memory,
+            \32 packets are read from the memory, converted and PacketReadyFlag is raised to stream data to the bridge
+            \(if the user presses 'u' the stream end at the end of these 32 packets 
+            */
             if (Read_Pointer < Pointer) 
             {
                 if (Read_Pointer <POINTER_LIMIT)
@@ -253,10 +254,12 @@ int main(void)
                 Buffer_Creation();
                 PacketReadyFlag = 1;
             }
+            /*when all data have been sent the stream restart */
             else Read_Pointer = FIRST_FREE_CELL;   
         }
         
-        if( PacketReadyFlag)
+        /* when PacketReadyFlag is high 32 packets are sent to the bridge */
+        if(PacketReadyFlag)
         {   
             //UART_PutString("Packet ready\r\n");
             Packets_To_Send_Creation();
@@ -350,7 +353,7 @@ int main(void)
                 change_settings_flag = 0;
         }
             
-        
+        /* change the PWM of the led according to eeprom status */
         if(EEPROM_Full){
             /*set PWM period to 250 ms*/
             PWM_period = 14999;
@@ -361,6 +364,7 @@ int main(void)
             blue_led_PWM_behaviour(PWM_period);
         }
         
+        /*if user put an invalid input an error message is displayed */
         if(display_error){
             Display_Error();
             display_error = DONT_SHOW_ERROR;
@@ -368,7 +372,7 @@ int main(void)
     
 
 
-        
+        /*reset pointer when the button is pressed for 5 seconds */
         if(time_counter == 5000 / (1 + Timer_ReadPeriod())){
             /*Reset the pointer if the button has been pressed for 5 seconds*/
             Pointer_resetter();
@@ -378,13 +382,14 @@ int main(void)
     }//END FOR CYCLE
 }//END MAIN
 
-
+/*brief function to change the status of the blue led */
 void blue_led_PWM_behaviour(uint16_t period){    
     Blue_LED_PWM_WritePeriod(period);
     /*Set duty cycle to 50%*/
     Blue_LED_PWM_WriteCompare(period/2);    
 }
 
+/*brief function to start acquisition every time the user presses 'b' or the device is started and 'b' is found in memory */
 void Begin_Acquisition(void) {
     
     if (BeginFlag == 0) {
@@ -402,6 +407,7 @@ void Begin_Acquisition(void) {
     start = ACTIONS_DONE;
     
 }
+/*brief function to stop acquisition every time the user presses 's' or the device is started and 's' is found in memory */
 void Stop_Acquisition(void) {
     
     Change_Accelerometer_SampFreq(0);
@@ -420,7 +426,7 @@ void Stop_Acquisition(void) {
     
 }
      
-
+/* brief function to reset the point every time the button is pressed for 5 seconds or the user change one setting */
 void Pointer_resetter(){
         char message[100];
         Pointer = FIRST_FREE_CELL;
@@ -435,7 +441,7 @@ void Pointer_resetter(){
         sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
         UART_PutString(message);
 }
-
+/*brief function to clear the fifo when fsr or sampling frequency are changed */
 void Clear_Fifo(void) {
     
     uint8_t fifo_ctrl_reg;
