@@ -25,7 +25,7 @@
 //int16 temperature_mv = 0;
 
 /* Array to store 64 temperature data */
-int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
+//int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
 
 /* Flag to indicate that 32 new temperature data are available */
 volatile uint8_t TempDataReadyFlag = 0;
@@ -38,7 +38,7 @@ char message[100];
 uint8_t AccelerometerData[BYTES_READ_FROM_FIFO];
 
 /* Array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
-int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
+//int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
 
 /* Flag to indicate that new data have been read from FIFO and must be sent to EEPROM */
 volatile uint8_t FIFODataReadyFlag = 0;   
@@ -51,7 +51,7 @@ volatile uint8_t FIFODataReadyFlag = 0;
 CY_ISR(Custom_isr_TIMER){
     /*Read status register to reset the isr*/
     Timer_ReadStatusRegister();
-    
+//    UART_PutString("isr timer\r\n");
     /*Counting time only if the button is pressed*/
     if(button_pressed == BUTTON_PRESSED){
         time_counter ++;
@@ -286,8 +286,6 @@ CY_ISR(Custom_isr_UART)
 */
 
 CY_ISR(Custom_isr_FIFO) {
-    
-    UART_PutString("ISR_FIfo\r\n");
     
     uint8_t int1_src_reg;
     ErrorCode error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,

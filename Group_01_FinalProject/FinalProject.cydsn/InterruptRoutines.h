@@ -77,10 +77,10 @@
     CY_ISR_PROTO(Custom_isr_FIFO);
     
     /* array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
-    int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
+     int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
     
     /* Array to store 64 temperature data */
-    int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
+     int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
 
     /* Flag to indicate that new data have been read from FIFO and must be sent to EEPROM */
     volatile uint8_t FIFODataReadyFlag;   

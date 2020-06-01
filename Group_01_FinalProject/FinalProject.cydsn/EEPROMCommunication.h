@@ -20,7 +20,7 @@
     #include "25LC256.h"
     #include "InterruptRoutines.h"
     
-    #define POINTER_LIMIT 32647
+    #define POINTER_LIMIT 32704
     
     uint16_t Pointer;
     

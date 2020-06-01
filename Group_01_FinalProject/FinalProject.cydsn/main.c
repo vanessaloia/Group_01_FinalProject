@@ -311,7 +311,7 @@ int main(void)
                 case SAMP_FREQ:
                     /* change sampling freqeuncy */
                     EEPROM_Store_Freq();
-                    Change_Accelerometer_SampFreq(feature_selected);
+                    if(begin_pressed) Change_Accelerometer_SampFreq(feature_selected);
                     /* change timer frequency in order to change the fequency of the isr */
                     Timer_WritePeriod(timer_periods[feature_selected-1]);
                     /* Pointer resetted at the first available cell (0x0007)*/
