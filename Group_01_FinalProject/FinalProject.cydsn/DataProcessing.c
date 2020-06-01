@@ -15,7 +15,9 @@
 #include "InterruptRoutines.h"
 char message[100];
 
-
+/*
+\brief function to convert 32 data in digit acquired from the sensors to the packet of bytes to be stored in EEPROM
+*/
 void Digit_To_EEPROM_Conversion(void)
 {
     uint8_t i;
@@ -48,7 +50,9 @@ void Digit_To_EEPROM_Conversion(void)
     } 
 }
 
-
+/*
+\brief function to convert 192 bytes read from the eeprom to 32 packets in digit 
+*/
 void EEPROM_To_Digit_Conversion (void) 
 {
     uint8_t i;
@@ -84,6 +88,10 @@ void EEPROM_To_Digit_Conversion (void)
     
 }
 
+/*
+\brief function to convert 32 packets in digit in 32 packets in the correct unit of measurement 
+\(m/s^2 for the acceleration, celsius or farhenheit for the temperature)
+*/
 void Digit_To_UOM_Conversion (void) 
 {
     uint8_t i;
@@ -104,8 +112,10 @@ void Digit_To_UOM_Conversion (void)
         Data_UOM[i*PACKET_DATA+3] = m_temp_conversion*(EEPROM_Data_Digit[i*PACKET_DATA+3]-OFFSET_mV) +q_temp_conversion;
     }
       
-    }
-
+}
+/*
+\brief function to create a buffer of 256 bytes to be sent to the bridge starting from the 32 packets 
+*/
 void Buffer_Creation(void)
 {
     uint8_t i;
@@ -131,6 +141,9 @@ void Buffer_Creation(void)
     }
 }
 
+/*
+\brief function to create little buffer to be sent to the bridge,each containing one packet, starting from the buffer of 256 bytes
+*/
 void Packets_To_Send_Creation(void)
 {
     uint8_t i;

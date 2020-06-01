@@ -9,18 +9,18 @@
 #include "InterruptRoutines.h"
 #include "ConfigurationMenu.h"
 
+/* String to print out messages on the UART */
+char message[100];
+
 /* 
 * \brief function to configure accelerometer registers
 * \Accelerometer registers are non volatile so this function is called only the first time the device is turn on 
 * \settings modifiable by the user are set to default values and will be changed at runtime when the user requires it
 * \(default values for sampling frequency and FSR: 1Hz and Â±2g)
 */
-/* String to print out messages on the UART */
-char message[100];
-
 void Accelerometer_Configuration(void) {
     
-    
+
     
     /* Variable to check error in I2C communication */
     ErrorCode error;    
