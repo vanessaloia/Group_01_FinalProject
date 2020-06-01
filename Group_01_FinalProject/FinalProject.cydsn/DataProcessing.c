@@ -107,13 +107,15 @@ void EEPROM_To_Digit_Conversion (void)
 
 void Digit_To_UOM_Conversion (void) 
 {
+    char mess[50];
     uint8_t i;
     uint8_t fsr = EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS);
-    uint8_t sensitivity = (2*(1<<fsr)*1000)/ (MAX_VALUE_DIGIT);
+    uint8_t sensitivity = ((2*(1<<fsr)*1000)/ (MAX_VALUE_DIGIT)+1);
     
     for(i=0; i< (number_of_packets); i++) 
     {/*
         Data_UOM[i*PACKET_DATA] = EEPROM_Data_digit[i*PACKET_DATA]* sensitivity * MG_TO_MS2;
+        sprintf(
         Data_UOM[i*PACKET_DATA+1] = EEPROM_Data_digit[i*PACKET_DATA+1]* sensitivity * MG_TO_MS2;
         Data_UOM[i*PACKET_DATA+2] = EEPROM_Data_digit[i*PACKET_DATA+2]* sensitivity * MG_TO_MS2;
         EEPROM_Data_digit[i*PACKET_DATA+3]= ADC_DelSig_CountsTo_mVolts(EEPROM_Data_digit[i*PACKET_DATA+3]);

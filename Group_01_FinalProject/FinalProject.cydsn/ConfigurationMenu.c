@@ -10,7 +10,6 @@
  * ========================================
 */
 #include "ConfigurationMenu.h"
-#include "OptionsToBeDisplayed.h"
 #include "25LC256.h"
 #include "MemoryCells.h"
 
@@ -83,15 +82,7 @@ void Show_table(uint8_t index_table)
     /* global variable "initialized" is set in main.c to 0. The first time that the function is called the array set_of_tables
     * / is initialized and the variable "initialized" is set to 1
     */
-    if( !struct_initialized) {
-        options_to_display FSR = {"Character", "Full scale range",'1', "+/- 2g", '2', "+/- 4g",'3', "+/- 8g", '4', "+/- 16g"};
-        options_to_display SampFreq = {"Character", "Sampling Frequency",'1', "1 Hz", '2', "10 Hz",'3', "25 Hz", '4', "50 Hz"};
-        options_to_display TempFormat = {"Character","Temperature format",'c', "Celsius", 'f', "Fahrenheit",' ' , " ",' ' , " "};
-        set_of_tables[0]= FSR;
-        set_of_tables[1]= SampFreq;
-        set_of_tables[2]= TempFormat;
-        struct_initialized=1;
-    }
+    
     /* pointer variable "index" points the memory cell of the first element of the struct related with the correct element of set_of_tables array */
     char *index= (set_of_tables[index_table].header1);
     
@@ -132,14 +123,12 @@ void Keys_menu (void)
     Menu_edge();
      /* Accelerometer acquisition configuration displayed */
     
-    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %d\r\n",EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS));
+    sprintf(message, "Current accelerometer acquisition configuration:\r\nFull scale range: %s\r\n",set_of_tables[0].option1 + (WORD_SIZE+1)* (EEPROM_readByte(FULL_SCALE_RANGE_ADDRESS)-1));
     UART_PutString(message);
-    sprintf(message, "Sampling frequency: %d\r\n",EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS));
+    sprintf(message, "Sampling frequency: %s\r\n", set_of_tables[1].option1 + (WORD_SIZE+1)* (EEPROM_readByte(SAMPLING_FREQUENCY_ADDRESS)-1));
     UART_PutString(message);
-    /* !!DATA TO BE INSERTED */ 
-    
     /* Temperature sensor acquisition configuration displayed */
-    sprintf(message, "Temperature sensor data format:\r\n%s\r\n\n", (EEPROM_readByte(TEMPERATURE_UNIT_ADDRESS)==2)? "Fahrenheit" : "Celsius");
+    sprintf(message, "Temperature sensor data format: %s\r\n\n", (EEPROM_readByte(TEMPERATURE_UNIT_ADDRESS)==2)? "Fahrenheit" : "Celsius");
     UART_PutString(message);
     
     /* Keyboard commands to change configuation and to handle data visualization */
