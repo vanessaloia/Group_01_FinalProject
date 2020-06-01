@@ -38,7 +38,7 @@
     #define DONT_DISPLAY 2
     
     /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
-    extern volatile uint8_t Temp_Counter;
+    volatile uint8_t Temp_Counter;
     
     CY_ISR_PROTO(Custom_isr_TIMER);
 

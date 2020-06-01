@@ -56,7 +56,7 @@ void EEPROM_Data_Write(void) {
 }
 
 void EEPROM_Data_Read (void) {
-    
+    //UART_PutString("SONO IN DATA READ\r\n");
     uint8_t i;
     uint8_t InterruptStatus;
     InterruptStatus=CyEnterCriticalSection();
@@ -87,6 +87,7 @@ void EEPROM_Data_Read (void) {
 void EEPROM_Initialization(void) {
     
     char message[50];
+    UART_PutString("EEPROM_init\r\n");
     Pointer = FIRST_FREE_CELL;
     EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer&0xFF00)>>8);
     EEPROM_waitForWriteComplete();

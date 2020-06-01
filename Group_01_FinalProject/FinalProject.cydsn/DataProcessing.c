@@ -13,6 +13,7 @@
 #include "EEPROMCommunication.h"
 #include "MemoryCells.h"
 #include "InterruptRoutines.h"
+char message[100];
 
 
 void Digit_To_EEPROM_Conversion(void)
@@ -25,7 +26,9 @@ void Digit_To_EEPROM_Conversion(void)
                 
                 EEPROM_Data[i*EEPROM_PACKET_BYTES] = (Accelerations_digit[i*3]>>4)&0x3f;
                 EEPROM_Data[i*EEPROM_PACKET_BYTES+1] = (Accelerations_digit[i*3] << 4) | (Accelerations_digit[i*3+1] >>6);
+                
                 EEPROM_Data[i*EEPROM_PACKET_BYTES+2] = (Accelerations_digit[i*3+1] << 2) | (Accelerations_digit[i*3+2] >> 8);
+                
                 EEPROM_Data[i*EEPROM_PACKET_BYTES+3] = Accelerations_digit[i*3+2];
 //                sprintf(message,"b1= %u,b2= %u,b3= %u,b4= %u\r\n",EEPROM_Data[i*EEPROM_PACKET_BYTES],EEPROM_Data[i*EEPROM_PACKET_BYTES+1],EEPROM_Data[i*EEPROM_PACKET_BYTES+2],EEPROM_Data[i*EEPROM_PACKET_BYTES+3]);
 //                UART_PutString(message);
@@ -82,6 +85,7 @@ void EEPROM_To_Digit_Conversion (void)
 
 void Digit_To_UOM_Conversion (void) 
 {
+    char mess[50];
     uint8_t i;
     
     uint8_t InterruptStatus;
@@ -99,7 +103,8 @@ void Digit_To_UOM_Conversion (void)
         EEPROM_Data_Digit[i*PACKET_DATA+3]= ADC_DelSig_CountsTo_mVolts(EEPROM_Data_Digit[i*PACKET_DATA+3]);
         Data_UOM[i*PACKET_DATA+3] = m_temp_conversion*(EEPROM_Data_Digit[i*PACKET_DATA+3]-OFFSET_mV) +q_temp_conversion;
     }
-    
+      
+      
 }
 void Buffer_Creation(void)
 {

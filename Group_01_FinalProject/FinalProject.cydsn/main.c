@@ -59,6 +59,23 @@ int main(void)
     
     
     
+    options_to_display FSR = {"Character", "Full scale range",'1', "+/- 2g", '2', "+/- 4g",'3', "+/- 8g", '4', "+/- 16g"};
+    options_to_display SampFreq = {"Character", "Sampling Frequency",'1', "1 Hz", '2', "10 Hz",'3', "25 Hz", '4', "50 Hz"};
+    options_to_display TempFormat = {"Character","Temperature format",'c', "Celsius", 'f', "Fahrenheit",' ' , " ",' ' , " "};
+        
+    set_of_tables[0]= FSR;
+    set_of_tables[1]= SampFreq;
+    set_of_tables[2]= TempFormat;
+    
+  
+    
+   
+    
+    
+    
+    
+    
+    
     /*Starting I2C*/
     I2C_Peripheral_Start();
     
@@ -75,8 +92,9 @@ int main(void)
 
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
-    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
-    UART_PutString(message);
+    UART_ClearTxBuffer();
+    /*sprintf(message,"Flag_Cell_delfino == %d\r\n",Flag_Cell);
+    UART_PutString(message);*/
     
     if (Flag_Cell == 0) {
         
@@ -104,7 +122,6 @@ int main(void)
     
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
-    struct_initialized = 0;
     feature_selected = 0;
     KeysMenu = 0;
     display_error = DONT_SHOW_ERROR;
@@ -112,13 +129,33 @@ int main(void)
     while_working_menu_flag = DONT_SHOW_MENU;
     EEPROM_Full = 0;
     time_counter = 0;
-    
-    
+    Temp_Counter = 0;
     /* flag that is set high when the user want to visualize the data */
     display_data=DONT_DISPLAY;
 
    
-   
+//     uint8_t buffer[64];
+//    uint8_t buffer1[64];
+//    uint8_t buffer2[64];
+//    memset(&buffer,0x01,64);
+//    
+//    EEPROM_writePage(0x0020,buffer,64);
+//    EEPROM_waitForWriteComplete();
+////    EEPROM_writePage(0x0020,buffer,64);
+////    EEPROM_waitForWriteComplete();
+//    
+//    EEPROM_readPage(0x0000,buffer1,64);
+//    EEPROM_readPage(0x0040,buffer2,64);
+//    
+//    uint8_t i;
+//    for(i= 0;i<64;i++){
+//        sprintf(message,"buffer1 [%d] = %d\r\n",i,buffer1[i]);
+//        UART_PutString(message);
+//    }
+//    for(i= 0;i<64;i++){
+//        sprintf(message,"buffer2 [%d] = %d\r\n",i,buffer2[i]);
+//        UART_PutString(message);
+//    }
     
     for(;;)
     {
@@ -136,6 +173,7 @@ int main(void)
                 else BeginFlag = 0;
                 
                 Begin_Acquisition();
+                
             break;
             case (STOP):
                 if (BeginFlag == 0) {
@@ -219,7 +257,8 @@ int main(void)
         }
         
         if( PacketReadyFlag)
-        {
+        {   
+            //UART_PutString("Packet ready\r\n");
             Packets_To_Send_Creation();
             
             PacketReadyFlag=0;    
@@ -359,6 +398,7 @@ void Begin_Acquisition(void) {
     /*ADC start conversion*/
     ADC_DelSig_StartConvert();
     Blue_LED_PWM_Start();
+    UART_PutString("Data acquisition ON... \r\n");
     start = BYTE_SAVED;
     
 }
@@ -375,6 +415,7 @@ void Stop_Acquisition(void) {
     EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
     EEPROM_waitForWriteComplete();
     CyExitCriticalSection(InterruptStatus);
+    UART_PutString("Data acquisition OFF \r\n");
     start = BYTE_SAVED;
     
 }

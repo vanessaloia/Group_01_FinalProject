@@ -4,11 +4,9 @@
 */
 
 #include "LIS3DH_Registers.h"
-#include "project.h"
 #include "I2C_Interface.h"
 #include "stdio.h"
 #include "InterruptRoutines.h"
-#include "OptionsToBeDisplayed.h"
 #include "ConfigurationMenu.h"
 
 /* 
@@ -346,6 +344,7 @@ void Change_Accelerometer_FSR(uint8_t feature_selected)
     * \(n-key + n-option)= WORD_SIZE (string size) +1 (char size)
     * \the pointer points to option1= ±2g so it has to go to the (feature_selected -1)option
     */
+    //char * fsr_to_print = set_of_tables[option_table].option1 + (WORD_SIZE+1)* (feature_selected-1);
     char * fsr_to_print = set_of_tables[option_table].option1 + (WORD_SIZE+1)* (feature_selected-1);
     
     /* Change the value of the Control register 4 according to the user's input */
@@ -370,8 +369,8 @@ void Change_Accelerometer_FSR(uint8_t feature_selected)
                                              &register_content);
     if (error == NO_ERROR)
         {
-            sprintf(message, "FSR = %d \r\n", register_content);
-            UART_PutString(message); 
+//            sprintf(message, "FSR = %d \r\n", register_content);
+//            UART_PutString(message); 
         }
         else
         {
@@ -396,22 +395,26 @@ void Change_Accelerometer_SampFreq(uint8_t feature_selected)
     */
     register_content = (feature_selected <<4) + CTRL_REG_1_CONST;
     
-    
-    /* pointer that points to the correct variable inside the struct of SampFreq. It's used to print the sampling
-    * \ frequency set up in the accelerometer according to the user's input.
-    * / (n-key + n-option)= WORD_SIZE (string size) +1 (char size)
-    * / the pointer points to option1= 1 Hz so it has to go to the (feature_selected -1)option
-    */
-    char * sampfreq_to_print = set_of_tables[option_table].option1 + (WORD_SIZE + 1)* (feature_selected -1);
+   
     
     error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
                                              CTRL_REG_1_ADDR,
                                              register_content);
     
         if (error == NO_ERROR)
+        
         {
-            sprintf(message, "Sampling frequency successfully changed at: %s \r\n", sampfreq_to_print);
-            UART_PutString(message); 
+            if (display_data != DONT_DISPLAY && start== BYTE_SAVED) 
+            {
+                /* pointer that points to the correct variable inside the struct of SampFreq. It's used to print the sampling
+                * \ frequency set up in the accelerometer according to the user's input.
+                * / (n-key + n-option)= WORD_SIZE (string size) +1 (char size)
+                * / the pointer points to option1= 1 Hz so it has to go to the (feature_selected -1)option
+                */
+                char * sampfreq_to_print = set_of_tables[option_table].option1 + (WORD_SIZE + 1)* (feature_selected -1);
+                sprintf(message, "Sampling frequency successfully changed at: %s \r\n", sampfreq_to_print);
+                UART_PutString(message); 
+            }
         }
         else
         {

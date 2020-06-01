@@ -37,12 +37,8 @@
         char option4[WORD_SIZE];
     } options_to_display;
     
-    char struct_initialized;
-    
-    options_to_display FSR;
-    options_to_display SampFreq;
-    options_to_display TempFormat;
     options_to_display set_of_tables[NUMBER_OF_TABLES];
+   
 
     void While_Working_Menu(void);
     void Switch_to_BridgeControlPanel(void);
