@@ -15,93 +15,77 @@
 #include "MemoryCells.h"
 #include "project.h"
 
-//uint8_t Flag_Cell;
-//uint16_t Pointer;
-//uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-
 
 void EEPROM_Data_Write(void) {
     
     uint8_t i;
-    char message[100];
-    if ( Pointer < POINTER_LIMIT ) 
-    {
+    uint8_t InterruptStatus;
+    InterruptStatus=CyEnterCriticalSection();
     
-        for(i = 0; i < 3; i++) {
-//            sprintf(message,"pointer = %d\r\n",Pointer);
-//            UART_PutString(message);
-          /*  if(i == 0){
-                EEPROM_writePage(Pointer, &EEPROM_Data[i * SPI_EEPROM_PAGE_SIZE], 57);
-                EEPROM_waitForWriteComplete();
-                Pointer += 57;
-            }else if(i == 3){
-                EEPROM_writePage(Pointer, &EEPROM_Data[185], 8);
-                EEPROM_waitForWriteComplete();
-                Pointer += 7;
-            }else{
-                EEPROM_writePage(Pointer, &EEPROM_Data[57+(i-1) * SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
-                EEPROM_waitForWriteComplete();
-                Pointer += 64;
-            }*/
-           
-                EEPROM_writePage(Pointer, &EEPROM_Data[i * SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
-                EEPROM_waitForWriteComplete();
-                Pointer += SPI_EEPROM_PAGE_SIZE;
-            }
+    if (!EEPROM_Full) {
+        
+        if (Pointer  < POINTER_LIMIT) {
             
-            //CyDelay(10);
-            //Pointer += SPI_EEPROM_PAGE_SIZE;
-        
-        
-    }
-    else 
-    {
-        EEPROM_writePage(Pointer, EEPROM_Data , SPI_EEPROM_PAGE_SIZE);
+            for(i = 0; i < 192; i++) { 
+                
+                //EEPROM_writePage(Pointer, &EEPROM_Data[i*SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
+                EEPROM_writeByte(Pointer, EEPROM_Data[i]);
+                EEPROM_waitForWriteComplete();
+                //Pointer += SPI_EEPROM_PAGE_SIZE;
+                Pointer++;
+       
+            }  
+        }
+        else {
+            for(i = 0; i < 60; i++) {
+                //EEPROM_writePage(Pointer, EEPROM_Data , 60);
+                EEPROM_writeByte(Pointer, EEPROM_Data[i]);                
+                EEPROM_waitForWriteComplete();
+                Pointer++;
+            }
+            EEPROM_Full=1;
+        }
+    
+        EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer&0xFF00)>>8);
         EEPROM_waitForWriteComplete();
-        Pointer+= 64;
-        EEPROM_writePage( Pointer, &EEPROM_Data[SPI_EEPROM_PAGE_SIZE], 56);
-        EEPROM_waitForWriteComplete();
-        Pointer += 56;
-        EEPROM_Full = 1;
+        EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer&0xff));
+        EEPROM_waitForWriteComplete(); 
     }
     
+    CyExitCriticalSection(InterruptStatus);
 }
 
 void EEPROM_Data_Read (void) {
     //UART_PutString("SONO IN DATA READ\r\n");
     uint8_t i;
-    char message[100];
-    
-    
-    if ( Read_Pointer < POINTER_LIMIT ) 
-    {
-        for (i=0; i < 3 ; i++) {
-//            sprintf(message,"read pointer = %d\r\n",Read_Pointer);
-//            UART_PutString(message);
-            EEPROM_readPage (Read_Pointer, &EEPROM_Data_read[i*SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
-            Read_Pointer+= SPI_EEPROM_PAGE_SIZE;
+    uint8_t InterruptStatus;
+    InterruptStatus=CyEnterCriticalSection();
+   
+    if (Read_Pointer < POINTER_LIMIT) {
+   
+        for (i=0; i < 192 ; i++) {
+            //EEPROM_readPage (Read_Pointer, &EEPROM_Data_read[i*SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
+            EEPROM_Data_read[i]=EEPROM_readByte(Read_Pointer);
+            //Read_Pointer+= SPI_EEPROM_PAGE_SIZE;
+            Read_Pointer++;
         }
     }
     
-    else 
-    {
-        EEPROM_readPage(Read_Pointer, EEPROM_Data , SPI_EEPROM_PAGE_SIZE);
-        Read_Pointer+= 64;
-        EEPROM_readPage( Read_Pointer, &EEPROM_Data[SPI_EEPROM_PAGE_SIZE], 56);
-        Pointer += 56;
-//        sprintf(message,"Read_Pointer = %d" ,Read_Pointer);
-//        UART_PutString(message);
+    else {
+        
+        for(i = 0; i < 60; i++) {
+        //EEPROM_readPage(Read_Pointer, EEPROM_Data_read , 60);
+        EEPROM_Data_read[i] = EEPROM_readByte(Read_Pointer);
+        Read_Pointer++;
+        }
     }
-   // UART_PutString("Read completed\r\n");
+    
+    CyExitCriticalSection(InterruptStatus); 
 }
 
-       
-        
-        
-    
-    
 
 void EEPROM_Initialization(void) {
+    
     char message[50];
     UART_PutString("EEPROM_init\r\n");
     Pointer = FIRST_FREE_CELL;
@@ -129,20 +113,35 @@ void EEPROM_Initialization(void) {
 
 void EEPROM_Store_FSR(void) {
     
+    uint8_t InterruptStatus;
+    InterruptStatus=CyEnterCriticalSection();
+    
     EEPROM_writeByte(FULL_SCALE_RANGE_ADDRESS, feature_selected);
     EEPROM_waitForWriteComplete();
     
+    CyExitCriticalSection(InterruptStatus);
 }
 
 void EEPROM_Store_Freq(void) {
     
+    uint8_t InterruptStatus;
+    InterruptStatus=CyEnterCriticalSection();
+    
     EEPROM_writeByte(SAMPLING_FREQUENCY_ADDRESS, feature_selected);
+    
     EEPROM_waitForWriteComplete();
+    
+    CyExitCriticalSection(InterruptStatus);
 }
 void EEPROM_Store_Temp(void) {
     
+    uint8_t InterruptStatus;
+    InterruptStatus=CyEnterCriticalSection();
+    
     EEPROM_writeByte(TEMPERATURE_UNIT_ADDRESS, feature_selected);
     EEPROM_waitForWriteComplete();
+    
+    CyExitCriticalSection(InterruptStatus);
     
 }
 

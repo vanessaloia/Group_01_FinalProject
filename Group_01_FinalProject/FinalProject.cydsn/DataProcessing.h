@@ -34,7 +34,7 @@
     
     
     #define PACKET_DATA 4
-    #define PACKET_BYTES PACKET_DATA * 2
+    #define PACKET_BYTES 8
     
     /* coefficient to make the conversion from 1 mg to m/s^2
     * \ 1 mg = 0.00981 m/s^2
@@ -43,16 +43,22 @@
     
     /* 10 bits resolution data */
     #define ADC_RESOLUTION 10
-    /* 1024 possible values with 10 bits  */
-    #define MAX_VALUE_DIGIT 1024
-   
-    #define END_EEPROM_PACKETS 20
+    #define MAX_VALUE_DIGIT 1<<10
+    #define END_EEPROM_PACKETS 10
     
     
     
     
-    int16_t  EEPROM_Data_digit [192/*PACKET_DATA*(WATERMARK_LEVEL +1)*/];
-    float  Data_UOM [PACKET_DATA*(WATERMARK_LEVEL +1)];
+    uint8_t x_l;
+    uint8_t x_h;
+    uint8_t y_l;
+    uint8_t y_h;
+    uint8_t z_l;
+    uint8_t z_h;
+    uint8_t t_l;
+    uint8_t t_h;    
+    int16_t EEPROM_Data_Digit[PACKET_DATA*(WATERMARK_LEVEL +1)];
+    float Data_UOM[PACKET_DATA*(WATERMARK_LEVEL +1)];
     uint8_t Data_Buffer[PACKET_BYTES*(WATERMARK_LEVEL +1)];
     uint8_t Packet_To_Send[1 + PACKET_BYTES +1];
     float m_temp_conversion;
@@ -60,7 +66,14 @@
     
     uint8_t number_of_packets;
         
-     
+    uint8_t xl;
+    uint8_t xh;
+    uint8_t yl;
+    uint8_t yh;
+    uint8_t zl;
+    uint8_t zh;
+    uint8_t tl;
+    uint8_t th;
     
     void Digit_To_EEPROM_Conversion(void);
     void EEPROM_To_Digit_Conversion (void); 
@@ -72,3 +85,4 @@
     
 #endif
 /* [] END OF FILE */
+
