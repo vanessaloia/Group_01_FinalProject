@@ -93,8 +93,6 @@ int main(void)
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
     UART_ClearTxBuffer();
-    /*sprintf(message,"Flag_Cell_delfino == %d\r\n",Flag_Cell);
-    UART_PutString(message);*/
     
     if (Flag_Cell == 0) {
         
@@ -132,40 +130,17 @@ int main(void)
     temp_counter = 0;
     /* flag that is set high when the user want to visualize the data */
     display_data=ACTIONS_DONE;
-
-   
-//     uint8_t buffer[64];
-//    uint8_t buffer1[64];
-//    uint8_t buffer2[64];
-//    memset(&buffer,0x01,64);
-//    
-//    EEPROM_writePage(0x0020,buffer,64);
-//    EEPROM_waitForWriteComplete();
-////    EEPROM_writePage(0x0020,buffer,64);
-////    EEPROM_waitForWriteComplete();
-//    
-//    EEPROM_readPage(0x0000,buffer1,64);
-//    EEPROM_readPage(0x0040,buffer2,64);
-//    
-//    uint8_t i;
-//    for(i= 0;i<64;i++){
-//        sprintf(message,"buffer1 [%d] = %d\r\n",i,buffer1[i]);
-//        UART_PutString(message);
-//    }
-//    for(i= 0;i<64;i++){
-//        sprintf(message,"buffer2 [%d] = %d\r\n",i,buffer2[i]);
-//        UART_PutString(message);
-//    }
     
     for(;;)
     {
         
         switch(start){
             case (START):
+                /*The use has pressed 'b'*/
                 if (BeginFlag == 0) {
-                    
                     uint8_t InterruptStatus;
                     InterruptStatus=CyEnterCriticalSection();
+                    /*Writing begin condition on the EEPROM*/
                     EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
                     EEPROM_waitForWriteComplete();
                     CyExitCriticalSection(InterruptStatus);
@@ -176,7 +151,9 @@ int main(void)
                 
             break;
             case (STOP):
+                /*The user pressed 's'*/
                 if (BeginFlag == 0) {
+                    /*Stopping data acquisition and clearing FIFO*/
                     Stop_Acquisition();
                     Clear_Fifo();
                 }
@@ -190,10 +167,12 @@ int main(void)
         
         
         if (FIFODataReadyFlag && TempDataReadyFlag) {
-
+            UART_PutString("Data are ready to be displayed on the Bridge Control Panel\r\n");
+            /*Data converted from digit to EEPROM packet*/
             Digit_To_EEPROM_Conversion();
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
+            /*Data written in the EEPROM*/
             EEPROM_Data_Write();
         }
         
@@ -211,13 +190,16 @@ int main(void)
                 Switch_to_BridgeControlPanel();
                 if(begin_pressed == START)
                     Stop_Acquisition();
+                /*Data are sent to be display on the bridge control panel */
                 sending_data = START;
+                /*Read_pointer set to the first free cell (0x0040)*/
                 Read_Pointer = FIRST_FREE_CELL;
+                /*Default value for display data*/
                 display_data = ACTIONS_DONE;
                 break;
                 
             case STOP :
-                /* stop sending data throygh UART to the Brisdge Control Panel */
+                /* stop sending data through UART to the Bridge Control Panel */
             
                 /* display data set to ACTIONS_DONE */
                 display_data = ACTIONS_DONE;
@@ -238,8 +220,6 @@ int main(void)
         
         if (sending_data == START) 
         {   
-//            sprintf(message,"Pointer=%u,readPointer=%u\r\n",Pointer,Read_Pointer);
-//            UART_PutString(message);
             if (Read_Pointer < Pointer) 
             {
                 if (Read_Pointer <POINTER_LIMIT)
@@ -258,7 +238,6 @@ int main(void)
         
         if( PacketReadyFlag)
         {   
-            //UART_PutString("Packet ready\r\n");
             Packets_To_Send_Creation();
             
             PacketReadyFlag=0;    
@@ -318,7 +297,6 @@ int main(void)
                     Clear_Fifo();
                     break;
                 case TEMP:
-                    /* to do */
                     EEPROM_Store_Temp();
                     /* change the coeffients for the temperature sensor data conversion depending
                     * \to the user input: 
@@ -345,7 +323,6 @@ int main(void)
             }
                 option_table= DONT_SHOW_TABLE;
                 feature_selected = 0;
-                //KeysMenu=0;
                 while_working_menu_flag = SHOW_MENU;
                 change_settings_flag = 0;
         }
@@ -422,11 +399,13 @@ void Stop_Acquisition(void) {
      
 
 void Pointer_resetter(){
+        /*Function to reset Pointer value*/
         char message[100];
         Pointer = FIRST_FREE_CELL;
         
         uint8_t InterruptStatus;
         InterruptStatus=CyEnterCriticalSection();
+        /*Writing the 2 registers of the pointer*/
         EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer & 0xFF00) >> 8);
         EEPROM_waitForWriteComplete();
         EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
