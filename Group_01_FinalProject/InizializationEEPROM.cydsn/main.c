@@ -9,6 +9,10 @@
  *
  * ========================================
 */
+
+/*************************************************************/
+/*THIS PROGRAM IS NEEDED TO RESET EEPROM BEFORE THE FIRST USE*/
+/*************************************************************/
 #include "project.h"
 #include <stdio.h>
 #include <string.h>
@@ -23,20 +27,24 @@ int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
     
+    /*Starting UART and SPI*/
     UART_Start();
     SPIM_Start(); 
     
-    UART_PutString("UART started\r\n");
+    /*data array created to be written in the eeprom*/
     uint8_t data[DATA_SIZE];
     uint16 i=0,count = 1;
     uint16 addr = 0x0000;
    
+    /*Populating data array*/
     for(i=0;i<DATA_SIZE;i++){
         data[i] = 0;
     }
     
     UART_PutString("Begin writing\r\n");
     CyDelay(500);
+    
+    /*Populating all eeprom cells with zeros*/
     for(i=0; i<EEPROM_BYTES/64; i++){
         EEPROM_writePage(addr, data, DATA_SIZE);
         EEPROM_waitForWriteComplete();
@@ -49,9 +57,11 @@ int main(void)
         addr+=64;
     }
     
+    
     UART_PutString("Writing done\r\n\n");
     CyDelay(500);
     
+    /*data_read array created to check if the eeprom has been successfully resetted*/
     uint16 addr_read = 0x0000;
     uint8_t data_read[EEPROM_BYTES];
     
@@ -59,6 +69,8 @@ int main(void)
     CyDelay(500);
     
     count = 1;
+    
+    /*Reading of all eeprom cells*/
     
     for(i=0;i<EEPROM_BYTES/64;i++){    
         EEPROM_readPage(addr_read,&data_read[addr_read],DATA_SIZE);
@@ -80,15 +92,16 @@ int main(void)
     
     for(i=0;i<EEPROM_BYTES;i++){
         if(data_read[i] != 0){
-            sprintf(message,"VALUE DIFFERENT FROM 0(CELLA 0x%x)\r\n",i);
             UART_PutString(message);
             count_notzeros++;
         }
     }
     if(count_notzeros == 0){
+        /*Success message displayed*/
         UART_PutString("\nEEPROM RESETTED SUCCESFULLY, THE DEVICE IS READY TO BE USED\r\n");
     }
     else{
+        /*Error message displayed*/
         UART_PutString("\nAN ERROR OCCURED ON EEPROM RESET, PLEASE RETRY\r\n");
     }
     CyDelay(10);
