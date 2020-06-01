@@ -148,6 +148,7 @@ int main(void)
                 else BeginFlag = 0;
                 
                 Begin_Acquisition();
+                
             break;
             case (STOP):
                 if (BeginFlag == 0) {
@@ -164,15 +165,6 @@ int main(void)
         
         if (FIFODataReadyFlag && TempDataReadyFlag) {
             UART_PutString("ISR FIFO\r\n");
-            uint8_t i = 0;
-            for (i= 0;i<32;i++){
-                sprintf(message,"x_in = %d\r\n",Accelerations_digit[i*3]);
-                UART_PutString(message);
-                sprintf(message,"y_in = %d\r\n",Accelerations_digit[i*3+1]);
-                UART_PutString(message);
-                sprintf(message,"z_in = %d\r\n",Accelerations_digit[i*3+2]);
-                UART_PutString(message);
-            }
             Digit_To_EEPROM_Conversion();
             
             FIFODataReadyFlag = 0;
@@ -246,7 +238,7 @@ int main(void)
                 }*/
                 Digit_To_UOM_Conversion ();
                 Buffer_Creation();
-                //PacketReadyFlag=1;
+                PacketReadyFlag=1;
             }
             else Read_Pointer = FIRST_FREE_CELL;
             
@@ -389,6 +381,7 @@ void Begin_Acquisition(void) {
     /*ADC start conversion*/
     ADC_DelSig_StartConvert();
     Blue_LED_PWM_Start();
+    UART_PutString("Data acquisition ON... \r\n");
     start = BYTE_SAVED;
     
 }
@@ -402,6 +395,7 @@ void Stop_Acquisition(void) {
     Blue_LED_PWM_Stop();
     EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
     EEPROM_waitForWriteComplete();
+    UART_PutString("Data acquisition OFF \r\n");
     start = BYTE_SAVED;
     
 }

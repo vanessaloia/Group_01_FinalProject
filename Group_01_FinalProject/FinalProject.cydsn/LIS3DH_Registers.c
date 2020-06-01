@@ -370,8 +370,8 @@ void Change_Accelerometer_FSR(uint8_t feature_selected)
                                              &register_content);
     if (error == NO_ERROR)
         {
-            sprintf(message, "FSR = %d \r\n", register_content);
-            UART_PutString(message); 
+//            sprintf(message, "FSR = %d \r\n", register_content);
+//            UART_PutString(message); 
         }
         else
         {
