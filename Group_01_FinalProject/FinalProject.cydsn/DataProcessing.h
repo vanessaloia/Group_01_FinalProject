@@ -48,7 +48,7 @@
     
     
     
-    
+    /* uint8_variables that contain LSB and MSB data of the axes (x, y, z) and of the temperature */
     uint8_t x_l;
     uint8_t x_h;
     uint8_t y_l;
@@ -56,16 +56,19 @@
     uint8_t z_l;
     uint8_t z_h;
     uint8_t t_l;
-    uint8_t t_h;    
+    uint8_t t_h;   
+    
     int16_t EEPROM_Data_Digit[PACKET_DATA*(WATERMARK_LEVEL +1)];
     float Data_UOM[PACKET_DATA*(WATERMARK_LEVEL +1)];
     uint8_t Data_Buffer[PACKET_BYTES*(WATERMARK_LEVEL +1)];
     uint8_t Packet_To_Send[1 + PACKET_BYTES +1];
+    /* coeffients for conversion of temperature data from mv to the correct format (Celsius or Fahrenheit) */ 
     float m_temp_conversion;
     float q_temp_conversion;
     
     uint8_t number_of_packets;
         
+    
     
     void Digit_To_EEPROM_Conversion(void);
     void EEPROM_To_Digit_Conversion (void); 

@@ -37,8 +37,8 @@ uint16 timer_periods[4] = { 1000, 100, 40, 20 };
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
+    
     char message[100];
-    /****INITIAL EEPROM CONFIGURATION****/
     
     uint8_t PacketReadyFlag=0;
     
@@ -53,44 +53,40 @@ int main(void)
     m_temp_conversion= M_CELSIUS;
     q_temp_conversion= Q_CELSIUS;
     
-   
+    /* header and tail needed for UART communication */
     Packet_To_Send[0] = 0xA0;
     Packet_To_Send[9]= 0xC0;
     
-FIFODataReadyFlag = 0;
-TempDataReadyFlag = 0;
-temp_counter = 0;
+    /* flags for temeperature and accelerometer new data initialized to zero */
+    FIFODataReadyFlag = 0;
+    TempDataReadyFlag = 0;
+    
+    /* index of the temperature data array initialized to 0 */
+    temp_counter = 0;
     
     
-    
+    /* structs needed to create the tables about full scale range, sampling frequency, temperature format settings */
     options_to_display FSR = {"Character", "Full scale range",'1', "+/- 2g", '2', "+/- 4g",'3', "+/- 8g", '4', "+/- 16g"};
     options_to_display SampFreq = {"Character", "Sampling Frequency",'1', "1 Hz", '2', "10 Hz",'3', "25 Hz", '4', "50 Hz"};
     options_to_display TempFormat = {"Character","Temperature format",'c', "Celsius", 'f', "Fahrenheit",' ' , " ",' ' , " "};
-        
+    
+    /* structs put in set_of_tables array */ 
     set_of_tables[0]= FSR;
     set_of_tables[1]= SampFreq;
     set_of_tables[2]= TempFormat;
-    
   
-    
-   
-    
-    
-    
-    
-    
     
     /*Starting I2C*/
     I2C_Peripheral_Start();
     
    /*Starting UART*/
     UART_Start();
-    UART_PutString("\nUART Started\r\n");
-    /*SPI start*/
+  
+    /*Starting SPI*/
     SPIM_Start();
     
 
-    
+    /* wait for components to start */
     CyDelay(10);
     
 
