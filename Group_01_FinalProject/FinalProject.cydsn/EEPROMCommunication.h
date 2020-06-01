@@ -22,12 +22,13 @@
     
     #define POINTER_LIMIT 32647
     
-    extern uint16_t Pointer;
+    uint16_t Pointer;
     
-    extern uint8_t Flag_Cell;
+    volatile uint8_t Flag_Cell;
     
-    extern uint8_t EEPROM_Data[EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)];
-
+    uint8_t EEPROM_Data[192/*EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)*/];
+    uint8_t EEPROM_Data_read[192/*EEPROM_PACKET_BYTES * (WATERMARK_LEVEL + 1)*/];
+    
     uint8_t EEPROM_Full;
     
     

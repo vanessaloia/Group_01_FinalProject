@@ -42,7 +42,7 @@
     
     
     
-    int16_t  EEPROM_Data_digit [PACKET_DATA*(WATERMARK_LEVEL +1)];
+    int16_t  EEPROM_Data_digit [192/*PACKET_DATA*(WATERMARK_LEVEL +1)*/];
     float  Data_UOM [PACKET_DATA*(WATERMARK_LEVEL +1)];
     uint8_t Data_Buffer[PACKET_BYTES*(WATERMARK_LEVEL +1)];
     uint8_t Packet_To_Send[1 + PACKET_BYTES +1];

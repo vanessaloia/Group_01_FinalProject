@@ -20,7 +20,7 @@
 #include "EEPROMCommunication.h"
     
 /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
-volatile uint8_t Temp_Counter = 0;
+//volatile uint8_t Temp_Counter = 0;
 
 //int16 temperature_mv = 0;
 
@@ -291,14 +291,18 @@ CY_ISR(Custom_isr_FIFO) {
     ErrorCode error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,
                                                   INT1_SRC_ADDR,
                                                   &int1_src_reg);
-    
+    if(error == ERROR) {
+            UART_PutString("Error during I2C\r\n");
+        }
     if (error == NO_ERROR) {
 
         error = I2C_Peripheral_ReadRegisterMulti( LIS3DH_DEVICE_ADDRESS,
                                                   OUT_X_L_ADDR,
                                                   192,
                                                   AccelerometerData);   
-        
+        if(error == ERROR) {
+            UART_PutString("Error during I2C\r\n");
+        }
         if (error == NO_ERROR) {
             
             uint8_t i;
@@ -312,6 +316,9 @@ CY_ISR(Custom_isr_FIFO) {
         }
 
     }
+    
+  
+    
 }
 
 CY_ISR(Custom_isr_BUTTON){

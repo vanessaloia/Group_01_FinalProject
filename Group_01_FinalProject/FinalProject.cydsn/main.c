@@ -78,8 +78,9 @@ int main(void)
 
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
-    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
-    UART_PutString(message);
+    UART_ClearTxBuffer();
+    /*sprintf(message,"Flag_Cell_delfino == %d\r\n",Flag_Cell);
+    UART_PutString(message);*/
     
     if (Flag_Cell == 0) {
         
@@ -95,8 +96,6 @@ int main(void)
         begin_pressed = start;
         Pointer = (uint16_t)(EEPROM_readByte(POINTER_ADDRESS_L) | (EEPROM_readByte(POINTER_ADDRESS_H)<<8));
         
-
-        
     }
     
     change_settings_flag = 1;
@@ -109,14 +108,33 @@ int main(void)
     while_working_menu_flag = DONT_SHOW_MENU;
     EEPROM_Full = 0;
     time_counter = 0;
-    
-    Read_Pointer = FIRST_FREE_CELL;
-    
+    Temp_Counter = 0;
     /* flag that is set high when the user want to visualize the data */
     display_data=DONT_DISPLAY;
 
    
-   
+//     uint8_t buffer[64];
+//    uint8_t buffer1[64];
+//    uint8_t buffer2[64];
+//    memset(&buffer,0x01,64);
+//    
+//    EEPROM_writePage(0x0020,buffer,64);
+//    EEPROM_waitForWriteComplete();
+////    EEPROM_writePage(0x0020,buffer,64);
+////    EEPROM_waitForWriteComplete();
+//    
+//    EEPROM_readPage(0x0000,buffer1,64);
+//    EEPROM_readPage(0x0040,buffer2,64);
+//    
+//    uint8_t i;
+//    for(i= 0;i<64;i++){
+//        sprintf(message,"buffer1 [%d] = %d\r\n",i,buffer1[i]);
+//        UART_PutString(message);
+//    }
+//    for(i= 0;i<64;i++){
+//        sprintf(message,"buffer2 [%d] = %d\r\n",i,buffer2[i]);
+//        UART_PutString(message);
+//    }
     
     for(;;)
     {
@@ -145,7 +163,16 @@ int main(void)
         
         
         if (FIFODataReadyFlag && TempDataReadyFlag) {
-            
+            UART_PutString("ISR FIFO\r\n");
+            uint8_t i = 0;
+            for (i= 0;i<32;i++){
+                sprintf(message,"x_in = %d\r\n",Accelerations_digit[i*3]);
+                UART_PutString(message);
+                sprintf(message,"y_in = %d\r\n",Accelerations_digit[i*3+1]);
+                UART_PutString(message);
+                sprintf(message,"z_in = %d\r\n",Accelerations_digit[i*3+2]);
+                UART_PutString(message);
+            }
             Digit_To_EEPROM_Conversion();
             
             FIFODataReadyFlag = 0;
@@ -168,6 +195,7 @@ int main(void)
                 if(begin_pressed == START)
                     Stop_Acquisition();
                 sending_data = START;
+                Read_Pointer = FIRST_FREE_CELL;
                 display_data = DONT_DISPLAY;
                 break;
                 
@@ -192,9 +220,14 @@ int main(void)
         
         
         if (sending_data == START) 
-        {
-            while (Read_Pointer < Pointer ) 
-            {
+        {   
+            /*sprintf(message,"Read_pointer = %x\r\n",Read_Pointer);
+            UART_PutString(message);
+            sprintf(message,"Pointer = %x\r\n",Pointer);*/
+            //UART_PutString(message);
+            if (Read_Pointer < Pointer ) 
+            {   
+                //UART_PutString("Sono in if read pointer < pointer\r\n");
                 if (Read_Pointer <POINTER_LIMIT)
                     number_of_packets = WATERMARK_LEVEL + 1;
                 else 
@@ -202,15 +235,26 @@ int main(void)
                 
                 EEPROM_Data_Read();
                 EEPROM_To_Digit_Conversion();
+                uint8_t i = 0;
+                /*for(i=0;i<32;i++){
+                    sprintf(message,"x = %d\r\n",EEPROM_Data_digit[i*PACKET_DATA]);
+                    UART_PutString(message);
+                    sprintf(message,"y = %d\r\n",EEPROM_Data_digit[i*PACKET_DATA+1]);
+                    UART_PutString(message);
+                    sprintf(message,"z = %d\r\n",EEPROM_Data_digit[i*PACKET_DATA+2]);
+                    UART_PutString(message);
+                }*/
                 Digit_To_UOM_Conversion ();
                 Buffer_Creation();
-                PacketReadyFlag=1;
+                //PacketReadyFlag=1;
             }
+            else Read_Pointer = FIRST_FREE_CELL;
             
         }
         
         if( PacketReadyFlag)
-        {
+        {   
+            //UART_PutString("Packet ready\r\n");
             Packets_To_Send_Creation();
             
             PacketReadyFlag=0;    
