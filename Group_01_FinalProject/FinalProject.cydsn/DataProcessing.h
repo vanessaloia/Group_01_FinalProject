@@ -37,13 +37,21 @@
     #define MG_TO_MS2 0.00981
     #define ADC_RESOLUTION 10
     #define MAX_VALUE_DIGIT 1<<10
-    #define END_EEPROM_PACKETS 20
+    #define END_EEPROM_PACKETS 10
     
     
     
     
-    int16_t  EEPROM_Data_digit [PACKET_DATA*(WATERMARK_LEVEL +1)];
-    float  Data_UOM [PACKET_DATA*(WATERMARK_LEVEL +1)];
+    uint8_t x_l;
+    uint8_t x_h;
+    uint8_t y_l;
+    uint8_t y_h;
+    uint8_t z_l;
+    uint8_t z_h;
+    uint8_t t_l;
+    uint8_t t_h;    
+    int16_t EEPROM_Data_Digit[PACKET_DATA*(WATERMARK_LEVEL +1)];
+    float Data_UOM[PACKET_DATA*(WATERMARK_LEVEL +1)];
     uint8_t Data_Buffer[PACKET_BYTES*(WATERMARK_LEVEL +1)];
     uint8_t Packet_To_Send[1 + PACKET_BYTES +1];
     float m_temp_conversion;

@@ -72,21 +72,21 @@
     /* Number of bytes of each packet stored in EEPROM */
     #define EEPROM_PACKET_BYTES EEPROM_ACCELEROMETER_DATA_BYTES + EEPROM_TEMPERATURE_DATA_BYTES
     
-
+    
     
     CY_ISR_PROTO(Custom_isr_FIFO);
     
     /* array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
-    extern int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
+    int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
     
     /* Array to store 64 temperature data */
-    extern int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
+    int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
 
     /* Flag to indicate that new data have been read from FIFO and must be sent to EEPROM */
-    extern volatile uint8_t FIFODataReadyFlag;   
+    volatile uint8_t FIFODataReadyFlag;   
 
     /* Flag to indicate that 32 new temperature data are available */
-    extern volatile uint8_t TempDataReadyFlag;
+    volatile uint8_t TempDataReadyFlag;
     
     CY_ISR_PROTO(Custom_isr_BUTTON);
     #define BUTTON_PRESSED 0

@@ -22,26 +22,12 @@
 /* Circular counter to store the position of the array Temperature_Data in which to store new sampled data */
 volatile uint8_t Temp_Counter = 0;
 
-//int16 temperature_mv = 0;
-
-/* Array to store 64 temperature data */
-int16_t Temperature_Data[(WATERMARK_LEVEL + 1) * 2];
-
-/* Flag to indicate that 32 new temperature data are available */
-volatile uint8_t TempDataReadyFlag = 0;
-
-
 char message[100];
 
 
 /* Array to store accelerometer output data read from FIFO (starting from the position zero, for 32 samples: LSB and MSB (left-justified) of X,Y and Z axis acceleration ) */
 uint8_t AccelerometerData[BYTES_READ_FROM_FIFO];
 
-/* Array to store the 3 accelerations in digit(from the position zero, for 32 samples: X axis, Y axis, Z axis) */
-int16_t Accelerations_digit[BYTES_READ_FROM_FIFO/2];
-
-/* Flag to indicate that new data have been read from FIFO and must be sent to EEPROM */
-volatile uint8_t FIFODataReadyFlag = 0;   
 
 /* brief ISR on TC 
 * \- sample a new temperature value and store it in the Temperature_Data array according to Temp_Counter value
@@ -49,8 +35,12 @@ volatile uint8_t FIFODataReadyFlag = 0;
 * \-if so, rise the flag to allow preparation of data to be sent to EEPROM in main.c 
 */
 CY_ISR(Custom_isr_TIMER){
+    
+    
     /*Read status register to reset the isr*/
     Timer_ReadStatusRegister();
+    
+    UART_PutString("isr timer\r\n");
     
     /*Counting time only if the button is pressed*/
     if(button_pressed == BUTTON_PRESSED){
@@ -62,8 +52,6 @@ CY_ISR(Custom_isr_TIMER){
     
     if (Temperature_Data[Temp_Counter] < 0) Temperature_Data[Temp_Counter] = 0;
     if (Temperature_Data[Temp_Counter] > 1023) Temperature_Data[Temp_Counter] = 1023;
-    
-    //temperature_mv = ADC_DelSig_CountsTo_mVolts(temperature_digit);
     
     if (Temp_Counter == WATERMARK_LEVEL) TempDataReadyFlag = 1;
     Temp_Counter = (Temp_Counter+1) % ((WATERMARK_LEVEL + 1) * 2);
@@ -286,6 +274,8 @@ CY_ISR(Custom_isr_UART)
 */
 
 CY_ISR(Custom_isr_FIFO) {
+    
+    UART_PutString("isr fifo \r\n");
     
     uint8_t int1_src_reg;
     ErrorCode error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,

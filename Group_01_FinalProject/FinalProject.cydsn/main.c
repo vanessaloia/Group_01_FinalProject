@@ -19,6 +19,7 @@
 #include "MemoryCells.h"
 #include "EEPROMCommunication.h"
 #include "DataProcessing.h"
+#include "math.h"
 
 
 void blue_led_PWM_behaviour(uint16_t);
@@ -27,6 +28,7 @@ void blue_led_PWM_behaviour(uint16_t);
 
 void Begin_Acquisition(void);
 void Stop_Acquisition(void);
+void Clear_Fifo(void);
 
 uint8_t BeginFlag;
 /* array used to change the period of the timer when the user changes the sampling frequency] */
@@ -43,6 +45,8 @@ int main(void)
     uint8_t sending_data=0;
     
     uint16_t PWM_period = 0;
+    
+    uint8_t i;
     
     
      /* default temperature format to send data is Celsius */
@@ -64,12 +68,7 @@ int main(void)
     /*SPI start*/
     SPIM_Start();
     
-    isr_UART_StartEx(Custom_isr_UART);
-    isr_FIFO_StartEx(Custom_isr_FIFO);
-    isr_TIMER_StartEx(Custom_isr_TIMER);
-    
-    button_pressed = BUTTON_PRESSED;
-    isr_BUTTON_StartEx(Custom_isr_BUTTON);
+
     
     CyDelay(10);
     
@@ -92,10 +91,16 @@ int main(void)
         BeginFlag = 1;
         begin_pressed = start;
         Pointer = (uint16_t)(EEPROM_readByte(POINTER_ADDRESS_L) | (EEPROM_readByte(POINTER_ADDRESS_H)<<8));
-        
-
-        
+ 
     }
+    
+    isr_UART_StartEx(Custom_isr_UART);
+    isr_FIFO_StartEx(Custom_isr_FIFO);
+    isr_TIMER_StartEx(Custom_isr_TIMER);
+    
+    button_pressed = BUTTON_PRESSED;
+    isr_BUTTON_StartEx(Custom_isr_BUTTON);
+    
     
     change_settings_flag = 1;
     option_table = DONT_SHOW_TABLE;
@@ -121,8 +126,12 @@ int main(void)
         switch(start){
             case (START):
                 if (BeginFlag == 0) {
+                    
+                    uint8_t InterruptStatus;
+                    InterruptStatus=CyEnterCriticalSection();
                     EEPROM_writeByte(BEGIN_STOP_ADDRESS, START);
                     EEPROM_waitForWriteComplete();
+                    CyExitCriticalSection(InterruptStatus);
                 }
                 else BeginFlag = 0;
                 
@@ -131,6 +140,7 @@ int main(void)
             case (STOP):
                 if (BeginFlag == 0) {
                     Stop_Acquisition();
+                    Clear_Fifo();
                 }
                 else BeginFlag = 0;
 
@@ -142,9 +152,8 @@ int main(void)
         
         
         if (FIFODataReadyFlag && TempDataReadyFlag) {
-            
+
             Digit_To_EEPROM_Conversion();
-            
             FIFODataReadyFlag = 0;
             TempDataReadyFlag = 0;
             EEPROM_Data_Write();
@@ -190,7 +199,9 @@ int main(void)
         
         
         if (sending_data == START) 
-        {
+        {   
+//            sprintf(message,"Pointer=%u,readPointer=%u\r\n",Pointer,Read_Pointer);
+//            UART_PutString(message);
             if (Read_Pointer < Pointer) 
             {
                 if (Read_Pointer <POINTER_LIMIT)
@@ -243,8 +254,6 @@ int main(void)
         if (option_table!= DONT_SHOW_TABLE && feature_selected) {
             switch (option_table) 
            {
-                /* data need to be deleted: the timer is stopped to not generate new data */
-                Timer_Stop();
                 
                 case F_S_R:
                     /* change full scale range and store it in EEPROM*/
@@ -252,15 +261,22 @@ int main(void)
                     Change_Accelerometer_FSR(feature_selected);
                     /* Pointer resetted at the first available cell (0x0007)*/
                     Pointer_resetter();
+                    Clear_Fifo();
                    break;
                 case SAMP_FREQ:
+                    /* data need to be deleted: the timer is stopped to not generate new data */
+                    Timer_Stop();
                     /* change sampling freqeuncy */
                     EEPROM_Store_Freq();
+                    if (begin_pressed) {
                     Change_Accelerometer_SampFreq(feature_selected);
+                    }
                     /* change timer frequency in order to change the fequency of the isr */
                     Timer_WritePeriod(timer_periods[feature_selected-1]);
                     /* Pointer resetted at the first available cell (0x0007)*/
+                    Timer_Stop();
                     Pointer_resetter();
+                    Clear_Fifo();
                     break;
                 case TEMP:
                     /* to do */
@@ -354,8 +370,11 @@ void Stop_Acquisition(void) {
     /*Stopping ADC*/
     ADC_DelSig_Stop();
     Blue_LED_PWM_Stop();
+    uint8_t InterruptStatus;
+    InterruptStatus=CyEnterCriticalSection();
     EEPROM_writeByte(BEGIN_STOP_ADDRESS, STOP);
     EEPROM_waitForWriteComplete();
+    CyExitCriticalSection(InterruptStatus);
     start = BYTE_SAVED;
     
 }
@@ -364,12 +383,45 @@ void Stop_Acquisition(void) {
 void Pointer_resetter(){
         char message[100];
         Pointer = FIRST_FREE_CELL;
+        
+        uint8_t InterruptStatus;
+        InterruptStatus=CyEnterCriticalSection();
         EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer & 0xFF00) >> 8);
         EEPROM_waitForWriteComplete();
         EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
         EEPROM_waitForWriteComplete();
+        CyExitCriticalSection(InterruptStatus);
         sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
         UART_PutString(message);
+}
+
+void Clear_Fifo(void) {
+    
+    uint8_t fifo_ctrl_reg;
+    ErrorCode error;
+    
+    fifo_ctrl_reg = FIFO_CTRL_REG_CONTENT & 0x7f;
+
+    error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
+                                         FIFO_CTRL_REG_ADDR,
+                                         fifo_ctrl_reg);
+
+    if (error == ERROR)
+
+    {
+        UART_PutString("Error occurred during I2C comm to clear fifo \r\n");   
+    }
+ 
+    fifo_ctrl_reg = FIFO_CTRL_REG_CONTENT;
+
+    error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
+                                         FIFO_CTRL_REG_ADDR,
+                                         fifo_ctrl_reg);
+
+    if (error == ERROR)
+    {
+        UART_PutString("Error occurred during I2C comm to set stream mode \r\n");   
+    }
 }
 
     
