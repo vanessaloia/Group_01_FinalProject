@@ -125,8 +125,8 @@ void Digit_To_UOM_Conversion (void)
         Data_UOM[i*PACKET_DATA+2] = data_output[i*PACKET_DATA+2]* sensitivity * MG_TO_MS2;
         EEPROM_Data_digit[i*PACKET_DATA+3]= ADC_DelSig_CountsTo_mVolts(data_output[i*PACKET_DATA+3]);
         Data_UOM[i*PACKET_DATA+3] = m_temp_conversion* (EEPROM_Data_digit[i*PACKET_DATA+3]-OFFSET_mV) +q_temp_conversion;
-        sprintf(message, "t = %d\r\n",EEPROM_Data_digit[i*PACKET_DATA+3]);
-        UART_PutString(message);
+       /* sprintf(message, "t = %d\r\n",EEPROM_Data_digit[i*PACKET_DATA+3]);
+        UART_PutString(message);*/
     }
       
       
