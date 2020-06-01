@@ -319,14 +319,14 @@ void Accelerometer_Configuration(void) {
 }
 
 /* This function changes the full scale range of the accelerometer depending on the user input.
-*\   It uses the I2C protocol communication to change the content of the CTRL_REG_4 register content
+*\   It uses the I2C protocol communication to change the content of the CTRL_REG_4 register content.
 */
 void Change_Accelerometer_FSR(uint8_t feature_selected) 
 {
     uint8_t register_content;
     ErrorCode error;
     
-    /* default value of CTRL_REG_4: 0x00 
+    /* "register_content" contains the value to be inserted inside CTRL_REG_4 register
     * \FSR= ±2g -> CTRL_REG_4[5:4]= 00, feature_selected= 1
     * \FSR= ±4g -> CTRL_REG_4[5:4]= 01, feature_selected= 2
     * \FSR= ±8g -> CTRL_REG_4[5:4]= 10, feature_selected= 3
@@ -334,17 +334,14 @@ void Change_Accelerometer_FSR(uint8_t feature_selected)
     */
   
     register_content = (feature_selected-1) <<4;
-    /*
-    sprintf(message, "feature_selected = %d\r\nRegister content = %d\r\n",feature_selected,register_content);
-    UART_PutString(message);
-    */
+    
     
     /* pointer that points to the correct variable inside the struct of the FSR. It's used to print the FSR
     * \ set up in the accelerometer according to the user's input.
     * \(n-key + n-option)= WORD_SIZE (string size) +1 (char size)
-    * \the pointer points to option1= ±2g so it has to go to the (feature_selected -1)option
+    * \the pointer points to option1= ±2g so it has to go to (feature_selected -1) variables after option1
     */
-    //char * fsr_to_print = set_of_tables[option_table].option1 + (WORD_SIZE+1)* (feature_selected-1);
+   
     char * fsr_to_print = set_of_tables[option_table].option1 + (WORD_SIZE+1)* (feature_selected-1);
     
     /* Change the value of the Control register 4 according to the user's input */
@@ -364,18 +361,6 @@ void Change_Accelerometer_FSR(uint8_t feature_selected)
             UART_PutString("Error occurred during I2C comm to write  control register 4\r\n");   
         }   
     
-    error = I2C_Peripheral_ReadRegister(LIS3DH_DEVICE_ADDRESS,
-                                             CTRL_REG_4_ADDR,
-                                             &register_content);
-    if (error == NO_ERROR)
-        {
-//            sprintf(message, "FSR = %d \r\n", register_content);
-//            UART_PutString(message); 
-        }
-        else
-        {
-            UART_PutString("Error occurred during I2C comm to read control register 4\r\n");   
-        } 
 }
 
 /* This function changes the sampling frequency of the accelerometer depending on the user input.
@@ -386,7 +371,7 @@ void Change_Accelerometer_SampFreq(uint8_t feature_selected)
     uint8_t register_content;
     ErrorCode error;
     
-    /* default value of CTRL_REG_1: 0x17
+    /*  "register_content" contains the value to be inserted inside CTRL_REG_1 register
     * \SampFreq= 1 Hz -> CTRL_REG_1[5:4]= 01, feature_selected= 1
     * \SampFreq= 10 Hz -> CTRL_REG_1[5:4]= 10, feature_selected= 2
     * \SampFreq= 25 Hz -> CTRL_REG_1[5:4]= 11, feature_selected= 3
@@ -396,7 +381,7 @@ void Change_Accelerometer_SampFreq(uint8_t feature_selected)
     register_content = (feature_selected <<4) + CTRL_REG_1_CONST;
     
    
-    
+    /* Change the value of the Control register 4 according to the user's input */
     error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,
                                              CTRL_REG_1_ADDR,
                                              register_content);
@@ -409,7 +394,7 @@ void Change_Accelerometer_SampFreq(uint8_t feature_selected)
                 /* pointer that points to the correct variable inside the struct of SampFreq. It's used to print the sampling
                 * \ frequency set up in the accelerometer according to the user's input.
                 * / (n-key + n-option)= WORD_SIZE (string size) +1 (char size)
-                * / the pointer points to option1= 1 Hz so it has to go to the (feature_selected -1)option
+                * / the pointer points to option1= 1 Hz so it has to go to the (feature_selected -1) after option1 variable
                 */
                 char * sampfreq_to_print = set_of_tables[option_table].option1 + (WORD_SIZE + 1)* (feature_selected -1);
                 sprintf(message, "Sampling frequency successfully changed at: %s \r\n", sampfreq_to_print);
