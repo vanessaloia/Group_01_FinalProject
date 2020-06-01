@@ -33,7 +33,7 @@ void Digit_To_EEPROM_Conversion(void)
                 EEPROM_Data[i*EEPROM_PACKET_BYTES+3] = Accelerations_digit[i*3+2];
 //                sprintf(message,"b1= %u,b2= %u,b3= %u,b4= %u\r\n",EEPROM_Data[i*EEPROM_PACKET_BYTES],EEPROM_Data[i*EEPROM_PACKET_BYTES+1],EEPROM_Data[i*EEPROM_PACKET_BYTES+2],EEPROM_Data[i*EEPROM_PACKET_BYTES+3]);
 //                UART_PutString(message);
-                if (Temp_Counter > WATERMARK_LEVEL) {
+                if (temp_counter > WATERMARK_LEVEL) {
                     EEPROM_Data[i*EEPROM_PACKET_BYTES+4] = Temperature_Data[i]>>8;
                     EEPROM_Data[i*EEPROM_PACKET_BYTES+5] = Temperature_Data[i]; 
 //                    sprintf(message,"t_in= %d\r\n",Temperature_Data[i]);
@@ -105,7 +105,7 @@ void Digit_To_UOM_Conversion (void)
     }
       
     }
-}
+
 void Buffer_Creation(void)
 {
     uint8_t i;
