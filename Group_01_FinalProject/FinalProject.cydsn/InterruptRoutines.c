@@ -16,8 +16,6 @@
 #include "25LC256.h"
 #include "MemoryCells.h"
 
-//Questo da rimuovere
-#include "EEPROMCommunication.h"
 
 /* string to print meessages/menu to UART */
 char message[100];
@@ -37,8 +35,6 @@ CY_ISR(Custom_isr_TIMER){
     
     /*Read status register to reset the isr*/
     Timer_ReadStatusRegister();
-    
-    UART_PutString("isr timer\r\n");
     
     /*Counting time only if the button is pressed*/
     if(button_pressed == BUTTON_PRESSED){
@@ -269,8 +265,6 @@ CY_ISR(Custom_isr_UART)
 */
 
 CY_ISR(Custom_isr_FIFO) {
-    
-    UART_PutString("isr fifo \r\n");
     
     uint8_t int1_src_reg;
     uint8_t i;

@@ -88,7 +88,7 @@ void Show_Table(uint8_t index_table)
     * \ So, in this case the last cell to be pointed is after 1+WORD_SIZE (key1 size+ option1 size).
     * \ In the other cases, the table is composed by four options so the last cell memory to be pointed in the for loop is (1+WORD_SIZE)*3
     */
-    stop_loop= (option_table == TEMP)? (start +(1+ WORD_SIZE +1)): (start + (1+WORD_SIZE)*3+1);
+    stop_loop= (option_table == TEMP)? (start_loop +(1+ WORD_SIZE +1)): (start_loop + (1+WORD_SIZE)*3+1);
     
     /* layout of the menu */
     Menu_Edge();

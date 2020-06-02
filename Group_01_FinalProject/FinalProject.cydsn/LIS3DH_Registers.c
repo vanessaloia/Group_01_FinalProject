@@ -358,7 +358,7 @@ void Change_Accelerometer_FSR(uint8_t feature_selected)
         else
         {
             /* print error message */
-            UART_PutString("Error occurred during I2C comm to write  control register 4\r\n");   
+            UART_PutString("Error in changing the FSR\r\n");   
         }   
     
 }
@@ -403,16 +403,9 @@ void Change_Accelerometer_SampFreq(uint8_t feature_selected)
         }
         else
         {
-            UART_PutString("Error occurred during I2C comm to read fifo control register \r\n");   
+            UART_PutString("Error in changing the sampling frequency \r\n");   
         } 
     
 }
-
-
-
-
-
-
-
 
 /* [] END OF FILE */

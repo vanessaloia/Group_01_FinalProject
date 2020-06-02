@@ -1,15 +1,11 @@
-/* ========================================
- *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
- *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
- *
- * ========================================
-*/
+/* file EEPROMCommunication.c */
 
+/* storage and recovery of data in memory is done 32 packets at a time, corresponding to 192 bytes (3 pages)
+\ the first 6 cells are busy to store configuration informations. 
+\ To write in memory always an integer multiple of one packet (made of 6 bytes) and to avoid to lose the first packets, 
+\ data are written starting from the cell 0x40 (value defined in FIRST_FREE_CELL), so 192 bytes are written 170 times through 3 write pages. 
+\ after these 170 write (when the Pointer reach the value defined in POINTER_LIMIT), only one page remains available, so only 10 packets (60 bytes) are stored. 
+*/
 #include "EEPROMCommunication.h"
 #include "25LC256.h"
 #include "MemoryCells.h"
@@ -32,17 +28,14 @@ void EEPROM_Data_Write(void) {
             
             for(i = 0; i < 192; i++) { 
                 
-                //EEPROM_writePage(Pointer, &EEPROM_Data[i*SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
                 EEPROM_writeByte(Pointer, EEPROM_Data[i]);
                 EEPROM_waitForWriteComplete();
-                //Pointer += SPI_EEPROM_PAGE_SIZE;
                 Pointer++;
        
             }  
         }
         else {
             for(i = 0; i < 60; i++) {
-                //EEPROM_writePage(Pointer, EEPROM_Data , 60);
                 EEPROM_writeByte(Pointer, EEPROM_Data[i]);                
                 EEPROM_waitForWriteComplete();
                 Pointer++;
@@ -64,7 +57,7 @@ void EEPROM_Data_Write(void) {
 \ this function read 192 bytes (or 60 if the end of the eeprom is reached) 
 */
 void EEPROM_Data_Read (void) {
-    //UART_PutString("SONO IN DATA READ\r\n");
+
     uint8_t i;
     uint8_t InterruptStatus;
     InterruptStatus=CyEnterCriticalSection();
@@ -72,9 +65,7 @@ void EEPROM_Data_Read (void) {
     if (Read_Pointer < POINTER_LIMIT) {
    
         for (i=0; i < 192 ; i++) {
-            //EEPROM_readPage (Read_Pointer, &EEPROM_Data_read[i*SPI_EEPROM_PAGE_SIZE], SPI_EEPROM_PAGE_SIZE);
             EEPROM_Data_read[i]=EEPROM_readByte(Read_Pointer);
-            //Read_Pointer+= SPI_EEPROM_PAGE_SIZE;
             Read_Pointer++;
         }
     }
@@ -82,7 +73,6 @@ void EEPROM_Data_Read (void) {
     else {
         
         for(i = 0; i < 60; i++) {
-        //EEPROM_readPage(Read_Pointer, EEPROM_Data_read , 60);
         EEPROM_Data_read[i] = EEPROM_readByte(Read_Pointer);
         Read_Pointer++;
         }
@@ -97,8 +87,6 @@ void EEPROM_Data_Read (void) {
 */
 void EEPROM_Initialization(void) {
     
-    char message[50];
-    UART_PutString("EEPROM_init\r\n");
     Pointer = FIRST_FREE_CELL;
     EEPROM_writeByte(POINTER_ADDRESS_H,(Pointer&0xFF00)>>8);
     EEPROM_waitForWriteComplete();
@@ -116,8 +104,6 @@ void EEPROM_Initialization(void) {
     Flag_Cell = 1;
     EEPROM_writeByte(FLAG_ADDRESS,Flag_Cell);
     EEPROM_waitForWriteComplete();
-    sprintf(message,"Flag_Cell = %d\r\n",Flag_Cell);
-    UART_PutString(message);
     UART_PutString("Device started up for the first time. You can change default settings through the menu \r\n");
 
 }

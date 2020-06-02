@@ -19,17 +19,16 @@
 #include "MemoryCells.h"
 #include "EEPROMCommunication.h"
 #include "DataProcessing.h"
- void Pointer_resetter(void);
 
 
+void Pointer_resetter(void);
 void blue_led_PWM_behaviour(uint16_t);
-
-
 
 void Begin_Acquisition(void);
 void Stop_Acquisition(void);
 void Clear_Fifo(void);
 
+/* Flag to indicate if, at start up time, in memory is stored 'begin' or 'stop' */
 uint8_t BeginFlag;
 /* array used to change the period of the timer when the user changes the sampling frequency] */
 uint16 timer_periods[4] = { 1000, 100, 40, 20 }; 
@@ -38,18 +37,13 @@ int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
     
-    char message[100];
-    
     uint8_t PacketReadyFlag=0;
     
     uint8_t sending_data=0;
     
-    uint16_t PWM_period = 0;
+    uint16_t PWM_period = 0;    
     
-    uint8_t i;
-    
-    
-     /* default temperature format to send data is Celsius */
+    /* default temperature format to send data is Celsius */
     m_temp_conversion= M_CELSIUS;
     q_temp_conversion= Q_CELSIUS;
     
@@ -88,7 +82,6 @@ int main(void)
 
     /* wait for components to start */
     CyDelay(10);
-    
 
     
     Flag_Cell = EEPROM_readByte(FLAG_ADDRESS);
@@ -102,7 +95,6 @@ int main(void)
     }
     else {
         
-        UART_PutString("EEPROM already initialized");
         start = EEPROM_readByte(BEGIN_STOP_ADDRESS);
         BeginFlag = 1;
         begin_pressed = start;
@@ -358,8 +350,8 @@ int main(void)
             time_counter = 0;
         }
         
-    }//END FOR CYCLE
-}//END MAIN
+    }
+}
 
 /*brief function to change the status of the blue led */
 void blue_led_PWM_behaviour(uint16_t period){    
@@ -408,7 +400,6 @@ void Stop_Acquisition(void) {
 /* brief function to reset the point every time the button is pressed for 5 seconds or the user change one setting */
 void Pointer_resetter(){
         /*Function to reset Pointer value*/
-        char message[100];
         Pointer = FIRST_FREE_CELL;
         
         uint8_t InterruptStatus;
@@ -419,8 +410,7 @@ void Pointer_resetter(){
         EEPROM_writeByte(POINTER_ADDRESS_L,(Pointer & 0xff));
         EEPROM_waitForWriteComplete();
         CyExitCriticalSection(InterruptStatus);
-        sprintf(message,"pointer resetted at %x\r\n",EEPROM_readByte(POINTER_ADDRESS_L));
-        UART_PutString(message);
+        UART_PutString("the memory has been resetted\r\n");
 }
 /*brief function to clear the fifo when fsr or sampling frequency are changed */
 void Clear_Fifo(void) {
